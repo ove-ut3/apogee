@@ -9,7 +9,7 @@
 #' @export
 hier_etape_type_diplome <- function(code_etape) {
   
-  hier_etape_type_diplome <- tibble::tibble(code_etape) %>%
+  hier_etape_type_diplome <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape, by = "code_etape") %>%
     dplyr::pull(code_type_diplome)
 
@@ -29,7 +29,7 @@ hier_etape_filiere <- function(code_etape) {
     return(NA_character_)
   }
   
-  hier_etape_filiere <- tibble::tibble(code_etape) %>%
+  hier_etape_filiere <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape, by = "code_etape") %>%
     dplyr::pull(filiere)
   
@@ -45,7 +45,7 @@ hier_etape_filiere <- function(code_etape) {
 #' @export
 hier_elp_nature <- function(code_elp) {
   
-  hier_elp_nature <- tibble::tibble(code_elp) %>%
+  hier_elp_nature <- dplyr::tibble(code_elp) %>%
     dplyr::left_join(apogee::elp, by = "code_elp") %>%
     dplyr::pull(code_nature_elp)
   
@@ -68,7 +68,7 @@ hier_elp_nature <- function(code_elp) {
 #' @export
 hier_discipline_sise_parent <- function(code_discipline_sise, parent_final = FALSE, garder_na = FALSE) {
   
-  hier_discipline_sise_parent <- tibble::tibble(code_discipline_sise) %>%
+  hier_discipline_sise_parent <- dplyr::tibble(code_discipline_sise) %>%
     dplyr::left_join(apogee::sise_discipline, by = "code_discipline_sise") %>%
     dplyr::pull(code_discipline_sise_parent)
   
@@ -101,7 +101,7 @@ hier_discipline_sise_parent <- function(code_discipline_sise, parent_final = FAL
 #' @export
 hier_bac_parent <- function(code_bac, parent_final = FALSE, garder_na = FALSE) {
   
-  hier_bac_parent <- tibble::tibble(code_bac) %>%
+  hier_bac_parent <- dplyr::tibble(code_bac) %>%
     dplyr::left_join(apogee::bac, by = "code_bac") %>%
     dplyr::pull(code_bac_parent)
   
@@ -134,7 +134,7 @@ hier_bac_parent <- function(code_bac, parent_final = FALSE, garder_na = FALSE) {
 #' @export
 hier_pcs_parent <- function(code_pcs, parent_final = FALSE, garder_na = FALSE) {
   
-  hier_pcs_parent <- tibble::tibble(code_pcs) %>%
+  hier_pcs_parent <- dplyr::tibble(code_pcs) %>%
     dplyr::left_join(apogee::pcs, by = "code_pcs") %>%
     dplyr::pull(code_pcs_parent)
   
@@ -162,7 +162,7 @@ hier_pcs_parent <- function(code_pcs, parent_final = FALSE, garder_na = FALSE) {
 #' @export
 hier_etape_mention <- function(code_etape) {
   
-  hier_etape_mention <- tibble::tibble(code_etape) %>%
+  hier_etape_mention <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape_mention, by = "code_etape") %>%
     dplyr::pull(code_mention_diplome)
   
@@ -180,7 +180,7 @@ hier_etape_mention <- function(code_etape) {
 #' @export
 hier_etape_domaine <- function(code_etape) {
   
-  hier_etape_domaine <- tibble::tibble(code_etape) %>%
+  hier_etape_domaine <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape_domaine, by = "code_etape") %>%
     dplyr::pull(code_domaine_diplome)
   
@@ -203,7 +203,7 @@ hier_etape_domaine <- function(code_etape) {
 #' @export
 hier_composante_parent <- function(code_composante, parent_final = FALSE, garder_na = FALSE) {
   
-  hier_composante_parent <- tibble::tibble(code_composante) %>%
+  hier_composante_parent <- dplyr::tibble(code_composante) %>%
     dplyr::left_join(apogee::composante, by = "code_composante") %>%
     dplyr::pull(code_composante_parent)
   

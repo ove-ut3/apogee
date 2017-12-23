@@ -14,7 +14,7 @@
 #' @export
 flux_etape_succ <- function(code_etape, successeur_final = FALSE, garder_na = FALSE) {
   
-  flux_etape_succ <- tibble::tibble(code_etape) %>%
+  flux_etape_succ <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape_flux, by = "code_etape") %>%
     dplyr::pull(code_etape_flux)
   

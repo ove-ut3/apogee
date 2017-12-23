@@ -30,7 +30,7 @@ lib_etape <- function(code_etape, type_diplome = TRUE, annee_etape = TRUE, ville
                                      "FALSE FALSE FALSE" = "lib_etape")
   }
   
-  lib_etape <- tibble::tibble(code_etape) %>%
+  lib_etape <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape, by = "code_etape") %>%
     dplyr::rename(champ_lib_etape = !!champ_lib_etape)
   
@@ -72,7 +72,7 @@ lib_etape <- function(code_etape, type_diplome = TRUE, annee_etape = TRUE, ville
 #' @export
 acronyme_etape <- function(code_etape) {
   
-  sigle_etape <- tibble::tibble(code_etape) %>%
+  sigle_etape <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape, by = "code_etape") %>%
     dplyr::pull(acronyme_etape)
   
@@ -92,7 +92,7 @@ acronyme_etape <- function(code_etape) {
 #' @export
 lib_cursus_etape <- function(code_cursus_etape) {
   
-  lib_cursus_etape <- tibble::tibble(code_cursus_etape) %>%
+  lib_cursus_etape <- dplyr::tibble(code_cursus_etape) %>%
     dplyr::left_join(apogee::etape_cursus, by = "code_cursus_etape") %>%
     dplyr::pull(lib_cursus_etape)
   
@@ -113,7 +113,7 @@ lib_cursus_etape <- function(code_cursus_etape) {
 #' @export
 lib_composante <- function(code_composante) {
   
-  lib_composante <- tibble::tibble(code_composante) %>%
+  lib_composante <- dplyr::tibble(code_composante) %>%
     dplyr::left_join(apogee::composante, by = "code_composante") %>%
     dplyr::pull(lib_composante)
   
@@ -133,7 +133,7 @@ lib_composante <- function(code_composante) {
 #' @export
 lib_specialite_diplome <- function(code_specialite_diplome) {
   
-  lib_specialite_diplome <- tibble::tibble(code_specialite_diplome) %>%
+  lib_specialite_diplome <- dplyr::tibble(code_specialite_diplome) %>%
     dplyr::left_join(apogee::diplome_specialite, by = "code_specialite_diplome") %>%
     dplyr::pull(lib_specialite_diplome)
   
@@ -154,7 +154,7 @@ lib_specialite_diplome <- function(code_specialite_diplome) {
 #' @export
 lib_regime_inscription <- function(code_regime_inscription) {
   
-  lib_regime_inscription <- tibble::tibble(code_regime_inscription) %>%
+  lib_regime_inscription <- dplyr::tibble(code_regime_inscription) %>%
     dplyr::left_join(apogee::regime_inscription, by = "code_regime_inscription") %>%
     dplyr::pull(lib_regime_inscription)
   
@@ -175,7 +175,7 @@ lib_regime_inscription <- function(code_regime_inscription) {
 #' @export
 lib_type_diplome <- function(code_type_diplome) {
   
-  lib_type_diplome <- tibble::tibble(code_type_diplome) %>%
+  lib_type_diplome <- dplyr::tibble(code_type_diplome) %>%
     dplyr::left_join(apogee::diplome_type, by = "code_type_diplome") %>%
     dplyr::pull(lib_type_diplome)
   
@@ -195,7 +195,7 @@ lib_type_diplome <- function(code_type_diplome) {
 #' @export
 lib_finalite_diplome <- function(code_finalite_diplome) {
   
-  lib_finalite_diplome <- tibble::tibble(code_finalite_diplome) %>%
+  lib_finalite_diplome <- dplyr::tibble(code_finalite_diplome) %>%
     dplyr::left_join(apogee::diplome_finalite, by = "code_finalite_diplome") %>%
     dplyr::pull(lib_finalite_diplome)
   
@@ -215,7 +215,7 @@ lib_finalite_diplome <- function(code_finalite_diplome) {
 #' @export
 lib_bourse <- function(code_bourse) {
   
-  lib_bourse <- tibble::tibble(code_bourse) %>%
+  lib_bourse <- dplyr::tibble(code_bourse) %>%
     dplyr::left_join(apogee::bourse, by = "code_bourse") %>%
     dplyr::pull(lib_bourse)
   
@@ -236,7 +236,7 @@ lib_bourse <- function(code_bourse) {
 #' @export
 acronyme_type_diplome <- function(code_type_diplome) {
   
-  acronyme_type_diplome <- tibble::tibble(code_type_diplome) %>%
+  acronyme_type_diplome <- dplyr::tibble(code_type_diplome) %>%
     dplyr::left_join(apogee::diplome_type, by = "code_type_diplome") %>%
     dplyr::pull(acronyme_type_diplome)
   
@@ -256,7 +256,7 @@ acronyme_type_diplome <- function(code_type_diplome) {
 #' @export
 lib_type_etab <- function(code_type_etab) {
   
-  lib_type_etab <- tibble::tibble(code_type_etab) %>%
+  lib_type_etab <- dplyr::tibble(code_type_etab) %>%
     dplyr::left_join(apogee::etablissement_type, by = "code_type_etab") %>%
     dplyr::pull(lib_type_etab)
   
@@ -276,7 +276,7 @@ lib_type_etab <- function(code_type_etab) {
 #' @export
 lib_elp <- function(code_elp) {
   
-  lib_elp <- tibble::tibble(code_elp) %>%
+  lib_elp <- dplyr::tibble(code_elp) %>%
     dplyr::left_join(apogee::elp, by = "code_elp") %>%
     dplyr::pull(lib_elp)
   
@@ -296,7 +296,7 @@ lib_elp <- function(code_elp) {
 #' @export
 lib_nature_elp <- function(code_nature_elp) {
   
-  lib_nature_elp <- tibble::tibble(code_nature_elp) %>%
+  lib_nature_elp <- dplyr::tibble(code_nature_elp) %>%
     dplyr::left_join(apogee::elp_nature, by = "code_nature_elp") %>%
     dplyr::pull(lib_nature_elp)
   
@@ -317,7 +317,7 @@ lib_nature_elp <- function(code_nature_elp) {
 #' @export
 lib_discipline_sise <- function(code_discipline_sise) {
   
-  lib_discipline_sise <- tibble::tibble(code_discipline_sise) %>%
+  lib_discipline_sise <- dplyr::tibble(code_discipline_sise) %>%
     dplyr::left_join(apogee::sise_discipline, by = "code_discipline_sise") %>%
     dplyr::pull(lib_discipline_sise)
   
@@ -338,7 +338,7 @@ lib_discipline_sise <- function(code_discipline_sise) {
 #' @export
 lib_bac <- function(code_bac) {
   
-  lib_bac <- tibble::tibble(code_bac) %>%
+  lib_bac <- dplyr::tibble(code_bac) %>%
     dplyr::left_join(apogee::bac, by = "code_bac") %>%
     dplyr::pull(lib_bac)
   
@@ -359,7 +359,7 @@ lib_bac <- function(code_bac) {
 #' @export
 acronyme_bac <- function(code_bac) {
   
-  acronyme_bac <- tibble::tibble(code_bac) %>%
+  acronyme_bac <- dplyr::tibble(code_bac) %>%
     dplyr::left_join(apogee::bac, by = "code_bac") %>%
     dplyr::pull(acronyme_bac)
   
@@ -380,7 +380,7 @@ acronyme_bac <- function(code_bac) {
 #' @export
 lib_mention_bac <- function(code_mention_bac) {
   
-  lib_mention_bac <- tibble::tibble(code_mention_bac) %>%
+  lib_mention_bac <- dplyr::tibble(code_mention_bac) %>%
     dplyr::left_join(apogee::bac_mention, by = "code_mention_bac") %>%
     dplyr::pull(lib_mention_bac)
   
@@ -401,7 +401,7 @@ lib_mention_bac <- function(code_mention_bac) {
 #' @export
 lib_pcs <- function(code_pcs) {
   
-  lib_pcs <- tibble::tibble(code_pcs) %>%
+  lib_pcs <- dplyr::tibble(code_pcs) %>%
     dplyr::left_join(apogee::pcs, by = "code_pcs") %>%
     dplyr::pull(lib_pcs)
   
@@ -422,7 +422,7 @@ lib_pcs <- function(code_pcs) {
 #' @export
 lib_sexe <- function(code_sexe) {
   
-  lib_sexe <- tibble::tibble(code_sexe) %>%
+  lib_sexe <- dplyr::tibble(code_sexe) %>%
     dplyr::left_join(apogee::sexe, by = "code_sexe") %>%
     dplyr::pull(lib_sexe)
   
@@ -442,7 +442,7 @@ lib_sexe <- function(code_sexe) {
 #' @export
 lib_situation_sociale <- function(code_situation_sociale) {
   
-  lib_situation_sociale <- tibble::tibble(code_situation_sociale) %>%
+  lib_situation_sociale <- dplyr::tibble(code_situation_sociale) %>%
     dplyr::left_join(apogee::situation_sociale, by = "code_situation_sociale") %>%
     dplyr::pull(lib_situation_sociale)
   
@@ -462,7 +462,7 @@ lib_situation_sociale <- function(code_situation_sociale) {
 #' @export
 lib_statut_etudiant <- function(code_statut_etudiant) {
   
-  lib_statut_etudiant <- tibble::tibble(code_statut_etudiant) %>%
+  lib_statut_etudiant <- dplyr::tibble(code_statut_etudiant) %>%
     dplyr::left_join(apogee::statut_etudiant, by = "code_statut_etudiant") %>%
     dplyr::pull(lib_statut_etudiant)
   
@@ -482,7 +482,7 @@ lib_statut_etudiant <- function(code_statut_etudiant) {
 #' @export
 lib_mention_diplome <- function(code_mention_diplome) {
   
-  lib_mention_diplome <- tibble::tibble(code_mention_diplome) %>%
+  lib_mention_diplome <- dplyr::tibble(code_mention_diplome) %>%
     dplyr::left_join(apogee::diplome_mention, by = "code_mention_diplome") %>%
     dplyr::pull(lib_mention_diplome)
   
@@ -502,7 +502,7 @@ lib_mention_diplome <- function(code_mention_diplome) {
 #' @export
 lib_domaine_diplome <- function(code_domaine_diplome) {
   
-  lib_domaine_diplome <- tibble::tibble(code_domaine_diplome) %>%
+  lib_domaine_diplome <- dplyr::tibble(code_domaine_diplome) %>%
     dplyr::left_join(apogee::diplome_domaine, by = "code_domaine_diplome") %>%
     dplyr::pull(lib_domaine_diplome)
   
@@ -522,7 +522,7 @@ lib_domaine_diplome <- function(code_domaine_diplome) {
 #' @export
 lib_diplome <- function(code_diplome) {
   
-  lib_diplome <- tibble::tibble(code_diplome) %>%
+  lib_diplome <- dplyr::tibble(code_diplome) %>%
     dplyr::left_join(apogee::diplome, by = "code_diplome") %>%
     dplyr::pull(lib_diplome)
   
@@ -542,7 +542,7 @@ lib_diplome <- function(code_diplome) {
 #' @export
 lib_resultat <- function(code_resultat) {
   
-  lib_resultat <- tibble::tibble(code_resultat) %>%
+  lib_resultat <- dplyr::tibble(code_resultat) %>%
     dplyr::left_join(apogee::resultat, by = "code_resultat") %>%
     dplyr::pull(lib_resultat)
   
@@ -562,7 +562,7 @@ lib_resultat <- function(code_resultat) {
 #' @export
 lib_periode_elp <- function(code_periode_elp) {
   
-  lib_periode_elp <- tibble::tibble(code_periode_elp) %>%
+  lib_periode_elp <- dplyr::tibble(code_periode_elp) %>%
     dplyr::left_join(apogee::elp_periode, by = "code_periode_elp") %>%
     dplyr::pull(lib_periode_elp)
   
@@ -583,7 +583,7 @@ lib_periode_elp <- function(code_periode_elp) {
 #' @export
 lib_type_diplome_anterieur <- function(code_type_diplome_anterieur) {
   
-  lib_type_diplome_anterieur <- tibble::tibble(code_type_diplome_anterieur) %>%
+  lib_type_diplome_anterieur <- dplyr::tibble(code_type_diplome_anterieur) %>%
     dplyr::left_join(apogee::diplome_anterieur_type, by = "code_type_diplome_anterieur") %>%
     dplyr::pull(lib_type_diplome_anterieur)
   

@@ -12,7 +12,7 @@
 #' @export
 annee_etape <- function(code_etape) {
   
-  annee_etape <- tibble::tibble(code_etape) %>%
+  annee_etape <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape, by = "code_etape") %>%
     dplyr::pull(annee_etape)
   
@@ -32,7 +32,7 @@ annee_etape <- function(code_etape) {
 #' @export
 etape_premiere_annee <- function(code_etape) {
   
-  etape_premiere_annee <- tibble::tibble(code_etape) %>%
+  etape_premiere_annee <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape, by = "code_etape") %>%
     dplyr::pull(annee_premiere_etape)
   
@@ -52,7 +52,7 @@ etape_premiere_annee <- function(code_etape) {
 #' @export
 etape_derniere_annee <- function(code_etape) {
   
-  etape_derniere_annee <- tibble::tibble(code_etape) %>%
+  etape_derniere_annee <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape, by = "code_etape") %>%
     dplyr::pull(annee_derniere_etape)
   
@@ -70,7 +70,7 @@ etape_derniere_annee <- function(code_etape) {
 #' @export
 temoin_annee1_diplome <- function(code_etape) {
   
-  temoin_annee1_diplome <- tibble::tibble(code_etape) %>%
+  temoin_annee1_diplome <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape, by = "code_etape") %>%
     dplyr::pull(temoin_annee1_diplome) %>% 
     dplyr::recode("O" = TRUE, "N" = FALSE)
@@ -115,7 +115,7 @@ annee_u <- function(annee, fichier = FALSE) {
 #' @export
 temoin_elp_ue <- function(code_elp) {
   
-  temoin_elp_ue <- tibble::tibble(code_elp) %>%
+  temoin_elp_ue <- dplyr::tibble(code_elp) %>%
     dplyr::left_join(apogee::elp, by = "code_elp") %>%
     dplyr::pull(temoin_elp_ue) %>% 
     dplyr::recode("O" = TRUE, "N" = FALSE)

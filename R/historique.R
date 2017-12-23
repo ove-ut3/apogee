@@ -16,7 +16,7 @@
 histo_etape_succ <- function(code_etape, code_elp = NULL, successeur_final = TRUE, garder_na = FALSE) {
   
   if (is.null(code_elp)) {
-    histo_etape_succ <- tibble::tibble(code_etape) %>%
+    histo_etape_succ <- dplyr::tibble(code_etape) %>%
       dplyr::left_join(dplyr::filter(apogee::etape_histo, is.na(doublon)),
                        by = "code_etape") %>%
       dplyr::pull(code_etape_succ)
@@ -27,7 +27,7 @@ histo_etape_succ <- function(code_etape, code_elp = NULL, successeur_final = TRU
       stop("Les vecteurs de code_etape et code_elp doivent être de taille identique.", call. = FALSE)
     }
     
-    histo_etape_succ <- tibble::tibble(code_etape,
+    histo_etape_succ <- dplyr::tibble(code_etape,
                                        code_elp) %>%
       dplyr::left_join(dplyr::filter(apogee::etape_histo, is.na(doublon_elp)),
                        by = c("code_etape", "code_elp")) %>%
@@ -73,7 +73,7 @@ histo_etape_succ_2 <- function(code_etape, garder_na = FALSE) {
   
   histo_etape_succ_2 <- histo_etape_succ_2 %>% 
     tidyr::nest(code_etape_succ, .key = "code_etape_succ") %>% 
-    dplyr::left_join(tibble::tibble(code_etape), ., by = "code_etape") %>% 
+    dplyr::left_join(dplyr::tibble(code_etape), ., by = "code_etape") %>% 
     dplyr::pull(code_etape_succ)
 
   return(histo_etape_succ_2)
@@ -93,7 +93,7 @@ histo_etape_succ_2 <- function(code_etape, garder_na = FALSE) {
 #' @export
 histo_etape_pred <- function(code_etape) {
   
-  histo_etape_pred <- tibble::tibble(code_etape_succ = code_etape) %>%
+  histo_etape_pred <- dplyr::tibble(code_etape_succ = code_etape) %>%
     dplyr::left_join(apogee::etape_histo, by = "code_etape_succ") %>%
     split(x = .$code_etape, f = .$code_etape_succ)
   
@@ -116,7 +116,7 @@ histo_etape_pred <- function(code_etape) {
 #' @export
 histo_elp_succ <- function(code_elp, successeur_final = TRUE, garder_na = FALSE) {
   
-  histo_elp_succ <- tibble::tibble(code_elp) %>%
+  histo_elp_succ <- dplyr::tibble(code_elp) %>%
     dplyr::left_join(apogee::elp_histo, by = "code_elp") %>%
     dplyr::pull(code_elp_succ)
   
