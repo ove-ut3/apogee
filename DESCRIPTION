@@ -12,7 +12,7 @@ Imports:
     caractr,
     divr,
     dplyr,
-    importr,
+    impexp,
     purrr,
     rlang,
     source.maj,
