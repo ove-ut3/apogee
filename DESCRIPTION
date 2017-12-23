@@ -14,6 +14,7 @@ Imports:
     dplyr,
     impexp,
     purrr,
+    readxl,
     rlang,
     source.maj,
     stringr,
