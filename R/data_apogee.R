@@ -7,7 +7,7 @@
 doublon_maj_etudiant <- function(table) {
   
   table <- table %>% 
-    dplyr::left_join(importr::importer_table_access("doublons_code_etudiant", paste0(racine_packages, "apogee/raw/Tables_ref_individus.accdb")),
+    dplyr::left_join(impexp::access_importer("doublons_code_etudiant", paste0(racine_packages, "apogee/raw/Tables_ref_individus.accdb")),
                      by = "code_etudiant") %>% 
     dplyr::mutate(code_etudiant = ifelse(!is.na(code_etudiant_maj), code_etudiant_maj, code_etudiant)) %>% 
     dplyr::select(-code_etudiant_maj, -commentaire, -date_maj) %>% 
@@ -22,15 +22,15 @@ doublon_maj_etudiant <- function(table) {
 #' @keywords internal
 data_individus <- function() {
   
-  individus <- importr::importer_masse_csv(regex_fichier = "Individus\\.csv", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE, ligne_debut = 2) %>% 
+  individus <- impexp::csv_importer_masse(regex_fichier = "Individus\\.csv", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE, ligne_debut = 2) %>% 
     tidyr::unnest() %>% 
-    source.maj::renommer_champs(importr::importer_table_access("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
-    source.maj::transcoder_champs(importr::importer_table_access("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))
+    source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
+    source.maj::transcoder_champs(impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))
   
-  individus_bac <- importr::importer_masse_csv("Individus - Bac\\.csv", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
+  individus_bac <- impexp::csv_importer_masse("Individus - Bac\\.csv", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
     tidyr::unnest() %>% 
-    source.maj::renommer_champs(importr::importer_table_access("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
-    source.maj::transcoder_champs(importr::importer_table_access("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
+    source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
+    source.maj::transcoder_champs(impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
     dplyr::arrange(code_etudiant, desc(annee_bac), code_mention_bac, code_type_etab_bac) %>% 
     dplyr::group_by(code_etudiant) %>% 
     dplyr::filter(row_number() == 1) %>% 
@@ -38,10 +38,10 @@ data_individus <- function() {
   
   individus <- dplyr::left_join(individus, individus_bac, by = "code_etudiant")
   
-  individus_mail_ups <- importr::importer_masse_csv("Individus - Mail UPS\\.csv", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
+  individus_mail_ups <- impexp::csv_importer_masse("Individus - Mail UPS\\.csv", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
     tidyr::unnest() %>% 
-    source.maj::renommer_champs(importr::importer_table_access("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
-    source.maj::transcoder_champs(importr::importer_table_access("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))
+    source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
+    source.maj::transcoder_champs(impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))
   
   individus <- dplyr::left_join(individus, individus_mail_ups, by = "code_etudiant")
   
@@ -54,10 +54,10 @@ data_individus <- function() {
 #' @keywords internal
 data_individus_diplome_origine <- function() {
   
-  individus_diplome_origine <- importr::importer_masse_csv("Individus_diplome_origine\\.csv", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
+  individus_diplome_origine <- impexp::csv_importer_masse("Individus_diplome_origine\\.csv", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
     tidyr::unnest() %>% 
-    source.maj::renommer_champs(importr::importer_table_access("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
-    source.maj::transcoder_champs(importr::importer_table_access("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
+    source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
+    source.maj::transcoder_champs(impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
     dplyr::arrange(code_etudiant, annee_diplome_obtenu)
     
   save("individus_diplome_origine", file = paste0(racine_packages, "apogee/data/individus_diplome_origine.RData"))
@@ -69,10 +69,10 @@ data_individus_diplome_origine <- function() {
 #' @keywords internal
 data_individus_formation_origine <- function() {
   
-  individus_formation_origine <- importr::importer_masse_csv("Individus_formation_origine\\.csv", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
+  individus_formation_origine <- impexp::csv_importer_masse("Individus_formation_origine\\.csv", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
     tidyr::unnest() %>% 
-    source.maj::renommer_champs(importr::importer_table_access("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
-    source.maj::transcoder_champs(importr::importer_table_access("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))
+    source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
+    source.maj::transcoder_champs(impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))
   
   save("individus_formation_origine", file = paste0(racine_packages, "apogee/data/individus_formation_origine.RData"))
 }
@@ -109,12 +109,12 @@ nest_inscrits <- function(table, champ_nest, cle = c("annee", "code_etape", "cod
 #' @keywords internal
 data_inscrits <- function() {
   
-  inscrits <- importr::importer_masse_csv("Inscrits\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), ligne_debut = 2, archive_zip = TRUE) %>% 
-    dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, importr::importer_table_access("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
-                     import = purrr::map(import, source.maj::transcoder_champs, importr::importer_table_access("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
+  inscrits <- impexp::csv_importer_masse("Inscrits\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), ligne_debut = 2, archive_zip = TRUE) %>% 
+    dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
+                     import = purrr::map(import, source.maj::transcoder_champs, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
     apogee::doublon_maj_etudiant() %>% 
-    source.maj::recoder_champs(importr::importer_table_access("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")), source = "data_inscrits", champs_table = FALSE)
+    source.maj::recoder_champs(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")), source = "data_inscrits", champs_table = FALSE)
   
   inscrits <- inscrits %>%
     apogee::nest_inscrits(code_composante) %>%
@@ -154,7 +154,7 @@ data_inscrits <- function() {
   
   #### Ajout inscrits Base Access ####
   
-  inscrits <- importr::importer_table_access("inscrits_ajout", paste0(racine_packages, "apogee/raw/Tables_ref_individus.accdb")) %>% 
+  inscrits <- impexp::access_importer("inscrits_ajout", paste0(racine_packages, "apogee/raw/Tables_ref_individus.accdb")) %>% 
     dplyr::select(-commentaire, -date_maj) %>% 
     dplyr::anti_join(inscrits, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
     dplyr::bind_rows(inscrits) %>% 
@@ -180,9 +180,9 @@ data_inscrits <- function() {
 #' @keywords internal
 data_inscrits_peda <- function() {
   
-  inscrits_peda <- importr::importer_masse_csv("Inscrits_peda\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), ligne_debut = 2, archive_zip = TRUE) %>% 
-    dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, importr::importer_table_access("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
-                     import = purrr::map(import, source.maj::transcoder_champs, importr::importer_table_access("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
+  inscrits_peda <- impexp::csv_importer_masse("Inscrits_peda\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), ligne_debut = 2, archive_zip = TRUE) %>% 
+    dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
+                     import = purrr::map(import, source.maj::transcoder_champs, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
     apogee::doublon_maj_etudiant()
   
@@ -195,9 +195,9 @@ data_inscrits_peda <- function() {
 #' @keywords internal
 data_inscrits_elp <- function() {
   
-  inscrits_elp <- importr::importer_masse_csv("Inscrits_ELP\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
-    dplyr::transmute(import = lapply(import, source.maj::renommer_champs, importr::importer_table_access("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
-                     import = lapply(import, source.maj::transcoder_champs, importr::importer_table_access("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
+  inscrits_elp <- impexp::csv_importer_masse("Inscrits_ELP\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
+    dplyr::transmute(import = lapply(import, source.maj::renommer_champs, impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
+                     import = lapply(import, source.maj::transcoder_champs, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
     apogee::doublon_maj_etudiant() # %>% 
     # dplyr::semi_join(apogee::inscrits, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
@@ -211,9 +211,9 @@ data_inscrits_elp <- function() {
 #' @keywords internal
 data_resultats_elp <- function() {
 
-  resultats_elp <- importr::importer_masse_csv("Resultats_ELP\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
-    dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, importr::importer_table_access("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
-                     import = purrr::map(import, source.maj::transcoder_champs, importr::importer_table_access("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
+  resultats_elp <- impexp::csv_importer_masse("Resultats_ELP\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
+    dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
+                     import = purrr::map(import, source.maj::transcoder_champs, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
     apogee::doublon_maj_etudiant()
   
@@ -226,16 +226,16 @@ data_resultats_elp <- function() {
 #' @keywords internal
 data_resultats_etape <- function() {
   
-  resultats_etape <- importr::importer_masse_csv("Resultats_etape\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
-    dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, importr::importer_table_access("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
-                     import = purrr::map(import, source.maj::transcoder_champs, importr::importer_table_access("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
+  resultats_etape <- impexp::csv_importer_masse("Resultats_etape\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
+    dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
+                     import = purrr::map(import, source.maj::transcoder_champs, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
     apogee::doublon_maj_etudiant()
   
   #### PACES ####
-  resultats_paces <- importr::importer_masse_csv("Resultats_etape_paces\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
-    dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, importr::importer_table_access("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
-                     import = purrr::map(import, source.maj::transcoder_champs, importr::importer_table_access("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
+  resultats_paces <- impexp::csv_importer_masse("Resultats_etape_paces\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
+    dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
+                     import = purrr::map(import, source.maj::transcoder_champs, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
     apogee::doublon_maj_etudiant() %>% 
     dplyr::rename(note_etape = note_elp, code_resultat = code_resultat_elp) %>% 
@@ -266,7 +266,7 @@ data_resultats_etape <- function() {
   suppression_session2 <- apogee::resultats_etape %>% 
     dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, lib_session, code_resultat) %>% 
     tidyr::spread(lib_session, code_resultat) %>% 
-    importr::normaliser_nom_champs() %>% 
+    impexp::normaliser_nom_champs() %>% 
     dplyr::filter(session_1 %in% c("ADM", "ADJ") & !session_2 %in% c(NA_character_, "ADM", "ADJ")) %>% 
     dplyr::mutate(lib_session = "Session 2")
   
@@ -284,9 +284,9 @@ data_resultats_etape <- function() {
 #' @keywords internal
 data_resultats_diplome <- function() {
   
-  resultats_diplome <- importr::importer_masse_csv("Resultats_diplome\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
-    dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, importr::importer_table_access("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
-                     import = purrr::map(import, source.maj::transcoder_champs, importr::importer_table_access("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
+  resultats_diplome <- impexp::csv_importer_masse("Resultats_diplome\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
+    dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
+                     import = purrr::map(import, source.maj::transcoder_champs, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
     apogee::doublon_maj_etudiant()
 
@@ -305,15 +305,15 @@ data_resultats_diplome <- function() {
 #' @keywords internal
 data_diplomes <- function() {
   
-  diplomes <- importr::importer_masse_csv("Diplomes\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
-    dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, importr::importer_table_access("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
-                     import = purrr::map(import, source.maj::transcoder_champs, importr::importer_table_access("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
+  diplomes <- impexp::csv_importer_masse("Diplomes\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
+    dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
+                     import = purrr::map(import, source.maj::transcoder_champs, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
     apogee::doublon_maj_etudiant()
   
   #### Ajout diplômés Base Access ####
   
-  ajout_diplomes <- importr::importer_table_access("diplomes_ajout", paste0(racine_packages, "apogee/raw/Tables_ref_individus.accdb")) %>% 
+  ajout_diplomes <- impexp::access_importer("diplomes_ajout", paste0(racine_packages, "apogee/raw/Tables_ref_individus.accdb")) %>% 
     dplyr::select(-commentaire, -date_maj)
   
   ajout_diplomes %>%
