@@ -1,0 +1,13 @@
+.Rproj.user
+.Rhistory
+.RData
+.Ruserdata
+data/diplomes*
+data/individus*
+data/inscrits*
+data/resultats*
+raw/**/Diplomes*
+raw/**/Individus*
+raw/**/Inscrits*
+raw/**/Resultats*
+raw/Tables_ref_individus.accdb
