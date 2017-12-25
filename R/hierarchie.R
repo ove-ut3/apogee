@@ -219,3 +219,27 @@ hier_composante_parent <- function(code_composante, parent_final = FALSE, garder
   
   return(hier_composante_parent)
 }
+
+#' Renvoie les codes academie a partir des codes de departement
+#'
+#' Renvoie les codes académie à partir des codes de département.
+#'
+#' @param code_departement Un vecteur de code de départements.
+#'
+#' @return Un vecteur de code académie.
+#'
+#' Jeu de données source : \code{apogee::departement_academie}.\cr
+#' Il est créé à partir de la table "departement_academie" de la base Access "Tables_ref.accdb".
+#'
+#' @examples
+#' apogee::hier_departement_academie(c("031", "056"))
+#'
+#' @export
+hier_departement_academie <- function(code_departement) {
+  
+  hier_departement_academie <- dplyr::tibble(code_departement) %>%
+    dplyr::left_join(apogee::departement_academie, by = "code_departement") %>%
+    dplyr::pull(code_academie)
+  
+  return(hier_departement_academie)
+}

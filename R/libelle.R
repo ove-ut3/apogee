@@ -589,3 +589,27 @@ lib_type_diplome_anterieur <- function(code_type_diplome_anterieur) {
   
   return(lib_type_diplome_anterieur)
 }
+
+#' Renvoie le libelle d'academie a partir du code
+#'
+#' Renvoie le libellé d'académie à partir du code.
+#'
+#' @param code_academie Un vecteur de code académie.
+#'
+#' @return Un vecteur contenant les libellés dacadémie.
+#'
+#' Jeu de données source : \code{apogee::data_academie}.\cr
+#' Il est créé à partir de la table "academie" de la base Access "Tables_ref.accdb".
+#'
+#' @examples
+#' apogee::lib_academie(c("01", "09"))
+#'
+#' @export
+lib_academie <- function(code_academie) {
+  
+  lib_academie <- dplyr::tibble(code_academie) %>%
+    dplyr::left_join(apogee::academie, by = "code_academie") %>%
+    dplyr::pull(lib_academie)
+  
+  return(lib_academie)
+}

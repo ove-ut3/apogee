@@ -379,3 +379,16 @@ data_resultat <- function() {
   save("resultat", file = paste0(racine_packages, "apogee/data/resultat.RData"))
   
 }
+
+#' data_academie
+#'
+#' @export
+#' @keywords internal
+data_academie <- function() {
+  
+  academie <- impexp::access_importer("academie", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))
+  save("academie", file = paste0(racine_packages, "apogee/data/academie.RData"))
+  
+  departement_academie <- impexp::access_importer("departement_academie", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))
+  save("departement_academie", file = paste0(racine_packages, "apogee/data/departement_academie.RData"))
+}
