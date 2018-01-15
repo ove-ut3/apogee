@@ -158,6 +158,17 @@ data_etape <- function() {
                      by = c("code_etape", "code_specialite_diplome")) %>% 
     tidyr::nest(code_specialite_diplome, .key = "code_specialite_diplome")
   save("etape_specialite_diplome", file = paste0(racine_packages, "apogee/data/etape_specialite_diplome.RData"))
+  
+  #### Etape - cycle ####
+  
+  etape_cycle <- readxl::read_excel(paste0(racine_packages, "apogee/raw/Etape.xlsx"), "Etape_cycle") %>% 
+    source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))
+  save("etape_cycle", file = paste0(racine_packages, "apogee/data/etape_cycle.RData"))
+  
+  #### Cycle
+  cycle <- readxl::read_excel(paste0(racine_packages, "apogee/raw/Etape.xlsx"), "Cycle") %>% 
+    source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))
+  save("cycle", file = paste0(racine_packages, "apogee/data/cycle.RData"))
 }
 
 #' data_sise
