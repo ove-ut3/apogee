@@ -10,9 +10,9 @@ lib_academie(code_academie)
 \item{code_academie}{Un vecteur de code académie.}
 }
 \value{
-Un vecteur contenant les libellés dacadémie.
+Un vecteur contenant les libellés d'académie.
 
-Jeu de données source : \code{apogee::data_academie}.\cr
+Jeu de données source : \code{apogee::academie}.\cr
 Il est créé à partir de la table "academie" de la base Access "Tables_ref.accdb".
 }
 \description{
