@@ -4,7 +4,10 @@
 \alias{data_resultats_elp}
 \title{data_resultats_elp}
 \usage{
-data_resultats_elp()
+data_resultats_elp(derniere_annee = TRUE)
+}
+\arguments{
+\item{derniere_annee}{\dots}
 }
 \description{
 data_resultats_elp

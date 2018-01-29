@@ -105,11 +105,19 @@ nest_inscrits <- function(table, champ_nest, cle = c("annee", "code_etape", "cod
 
 #' data_inscrits
 #'
+#' @param derniere_annee \dots
+#'
 #' @export
 #' @keywords internal
-data_inscrits <- function() {
+data_inscrits <- function(derniere_annee = TRUE) {
   
-  inscrits <- impexp::csv_importer_masse("Inscrits\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), ligne_debut = 2, archive_zip = TRUE) %>% 
+  if (derniere_annee == TRUE) {
+    n_csv <- -1
+  } else {
+    n_csv <- Inf
+  }
+  
+  inscrits <- impexp::csv_importer_masse("Inscrits\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), ligne_debut = 2, archive_zip = TRUE, n_csv = n_csv) %>% 
     dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
                      import = purrr::map(import, source.maj::transcoder_champs, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
@@ -124,6 +132,11 @@ data_inscrits <- function() {
   
   inscrits_annules <- dplyr::filter(inscrits, inscription_annulee) %>% 
     dplyr::select(-inscription_annulee)
+  
+  if (derniere_annee == TRUE) {
+    inscrits_annules <- divr::anti_join_bind(apogee::inscrits_annules, inscrits_annules, by = "annee")
+  }
+  
   save("inscrits_annules", file = paste0(racine_packages, "apogee/data/inscrits_annules.RData"))
   
   inscrits <- inscrits %>% 
@@ -164,6 +177,11 @@ data_inscrits <- function() {
   
   inscrits_cpge <- inscrits %>% 
     dplyr::filter(code_profil_etudiant %in% "CP" | apogee::hier_etape_filiere(code_etape) %in% "CPGE")
+  
+  if (derniere_annee == TRUE) {
+    inscrits_cpge <- divr::anti_join_bind(apogee::inscrits_cpge, inscrits_cpge, by = "annee")
+  }
+  
   save("inscrits_cpge", file = paste0(racine_packages, "apogee/data/inscrits_cpge.RData"))
   
   inscrits <- inscrits %>% 
@@ -171,62 +189,111 @@ data_inscrits <- function() {
                   !apogee::hier_etape_filiere(code_etape) %in% "CPGE")
   
   #### Sauvegarde finale ####
+  
+  if (derniere_annee == TRUE) {
+    inscrits <- divr::anti_join_bind(apogee::inscrits, inscrits, by = "annee")
+  }
+  
   save("inscrits", file = paste0(racine_packages, "apogee/data/inscrits.RData"))
 }
 
 #' data_inscrits_peda
 #'
+#' @param derniere_annee \dots
+#' 
 #' @export
 #' @keywords internal
-data_inscrits_peda <- function() {
+data_inscrits_peda <- function(derniere_annee = TRUE) {
   
-  inscrits_peda <- impexp::csv_importer_masse("Inscrits_peda\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), ligne_debut = 2, archive_zip = TRUE) %>% 
+  if (derniere_annee == TRUE) {
+    n_csv <- -1
+  } else {
+    n_csv <- Inf
+  }
+  
+  inscrits_peda <- impexp::csv_importer_masse("Inscrits_peda\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), ligne_debut = 2, archive_zip = TRUE, n_csv = n_csv) %>% 
     dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
                      import = purrr::map(import, source.maj::transcoder_champs, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
     apogee::doublon_maj_etudiant()
+  
+  if (derniere_annee == TRUE) {
+    inscrits_peda <- divr::anti_join_bind(apogee::inscrits_peda, inscrits_peda, by = "annee")
+  }
   
   save("inscrits_peda", file = paste0(racine_packages, "apogee/data/inscrits_peda.RData"))
 }
 
 #' data_inscrits_elp
 #'
+#' @param derniere_annee \dots
+#' 
 #' @export
 #' @keywords internal
-data_inscrits_elp <- function() {
+data_inscrits_elp <- function(derniere_annee = TRUE) {
   
-  inscrits_elp <- impexp::csv_importer_masse("Inscrits_ELP\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
+  if (derniere_annee == TRUE) {
+    n_csv <- -1
+  } else {
+    n_csv <- Inf
+  }
+  
+  inscrits_elp <- impexp::csv_importer_masse("Inscrits_ELP\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE, n_csv = n_csv) %>% 
     dplyr::transmute(import = lapply(import, source.maj::renommer_champs, impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
                      import = lapply(import, source.maj::transcoder_champs, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
     apogee::doublon_maj_etudiant() # %>% 
     # dplyr::semi_join(apogee::inscrits, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
   
+  if (derniere_annee == TRUE) {
+    inscrits_elp <- divr::anti_join_bind(apogee::inscrits_elp, inscrits_elp, by = "annee")
+  }
+  
   save("inscrits_elp", file = paste0(racine_packages, "apogee/data/inscrits_elp.RData"))
 }
 
 #' data_resultats_elp
 #'
+#' @param derniere_annee \dots
+#' 
 #' @export
 #' @keywords internal
-data_resultats_elp <- function() {
+data_resultats_elp <- function(derniere_annee = TRUE) {
 
-  resultats_elp <- impexp::csv_importer_masse("Resultats_ELP\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
+  if (derniere_annee == TRUE) {
+    n_csv <- -1
+  } else {
+    n_csv <- Inf
+  }
+  
+  resultats_elp <- impexp::csv_importer_masse("Resultats_ELP\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE, n_csv = n_csv) %>% 
     dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
                      import = purrr::map(import, source.maj::transcoder_champs, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
     apogee::doublon_maj_etudiant()
+  
+  if (derniere_annee == TRUE) {
+    resultats_elp <- divr::anti_join_bind(apogee::resultats_elp, resultats_elp, by = "annee")
+  }
   
   save("resultats_elp", file = paste0(racine_packages, "apogee/data/resultats_elp.RData"))
 }
 
 #' data_resultats_etape
 #'
+#' @param derniere_annee \dots
+#' 
 #' @export
 #' @keywords internal
-data_resultats_etape <- function() {
+data_resultats_etape <- function(derniere_annee = TRUE) {
   
-  resultats_etape <- impexp::csv_importer_masse("Resultats_etape\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
+  if (derniere_annee == TRUE) {
+    n_csv <- -1
+  } else {
+    n_csv <- Inf
+  }
+  
+  resultats_etape <- impexp::csv_importer_masse("Resultats_etape\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE, n_csv = n_csv) %>% 
     dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
                      import = purrr::map(import, source.maj::transcoder_champs, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
@@ -275,16 +342,28 @@ data_resultats_etape <- function() {
   
   #### Sauvegarde ####
   
+  if (derniere_annee == TRUE) {
+    resultats_etape <- divr::anti_join_bind(apogee::resultats_etape, resultats_etape, by = "annee")
+  }
+  
   save("resultats_etape", file = paste0(racine_packages, "apogee/data/resultats_etape.RData"))
 }
 
 #' data_resultats_diplome
 #'
+#' @param derniere_annee \dots
+#' 
 #' @export
 #' @keywords internal
-data_resultats_diplome <- function() {
+data_resultats_diplome <- function(derniere_annee = TRUE) {
   
-  resultats_diplome <- impexp::csv_importer_masse("Resultats_diplome\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
+  if (derniere_annee == TRUE) {
+    n_csv <- -1
+  } else {
+    n_csv <- Inf
+  }
+  
+  resultats_diplome <- impexp::csv_importer_masse("Resultats_diplome\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE, n_csv = n_csv) %>% 
     dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
                      import = purrr::map(import, source.maj::transcoder_champs, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
@@ -296,16 +375,28 @@ data_resultats_diplome <- function() {
     dplyr::semi_join(dplyr::select(apogee::inscrits, annee, code_etape, code_etudiant, inscription_premiere),
                      by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
 
+  if (derniere_annee == TRUE) {
+    resultats_diplome <- divr::anti_join_bind(apogee::resultats_diplome, resultats_diplome, by = "annee")
+  }
+  
   save("resultats_diplome", file = paste0(racine_packages, "apogee/data/resultats_diplome.RData"))
 }
 
 #' data_diplomes
 #'
+#' @param derniere_annee \dots
+#' 
 #' @export
 #' @keywords internal
-data_diplomes <- function() {
+data_diplomes <- function(derniere_annee = TRUE) {
   
-  diplomes <- impexp::csv_importer_masse("Diplomes\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE) %>% 
+  if (derniere_annee == TRUE) {
+    n_csv <- -1
+  } else {
+    n_csv <- Inf
+  }
+  
+  diplomes <- impexp::csv_importer_masse("Diplomes\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE, n_csv = n_csv) %>% 
     dplyr::transmute(import = purrr::map(import, source.maj::renommer_champs, impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
                      import = purrr::map(import, source.maj::transcoder_champs, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
@@ -332,6 +423,10 @@ data_diplomes <- function() {
     dplyr::semi_join(dplyr::select(apogee::inscrits, annee, code_etape, code_etudiant, inscription_premiere),
                      by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
 
+  if (derniere_annee == TRUE) {
+    diplomes <- divr::anti_join_bind(apogee::diplomes, diplomes, by = "annee")
+  }
+  
   save("diplomes", file = paste0(racine_packages, "apogee/data/diplomes.RData"))
 }
 

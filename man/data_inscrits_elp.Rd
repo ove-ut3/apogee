@@ -4,7 +4,10 @@
 \alias{data_inscrits_elp}
 \title{data_inscrits_elp}
 \usage{
-data_inscrits_elp()
+data_inscrits_elp(derniere_annee = TRUE)
+}
+\arguments{
+\item{derniere_annee}{\dots}
 }
 \description{
 data_inscrits_elp

@@ -4,7 +4,10 @@
 \alias{data_inscrits_peda}
 \title{data_inscrits_peda}
 \usage{
-data_inscrits_peda()
+data_inscrits_peda(derniere_annee = TRUE)
+}
+\arguments{
+\item{derniere_annee}{\dots}
 }
 \description{
 data_inscrits_peda

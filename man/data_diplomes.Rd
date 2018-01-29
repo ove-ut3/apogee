@@ -4,7 +4,10 @@
 \alias{data_diplomes}
 \title{data_diplomes}
 \usage{
-data_diplomes()
+data_diplomes(derniere_annee = TRUE)
+}
+\arguments{
+\item{derniere_annee}{\dots}
 }
 \description{
 data_diplomes

@@ -4,7 +4,10 @@
 \alias{data_resultats_etape}
 \title{data_resultats_etape}
 \usage{
-data_resultats_etape()
+data_resultats_etape(derniere_annee = TRUE)
+}
+\arguments{
+\item{derniere_annee}{\dots}
 }
 \description{
 data_resultats_etape
