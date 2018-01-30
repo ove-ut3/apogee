@@ -3,6 +3,7 @@
 export(acronyme_bac)
 export(acronyme_etape)
 export(acronyme_type_diplome)
+export(annee_en_cours)
 export(annee_etape)
 export(annee_u)
 export(conv_annee_etape_type_diplome)
