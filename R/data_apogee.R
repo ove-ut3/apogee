@@ -495,6 +495,7 @@ data_stats <- function() {
     dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, code_etape_pre, dplyr::starts_with("origine_gen"))
   
   present_ts_examens <- stats %>% 
+    dplyr::filter(annee < apogee::annee_en_cours()) %>% 
     dplyr::mutate(present_ts_examens = dplyr::case_when(is.na(code_resultat) ~ NA_character_,
                                                         code_resultat %in% c("ADM", "ADJ", "AJ", "AJAC", "AT") ~ "Oui",
                                                         TRUE ~ "Non")) %>% 
@@ -511,6 +512,7 @@ data_stats <- function() {
     dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, present_1_examen) %>% 
     dplyr::left_join(stats, ., by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
     tidyr::replace_na(list(present_1_examen = "Non")) %>% 
+    dplyr::filter(annee < apogee::annee_en_cours()) %>% 
     dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, present_1_examen)
   
   reussite <- stats %>% 
