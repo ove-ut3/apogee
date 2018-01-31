@@ -6,6 +6,7 @@ data/diplomes*
 data/individus*
 data/inscrits*
 data/resultats*
+data/stats*
 raw/**/Diplomes*
 raw/**/Individus*
 raw/**/Inscrits*
