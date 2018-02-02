@@ -199,6 +199,36 @@ formations_en_cours <- function() {
   return(formations_en_cours)
 }
 
+#' Historique des formations
+#' 
+#' Historique des formations depuis l'année de début définie
+#' 
+#' @param annee_debut Année de début définie
+#'
+#' @export
+formations_historique <- function(annee_debut) {
+  
+  formations_historique <- apogee::etape %>% 
+    dplyr::filter(annee_derniere_etape >= !!annee_debut,
+                  !(annee_premiere_etape == !!annee_debut & annee_derniere_etape == apogee::annee_en_cours())) %>% 
+    dplyr::anti_join(apogee::etape_histo, by = "code_etape") %>% 
+    dplyr::anti_join(apogee::etape_histo, by = c("code_etape" = "code_etape_succ")) %>% 
+    dplyr::mutate(annee = purrr::map2(annee_premiere_etape, annee_derniere_etape, ~ .x:.y)) %>% 
+    dplyr::mutate(id = row_number()) %>% 
+    tidyr::unnest(annee) %>% 
+    dplyr::filter(annee >= !!annee_debut) %>% 
+    dplyr::mutate(lib_etape = apogee::lib_etape(code_etape)) %>% 
+    dplyr::select(annee, code_type_diplome, id, code_etape, lib_etape) %>% 
+    tidyr::gather("champ", "valeur", code_etape, lib_etape) %>% 
+    tidyr::unite(champ, annee, champ, sep = "##") %>% 
+    tidyr::spread(champ, valeur) %>% 
+    dplyr::select(-id) %>% 
+    dplyr::mutate(code_type_diplome = stringr::str_replace_all(code_type_diplome, "/", "_")) %>% 
+    split(f = dplyr::pull(., code_type_diplome))
+  
+  return(formations_historique)
+}
+
 #' Mise a jour mensuelle des donnees Apogee (individus et meta-donnees)
 #' 
 #' Mise à jour mensuelle des données Apogée (individus et méta-données).
