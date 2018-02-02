@@ -4,14 +4,14 @@
 \alias{annee_en_cours}
 \title{Retourne l'année universitaire en cours}
 \usage{
-annee_en_cours(mois_resultats = 10)
+annee_en_cours(mois_debut = 9)
 }
 \arguments{
-\item{mois_resultats}{Mois des résultats, octobre par défaut}
+\item{mois_debut}{Mois de début de l'année, septembre par défaut}
 }
 \value{
 Une valeur integer contenant l'année en cours
 }
 \description{
-Retourne l'année universitaire en cours selon le mois défini pour les résultats
+Retourne l'année universitaire en cours selon le mois de début d'année défini
 }

@@ -149,18 +149,18 @@ liste_formations <- function(annee) {
 
 #' Retourne l'année universitaire en cours
 #' 
-#' Retourne l'année universitaire en cours selon le mois défini pour les résultats
+#' Retourne l'année universitaire en cours selon le mois de début d'année défini
 #'
-#' @param mois_resultats Mois des résultats, octobre par défaut
+#' @param mois_debut Mois de début de l'année, septembre par défaut
 #'
 #' @return Une valeur integer contenant l'année en cours
 #' 
 #' @export
-annee_en_cours <- function(mois_resultats = 10) {
+annee_en_cours <- function(mois_debut = 9) {
   
   annee_en_cours <- lubridate::year(lubridate::today())
   
-  if (lubridate::month(lubridate::today()) < mois_resultats) {
+  if (lubridate::month(lubridate::today()) < mois_debut) {
     annee_en_cours <- annee_en_cours - 1
   }
   
