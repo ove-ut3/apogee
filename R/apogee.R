@@ -167,6 +167,38 @@ annee_en_cours <- function(mois_resultats = 10) {
   return(annee_en_cours)
 }
 
+#' Liste des formations de l'annee en cours
+#' 
+#' Liste des formations de l'année en cours.
+#'
+#' @export
+formations_en_cours <- function() {
+  
+  formations_en_cours <- apogee::inscrits %>% 
+    dplyr::filter(annee == apogee::annee_en_cours()) %>% 
+    dplyr::select(code_etape, code_composante) %>% 
+    unique() %>% 
+    tidyr::unnest(code_composante) %>% 
+    dplyr::mutate(lib_composante = apogee::hier_composante_parent(code_composante) %>%
+                    apogee::lib_composante()) %>% 
+    dplyr::select(-code_composante) %>% 
+    unique() %>% 
+    dplyr::group_by(code_etape) %>% 
+    dplyr::summarise(lib_composante = paste(lib_composante, collapse = " / ")) %>% 
+    dplyr::ungroup() %>% 
+    dplyr::mutate(lib_etape = apogee::lib_etape(code_etape),
+                  acronyme_etape = apogee::acronyme_etape(code_etape),
+                  acronyme_type_diplome = apogee::hier_etape_type_diplome(code_etape) %>% apogee::acronyme_type_diplome(),
+                  acronyme_type_diplome = ifelse(is.na(acronyme_type_diplome), apogee::hier_etape_type_diplome(code_etape), acronyme_type_diplome),
+                  annee_etape = apogee::annee_etape(code_etape)) %>% 
+    dplyr::arrange(lib_composante, acronyme_type_diplome, annee_etape, code_etape) %>% 
+    dplyr::select(lib_composante, acronyme_type_diplome, annee_etape, code_etape, lib_etape, acronyme_etape) %>% 
+    dplyr::left_join(apogee::etape %>% dplyr::select(code_etape, lib_etape_apogee),
+                     by = "code_etape")
+  
+  return(formations_en_cours)
+}
+
 #' Mise a jour mensuelle des donnees Apogee (individus et meta-donnees)
 #' 
 #' Mise à jour mensuelle des données Apogée (individus et méta-données).
