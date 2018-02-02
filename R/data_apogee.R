@@ -495,7 +495,7 @@ data_stats <- function() {
     dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, code_etape_pre, dplyr::starts_with("origine_gen"))
   
   present_ts_examens <- stats %>% 
-    dplyr::filter(annee < apogee::annee_en_cours()) %>% 
+    dplyr::filter(annee < apogee::annee_en_cours(mois_debut = 11)) %>% 
     dplyr::mutate(present_ts_examens = dplyr::case_when(is.na(code_resultat) ~ NA_character_,
                                                         code_resultat %in% c("ADM", "ADJ", "AJ", "AJAC", "AT") ~ "Oui",
                                                         TRUE ~ "Non")) %>% 
@@ -512,7 +512,7 @@ data_stats <- function() {
     dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, present_1_examen) %>% 
     dplyr::left_join(stats, ., by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
     tidyr::replace_na(list(present_1_examen = "Non")) %>% 
-    dplyr::filter(annee < apogee::annee_en_cours()) %>% 
+    dplyr::filter(annee < apogee::annee_en_cours(mois_debut = 11)) %>% 
     dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, present_1_examen)
   
   reussite <- stats %>% 
@@ -527,7 +527,7 @@ data_stats <- function() {
     dplyr::ungroup() %>% 
     dplyr::select(annee, code_etape_post = code_etape, code_etudiant) %>% 
     dplyr::right_join(stats, by = c("annee", "code_etudiant")) %>% 
-    dplyr::filter(annee < apogee::annee_en_cours()) %>% 
+    dplyr::filter(annee < apogee::annee_en_cours(mois_debut = 11)) %>% 
     dplyr::mutate(code_etape_post = apogee::histo_etape_succ(code_etape_post, elp_parcours),
                   reussite = ifelse(apogee::lib_resultat(code_resultat) %in% "Admis", "Réussite", "Echec"),
                   annee_etape_post = apogee::annee_etape(code_etape_post),
