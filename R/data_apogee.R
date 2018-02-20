@@ -446,6 +446,13 @@ data_stats <- function() {
   
   stats <- apogee::inscrits %>%
     dplyr::left_join(apogee::individus, by = "code_etudiant") %>% 
+    dplyr::left_join(apogee::inscrits_peda %>% 
+                       dplyr::mutate(inscrits_peda = 1),
+                     by = c("annee", "code_etape", "code_etudiant")) %>% 
+    dplyr::left_join(apogee::inscrits_cpge %>% 
+                       dplyr::select(annee, code_etape, code_etudiant) %>% 
+                       dplyr::mutate(inscrits_cpge = 1),
+                     by = c("annee", "code_etape", "code_etudiant")) %>% 
     dplyr::left_join(apogee::individus_diplome_origine %>% 
                        dplyr::group_by(code_etudiant) %>% 
                        dplyr::filter(row_number() == n()) %>% 
@@ -457,9 +464,8 @@ data_stats <- function() {
                        dplyr::ungroup(),
                      by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
     dplyr::mutate(code_etape = apogee::histo_etape_succ_2(code_etape)) %>%
-    tidyr::unnest(code_etape) %>% 
-    dplyr::rename(code_etape = code_etape_succ) %>% 
-    dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, annee_bac, code_bac, code_type_diplome_anterieur, elp_parcours, code_resultat)
+    tidyr::unnest(code_etape, .drop = FALSE) %>% 
+    dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, inscrits_peda, inscrits_cpge, code_composante, annee_bac, code_bac, code_type_diplome_anterieur, elp_parcours, code_resultat)
   
   origine <- apogee::inscrits %>% 
     dplyr::mutate(annee = annee + 1) %>% 
@@ -468,11 +474,16 @@ data_stats <- function() {
     dplyr::right_join(stats, by = c("annee", "code_etudiant")) %>% 
     dplyr::mutate(origine_gen1 = ifelse(!is.na(code_etape_pre), "Admission interne", "Admission externe"),
                   origine_annee = apogee::annee_etape(code_etape_pre),
-                  histo_code_etape_pre = apogee::histo_etape_succ_2(code_etape_pre) %>%
-                    purrr::map("code_etape_succ"),
+                  histo_code_etape_pre = apogee::histo_etape_succ_2(code_etape_pre),
+                  mention_diplome_pre = purrr::map(histo_code_etape_pre, apogee::hier_etape_mention),
+                  mention_diplome = purrr::map(code_etape, apogee::hier_etape_mention),
+                  mention_diplome_comp = ifelse(apogee::hier_etape_type_diplome(code_etape) == "LMD/M1",
+                                                purrr::map(mention_diplome, ~ apogee::compatibilite_mention_diplome_m(.[[1]])),
+                                                mention_diplome),
                   origine_gen2 = dplyr::case_when(
-                    (apogee::annee_etape(code_etape) - origine_annee) == 1 ~ "Flux normal",
-                    purrr::map2_lgl(code_etape, histo_code_etape_pre, ~ .x %in% purrr::map(.y, 1)) ~ "Redoublement",
+                    (apogee::annee_etape(code_etape) - origine_annee) == 1 & purrr::map2_lgl(mention_diplome_comp, mention_diplome_pre, ~ any(.x[[1]] %in% .y[[1]])) ~ "Flux normal",
+                    (apogee::annee_etape(code_etape) - origine_annee) == 1 ~ "Flux latéral",
+                    purrr::map2_lgl(code_etape, histo_code_etape_pre, ~ .x %in% .y) ~ "Redoublement",
                     !is.na(code_etape_pre) ~ "Réorientation",
                     # Année L1
                     apogee::annee_etape(code_etape) == 1 & annee == annee_bac ~ "Néo-bacheliers",
@@ -488,7 +499,7 @@ data_stats <- function() {
                                  apogee::hier_bac_parent(code_bac, parent_final = TRUE) == "S4" ~ "Autre"),
                                NA_character_),
                   origine_gen3 = dplyr::case_when(
-                    origine_gen2 %in% c("Flux normal", "Réorientation") ~ apogee::histo_etape_succ(code_etape_pre) %>% apogee::lib_etape(ville = FALSE, option = FALSE, particularite = FALSE),
+                    origine_gen2 %in% c("Flux normal", "Flux latéral", "Réorientation") ~ apogee::histo_etape_succ(code_etape_pre) %>% apogee::lib_etape(ville = FALSE, option = FALSE, particularite = FALSE),
                     origine_gen2 == "Néo-bacheliers" ~ bac,
                     origine_gen2 == "Bacheliers antérieurs" ~ apogee::lib_type_diplome_anterieur(code_type_diplome_anterieur)),
                   origine_gen4 = dplyr::case_when(
@@ -513,8 +524,7 @@ data_stats <- function() {
     dplyr::semi_join(apogee::resultats_elp %>% 
                        dplyr::filter(apogee::lib_resultat(code_resultat_elp) == "Admis" | note_elp > 0) %>% 
                        dplyr::mutate(code_etape = apogee::histo_etape_succ_2(code_etape)) %>%
-                       tidyr::unnest(code_etape) %>%
-                       dplyr::rename(code_etape = code_etape_succ),
+                       tidyr::unnest(code_etape),
                      by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
     dplyr::mutate(present_1_examen = "Oui") %>% 
     dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, present_1_examen) %>% 
@@ -540,15 +550,20 @@ data_stats <- function() {
                   reussite = ifelse(apogee::lib_resultat(code_resultat) %in% "Admis", "Réussite", "Echec"),
                   annee_etape_post = apogee::annee_etape(code_etape_post),
                   filiere = apogee::hier_etape_filiere(code_etape),
-                  histo_code_etape_post = apogee::histo_etape_succ_2(code_etape_post) %>%
-                    purrr::map("code_etape_succ"),
+                  histo_code_etape_post = apogee::histo_etape_succ_2(code_etape_post),
+                  mention_diplome = purrr::map(code_etape, apogee::hier_etape_mention),
+                  mention_diplome_comp = ifelse(apogee::hier_etape_type_diplome(code_etape) == "LMD/L3",
+                                                purrr::map(mention_diplome, ~ apogee::compatibilite_mention_diplome_l(.[[1]])),
+                                                mention_diplome),
+                  mention_diplome_post = purrr::map(histo_code_etape_post, apogee::hier_etape_mention),
                   poursuite = dplyr::case_when(
-                    purrr::map_lgl(histo_code_etape_post, is.null) ~ "Sortie UPS",
-                    purrr::map2_lgl(code_etape, histo_code_etape_post, ~ .x %in% purrr::map(.y, 1)) ~ "Redoublement",
+                    is.na(code_etape_post) ~ "Sortie UPS",
+                    purrr::map2_lgl(code_etape, histo_code_etape_post, ~ .x %in% .y) ~ "Redoublement",
                     filiere == "Santé" & purrr::map_lgl(histo_code_etape_post, ~ any(apogee::hier_etape_filiere(.) == "Santé")) ~ "Année supérieure",
                     filiere == "Santé" & annee_etape_post - apogee::annee_etape(code_etape) >= 1 ~ "Année supérieure - Réorientation",
-                    annee_etape_post - apogee::annee_etape(code_etape) >= 1 ~ "Année supérieure",
-                    annee_etape_post - apogee::annee_etape(code_etape) <= 0 ~ "Réorientation"),
+                    (annee_etape_post - apogee::annee_etape(code_etape) >= 1) & purrr::map2_lgl(mention_diplome_comp, mention_diplome_post, ~ any(.x[[1]] %in% .y[[1]])) ~ "Année supérieure - Flux normal",
+                    (annee_etape_post - apogee::annee_etape(code_etape) >= 1) ~ "Année supérieure - Flux latéral",
+                    (annee_etape_post - apogee::annee_etape(code_etape) <= 0) ~ "Réorientation"),
                   poursuite = ifelse(poursuite == "Sortie UPS", paste(poursuite, reussite, sep = " - "), poursuite)) %>% 
     dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, code_etape_post, poursuite)
   
