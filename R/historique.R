@@ -47,14 +47,14 @@ histo_etape_succ <- function(code_etape, code_elp = NULL, successeur_final = TRU
   return(histo_etape_succ)
 }
 
-#' Renvoie le code etape successeur (avec doublons)
+#' Renvoie le code etape successeur (avec prise en charge de l'éclatement)
 #'
-#' Renvoie le code étape successeur (avec doublons).
+#' Renvoie le code étape successeur (avec prise en charge de l'éclatement).
 #'
 #' @param code_etape Un vecteur de code étape.
 #' @param garder_na \code{TRUE}, les codes sans successeur passent à \code{NA}; \code{FALSE}, les codes sans successeur sont gardés tels quels.
 #'
-#' @return Une liste de tibbles de code étape successeur.
+#' @return Une liste de code étape successeur.
 #'
 #' Jeu de données source : \code{apogee::etape_histo}.\cr
 #' Il est créé à partir d'Apogée et de la table "etape_histo" de la base Access Tables_ref (projet Apogee).
@@ -62,9 +62,9 @@ histo_etape_succ <- function(code_etape, code_elp = NULL, successeur_final = TRU
 #' @export
 histo_etape_succ_2 <- function(code_etape, garder_na = FALSE) {
   
-  histo_etape_succ_2 <- apogee::etape_histo %>% 
-    dplyr::right_join(apogee::etape, by = "code_etape") %>% 
-    dplyr::select(code_etape, code_etape_succ)
+  histo_etape_succ_2 <- dplyr::tibble(code_etape) %>% 
+    dplyr::mutate(.id = row_number()) %>% 
+    dplyr::left_join(apogee::etape_histo, by = "code_etape")
   
   if (garder_na == FALSE) {
     histo_etape_succ_2 <- histo_etape_succ_2 %>% 
@@ -72,10 +72,10 @@ histo_etape_succ_2 <- function(code_etape, garder_na = FALSE) {
   }
   
   histo_etape_succ_2 <- histo_etape_succ_2 %>% 
-    tidyr::nest(code_etape_succ, .key = "code_etape_succ") %>% 
-    dplyr::left_join(dplyr::tibble(code_etape), ., by = "code_etape") %>% 
-    dplyr::pull(code_etape_succ)
+    split(x = .$code_etape_succ, f = .$.id)
 
+  names(histo_etape_succ_2) <- code_etape
+  
   return(histo_etape_succ_2)
 }
 

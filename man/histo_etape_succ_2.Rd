@@ -2,7 +2,7 @@
 % Please edit documentation in R/historique.R
 \name{histo_etape_succ_2}
 \alias{histo_etape_succ_2}
-\title{Renvoie le code etape successeur (avec doublons)}
+\title{Renvoie le code etape successeur (avec prise en charge de l'éclatement)}
 \usage{
 histo_etape_succ_2(code_etape, garder_na = FALSE)
 }
@@ -12,11 +12,11 @@ histo_etape_succ_2(code_etape, garder_na = FALSE)
 \item{garder_na}{\code{TRUE}, les codes sans successeur passent à \code{NA}; \code{FALSE}, les codes sans successeur sont gardés tels quels.}
 }
 \value{
-Une liste de tibbles de code étape successeur.
+Une liste de code étape successeur.
 
 Jeu de données source : \code{apogee::etape_histo}.\cr
 Il est créé à partir d'Apogée et de la table "etape_histo" de la base Access Tables_ref (projet Apogee).
 }
 \description{
-Renvoie le code étape successeur (avec doublons).
+Renvoie le code étape successeur (avec prise en charge de l'éclatement).
 }

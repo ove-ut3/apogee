@@ -93,8 +93,9 @@ nest_inscrits <- function(table, champ_nest, cle = c("annee", "code_etape", "cod
   nest2 <- table %>%
     dplyr::select(cle, !!quo_champ_nest) %>%
     unique() %>% 
-    tidyr::nest(!!quo_champ_nest, .key = !!nom_champ_nest)
-  
+    tidyr::nest(!!quo_champ_nest, .key = !!nom_champ_nest) %>% 
+    dplyr::mutate(!!nom_champ_nest := purrr::map(!!quo_champ_nest, ~ .[[1]]))
+
   nest2 <- table %>%
     dplyr::select(!!!rlang::parse_quosure(paste0("-", nom_champ_nest))) %>%
     unique() %>%
@@ -193,7 +194,7 @@ data_inscrits <- function(derniere_annee = TRUE) {
   if (derniere_annee == TRUE) {
     inscrits <- divr::anti_join_bind(apogee::inscrits, inscrits, by = "annee")
   }
-  
+
   save("inscrits", file = paste0(racine_packages, "apogee/data/inscrits.RData"))
 }
 

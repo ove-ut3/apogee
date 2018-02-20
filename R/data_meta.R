@@ -87,8 +87,7 @@ data_etape <- function() {
     dplyr::select(-suppression) %>% 
     dplyr::arrange(code_etape, code_mention_diplome) %>% 
     dplyr::group_by(code_etape) %>% 
-    dplyr::filter(!is.na(code_mention_diplome) | row_number() == 1) %>% 
-    tidyr::nest(code_mention_diplome, .key = "code_mention_diplome")
+    dplyr::filter(!is.na(code_mention_diplome) | row_number() == 1)
   save("etape_mention", file = paste0(racine_packages, "apogee/data/etape_mention.RData"))
   
   #### Etape - domaine ####
@@ -106,8 +105,7 @@ data_etape <- function() {
     dplyr::select(-suppression) %>% 
     dplyr::arrange(code_etape, code_domaine_diplome) %>% 
     dplyr::group_by(code_etape) %>% 
-    dplyr::filter(!is.na(code_domaine_diplome) | row_number() == 1) %>% 
-    tidyr::nest(code_domaine_diplome, .key = "code_domaine_diplome")
+    dplyr::filter(!is.na(code_domaine_diplome) | row_number() == 1)
   save("etape_domaine", file = paste0(racine_packages, "apogee/data/etape_domaine.RData"))
   
   #### Etape - finalité ####
@@ -140,8 +138,7 @@ data_etape <- function() {
                        dplyr::select(-suppression)) %>% 
     dplyr::left_join(impexp::access_importer("etape_discipline_sise", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")), by = c("code_etape", "code_discipline_sise")) %>% 
     dplyr::filter(is.na(suppression)) %>% 
-    dplyr::select(-suppression) %>% 
-    tidyr::nest(code_discipline_sise, .key = "code_discipline_sise")
+    dplyr::select(-suppression)
   save("etape_sise_discipline", file = paste0(racine_packages, "apogee/data/etape_sise_discipline.RData"))
   
   #### Etape - secteur DUT et LP ####
@@ -155,8 +152,7 @@ data_etape <- function() {
     source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
     dplyr::anti_join(dplyr::filter(., !is.na(code_specialite_diplome)) %>% 
                        dplyr::mutate(code_specialite_diplome = NA_character_),
-                     by = c("code_etape", "code_specialite_diplome")) %>% 
-    tidyr::nest(code_specialite_diplome, .key = "code_specialite_diplome")
+                     by = c("code_etape", "code_specialite_diplome"))
   save("etape_specialite_diplome", file = paste0(racine_packages, "apogee/data/etape_specialite_diplome.RData"))
   
   #### Etape - cycle ####
@@ -193,8 +189,7 @@ data_sise <- function() {
                      by = c("code_diplome_sise" = "code_diplome")) %>% 
     dplyr::mutate(code_diplome_sise = ifelse(!is.na(code_diplome_maj), code_diplome_maj, code_diplome_sise)) %>% 
     dplyr::select(code_etape, annee, code_diplome_sise) %>% 
-    unique() %>% 
-    tidyr::nest(code_diplome_sise, .key = "code_diplome_sise")
+    unique()
   save("conv_etape_sise", file = paste0(racine_packages, "apogee/data/conv_etape_sise.RData"))
   
   sise_diplome <- readxl::read_excel(paste0(racine_packages, "apogee/raw/Diplome.xlsx"), "Diplome_sise", skip = 1) %>% 
@@ -264,7 +259,8 @@ data_diplome_version <- function() {
   diplome_version <- readxl::read_excel(paste0(racine_packages, "apogee/raw/Diplome_version.xlsx"), skip = 1) %>% 
     source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
     source.maj::transcoder_champs(impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
-    tidyr::nest(code_domaine_diplome, .key = "code_domaine_diplome")
+    tidyr::nest(code_domaine_diplome, .key = "code_domaine_diplome") %>% 
+    dplyr::mutate(code_domaine_diplome = purrr::map(code_domaine_diplome, ~ .[[1]]))
   save("diplome_version", file = paste0(racine_packages, "apogee/data/diplome_version.RData"))
   
   #### Domaine ####
