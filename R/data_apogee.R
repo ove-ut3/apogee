@@ -45,6 +45,13 @@ data_individus <- function() {
   
   individus <- dplyr::left_join(individus, individus_mail_ups, by = "code_etudiant")
   
+  individus_departement_naissance <- impexp::csv_importer_masse("Individus_departement_naissance\\.csv", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE, ligne_debut = 2) %>% 
+    tidyr::unnest() %>% 
+    source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
+    source.maj::transcoder_champs(impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))
+  
+  individus <- dplyr::left_join(individus, individus_departement_naissance, by = "code_etudiant")
+  
   save("individus", file = paste0(racine_packages, "apogee/data/individus.RData"))
 }
 
