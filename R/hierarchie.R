@@ -263,3 +263,30 @@ hier_etape_cycle <- function(code_etape) {
   
   return(hier_etape_cycle)
 }
+
+#' Renvoie la mention de diplome parent
+#'
+#' Renvoie la mention de diplôme parent.
+#'
+#' @param code_mention_diplome Un vecteur de code de mention de diplôme.
+#'
+#' @return Un vecteur contenant les mentions de diplôme parent.
+#'
+#' @export
+hier_mention_parent <- function(code_mention_diplome, parent_final = FALSE, garder_na = FALSE) {
+  
+  hier_mention_parent <- dplyr::tibble(code_mention_diplome) %>%
+    dplyr::left_join(apogee::diplome_mention, by = "code_mention_diplome") %>%
+    dplyr::pull(code_mention_diplome_parent)
+  
+  if (garder_na == FALSE) {
+    hier_mention_parent <- ifelse(is.na(hier_mention_parent), code_mention_diplome, hier_mention_parent)
+  }
+  
+  if (parent_final == TRUE) {
+    if (any(!is.na(apogee::hier_mention_parent(hier_mention_parent, parent_final = FALSE, garder_na = TRUE)))) {
+      hier_mention_parent <- Recall(hier_mention_parent, parent_final = parent_final, garder_na = garder_na)
+    }
+  }
+  
+  return(hier_mention_parent)

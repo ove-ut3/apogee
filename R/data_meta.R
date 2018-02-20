@@ -293,6 +293,12 @@ data_diplome_version <- function() {
     dplyr::select(-maj_lib_mention_diplome)
   save("diplome_mention", file = paste0(racine_packages, "apogee/data/diplome_mention.RData"))
   
+  #### Mention - historique ####
+  
+  diplome_mention_histo <- impexp::access_importer("diplome_mention_histo", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))
+  save("diplome_mention_histo", file = paste0(racine_packages, "apogee/data/diplome_mention_histo.RData"))
+  
+  save("diplome_mention_lm", file = paste0(racine_packages, "apogee/data/diplome_mention_lm.RData"))
   #### Spécialité ####
   diplome_specialite <- readxl::read_excel(paste0(racine_packages, "apogee/raw/Diplome_version.xlsx"), "Specialite") %>% 
     source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
