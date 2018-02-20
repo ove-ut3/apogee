@@ -260,3 +260,45 @@ mise_a_jour_data <- function() {
   apogee::data_resultat()
   
 }
+
+#' Renvoie les mentions master compatibles
+#'
+#' Renvoie les mentions master compatibles.
+#'
+#' @param code_mention_diplome_l Un vecteur de codes mentions licence.
+#'
+#' @return Une liste contenant les mentions master compatibles.
+#'
+#' @export
+compatibilite_mention_diplome_l <- function(code_mention_diplome_l) {
+  
+  compatibilite_mention_diplome_l <- dplyr::tibble(code_mention_diplome_l) %>%
+    dplyr::mutate(.id = row_number()) %>% 
+    dplyr::left_join(apogee::diplome_mention_lm, by = "code_mention_diplome_l") %>%
+    split(x = .$code_mention_diplome_m, f = .$.id)
+  
+  names(compatibilite_mention_diplome_l) <- code_mention_diplome_l
+  
+  return(compatibilite_mention_diplome_l)
+}
+
+#' Renvoie les mentions licence compatibles
+#'
+#' Renvoie les mentions licence compatibles.
+#'
+#' @param code_mention_diplome_m Un vecteur de code mention master.
+#'
+#' @return Une liste contenant les mentions licence compatibles.
+#'
+#' @export
+compatibilite_mention_diplome_m <- function(code_mention_diplome_m) {
+  
+  compatibilite_mention_diplome_m <- dplyr::tibble(code_mention_diplome_m) %>%
+    dplyr::mutate(.id = row_number()) %>% 
+    dplyr::left_join(apogee::diplome_mention_lm, by = "code_mention_diplome_m") %>%
+    split(x = .$code_mention_diplome_l, f = .$.id)
+  
+  names(compatibilite_mention_diplome_m) <- code_mention_diplome_m
+  
+  return(compatibilite_mention_diplome_m)
+}
