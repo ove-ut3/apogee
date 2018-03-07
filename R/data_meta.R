@@ -87,7 +87,8 @@ data_etape <- function() {
     dplyr::select(-suppression) %>% 
     dplyr::arrange(code_etape, code_mention_diplome) %>% 
     dplyr::group_by(code_etape) %>% 
-    dplyr::filter(!is.na(code_mention_diplome) | row_number() == 1)
+    dplyr::filter(!is.na(code_mention_diplome) | row_number() == 1) %>% 
+    unique()
   save("etape_mention", file = paste0(racine_packages, "apogee/data/etape_mention.RData"))
   
   #### Etape - domaine ####
