@@ -190,6 +190,12 @@ data_sise <- function() {
                      by = c("code_diplome_sise" = "code_diplome")) %>% 
     dplyr::mutate(code_diplome_sise = ifelse(!is.na(code_diplome_maj), code_diplome_maj, code_diplome_sise)) %>% 
     dplyr::select(code_etape, annee, code_diplome_sise) %>% 
+    dplyr::left_join(impexp::access_importer("etape_diplome_sise", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>% 
+                       dplyr::filter(is.na(annee)) %>% 
+                       dplyr::select(-annee),
+                     by = "code_etape") %>% 
+    dplyr::mutate(code_diplome_sise = ifelse(!is.na(code_diplome_maj), code_diplome_maj, code_diplome_sise)) %>% 
+    dplyr::select(code_etape, annee, code_diplome_sise) %>% 
     unique()
   save("conv_etape_sise", file = paste0(racine_packages, "apogee/data/conv_etape_sise.RData"))
   
