@@ -188,7 +188,7 @@ hier_etape_domaine <- function(code_etape) {
     dplyr::left_join(apogee::etape_domaine, by = "code_etape") %>%
     split(x = .$code_domaine_diplome, f = .$.id)
   
-  names(hier_etape_mention) <- code_etape
+  names(hier_etape_domaine) <- code_etape
   
   return(hier_etape_domaine)
 }
