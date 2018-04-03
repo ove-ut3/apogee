@@ -237,6 +237,16 @@ formations_historique <- function(annee_debut) {
 #' @keywords internal
 mise_a_jour_data <- function() {
   
+  # Méta-données
+  apogee::data_etape()
+  apogee::data_sise()
+  apogee::data_diplome()
+  apogee::data_composante()
+  apogee::data_diplome_version()
+  apogee::data_inscription()
+  apogee::data_elp()
+  apogee::data_resultat()
+  
   # Données par individu
   apogee::data_individus()
   apogee::data_individus_diplome_origine()
@@ -248,16 +258,6 @@ mise_a_jour_data <- function() {
   apogee::data_resultats_etape()
   apogee::data_resultats_diplome()
   apogee::data_diplomes()
-  
-  # Méta-données
-  apogee::data_etape()
-  apogee::data_sise()
-  apogee::data_diplome()
-  apogee::data_composante()
-  apogee::data_diplome_version()
-  apogee::data_inscription()
-  apogee::data_elp()
-  apogee::data_resultat()
   
 }
 
