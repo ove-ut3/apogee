@@ -96,11 +96,11 @@ nest_inscrits <- function(table, champ_nest, cle = c("annee", "code_etape", "cod
   
   quo_champ_nest <- dplyr::enquo(champ_nest)
   nom_champ_nest <- dplyr::quo_name(quo_champ_nest)
-  
+
   nest2 <- table %>%
     dplyr::select(cle, !!quo_champ_nest) %>%
-    unique() %>% 
-    tidyr::nest(!!quo_champ_nest, .key = !!nom_champ_nest) %>% 
+    unique() %>%
+    tidyr::nest(!!quo_champ_nest, .key = !!nom_champ_nest) %>%
     dplyr::mutate(!!nom_champ_nest := purrr::map(!!quo_champ_nest, ~ .[[1]]))
 
   nest2 <- table %>%
@@ -130,11 +130,7 @@ data_inscrits <- function(derniere_annee = TRUE) {
                      import = purrr::map(import, source.maj::transcoder_champs, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
     apogee::doublon_maj_etudiant() %>% 
-    source.maj::recoder_champs(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")), source = "data_inscrits", champs_table = FALSE)
-  
-  inscrits <- inscrits %>%
-    apogee::nest_inscrits(code_composante) %>%
-    apogee::nest_inscrits(code_version_etape) %>%
+    source.maj::recoder_champs(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")), source = "data_inscrits", champs_table = FALSE) %>% 
     dplyr::mutate(inscription_annulee = inscription_en_cours == "N" | !is.na(date_annulation) | inscription_resiliee == "O" | !is.na(date_resiliation),
                   inscription_annulee = ifelse(is.na(inscription_annulee), FALSE, inscription_annulee))
   
@@ -149,7 +145,9 @@ data_inscrits <- function(derniere_annee = TRUE) {
   
   inscrits <- inscrits %>% 
     dplyr::filter(!inscription_annulee) %>% 
-    dplyr::select(-inscription_annulee)
+    dplyr::select(-inscription_annulee) %>% 
+    apogee::nest_inscrits(code_composante) %>%
+    apogee::nest_inscrits(code_version_etape)
   
   #### Ajout ELP parcours ####
   
