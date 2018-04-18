@@ -193,7 +193,7 @@ formations_en_cours <- function() {
                   annee_etape = apogee::annee_etape(code_etape),
                   lib_mention = apogee::hier_etape_mention(code_etape) %>% 
                     purrr::map(apogee::lib_mention_diplome) %>% 
-                    purrr::map_chr( ~ caractr::paste2(.[[1]], collapse = " ; "))) %>% 
+                    purrr::map_chr(caractr::paste2, collapse = " ; ")) %>% 
     dplyr::arrange(lib_composante, acronyme_type_diplome, annee_etape, code_etape) %>% 
     dplyr::select(lib_composante, acronyme_type_diplome, annee_etape, code_etape, lib_etape, acronyme_etape, lib_mention) %>% 
     dplyr::left_join(apogee::etape %>% dplyr::select(code_etape, lib_etape_apogee),
