@@ -34,8 +34,29 @@ data_etape <- function() {
     dplyr::left_join(annee_derniere_etape, by = "code_etape")
   
   divr::doublons(etape, code_etape)
-  
+
   save("etape", file = paste0(racine_packages, "apogee/data/etape.RData"))
+  
+  #### Etape -Intégration SCUIO-IP ####
+  
+  etape_scuio <- impexp::excel_importer("raw/scuio-ip/20180413_TableauGeneralOF_PassageCFVU.xlsx", regex_onglet = "(LICENCE|LPRO|MASTER)", ligne_debut = 2) %>% 
+    tidyr::unnest() %>% 
+    dplyr::select(code_etape = code_apogee, lib_etape_scuio = parcours, acronyme_etape_scuio = acronyme) %>% 
+    dplyr::filter(stringr::str_detect(code_etape, "^[A-Z\\d]{6}$"),
+                  !code_etape %in% c("ELMAEE")) %>% # Mathématiques enseignement
+    dplyr::mutate(lib_etape_scuio = stringr::str_remove_all(lib_etape_scuio, "\\r\\n")) %>% 
+    tidyr::drop_na(lib_etape_scuio) %>% 
+    unique() %>% 
+    dplyr::right_join(impexp::access_importer("etape", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")),
+                      by = "code_etape") %>% 
+    dplyr::mutate(lib_etape = ifelse(!is.na(lib_etape_scuio), lib_etape_scuio, lib_etape),
+                  acronyme_etape = ifelse(!is.na(acronyme_etape_scuio), acronyme_etape_scuio, acronyme_etape)) %>% 
+    dplyr::select(-lib_etape_scuio, -acronyme_etape_scuio) %>% 
+    dplyr::arrange(code_etape)
+    
+    divr::doublons(etape_scuio, code_etape)
+  
+  writexl::write_xlsx(etape_scuio, "etape_scuio.xlsx")
   
   #### Historique ####
   
