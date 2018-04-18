@@ -190,9 +190,12 @@ formations_en_cours <- function() {
                   acronyme_etape = apogee::acronyme_etape(code_etape),
                   acronyme_type_diplome = apogee::hier_etape_type_diplome(code_etape) %>% apogee::acronyme_type_diplome(),
                   acronyme_type_diplome = ifelse(is.na(acronyme_type_diplome), apogee::hier_etape_type_diplome(code_etape), acronyme_type_diplome),
-                  annee_etape = apogee::annee_etape(code_etape)) %>% 
+                  annee_etape = apogee::annee_etape(code_etape),
+                  lib_mention = apogee::hier_etape_mention(code_etape) %>% 
+                    purrr::map(apogee::lib_mention_diplome) %>% 
+                    purrr::map_chr( ~ caractr::paste2(.[[1]], collapse = " ; "))) %>% 
     dplyr::arrange(lib_composante, acronyme_type_diplome, annee_etape, code_etape) %>% 
-    dplyr::select(lib_composante, acronyme_type_diplome, annee_etape, code_etape, lib_etape, acronyme_etape) %>% 
+    dplyr::select(lib_composante, acronyme_type_diplome, annee_etape, code_etape, lib_etape, acronyme_etape, lib_mention) %>% 
     dplyr::left_join(apogee::etape %>% dplyr::select(code_etape, lib_etape_apogee),
                      by = "code_etape")
   
