@@ -100,6 +100,7 @@ nest_inscrits <- function(table, champ_nest, cle = c("annee", "code_etape", "cod
   nest2 <- table %>%
     dplyr::select(cle, !!quo_champ_nest) %>%
     unique() %>%
+    dplyr::arrange(!!! rlang::syms(cle), !!quo_champ_nest) %>% 
     tidyr::nest(!!quo_champ_nest, .key = !!nom_champ_nest) %>%
     dplyr::mutate(!!nom_champ_nest := purrr::map(!!quo_champ_nest, ~ .[[1]]))
 
