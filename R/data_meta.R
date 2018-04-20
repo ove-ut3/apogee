@@ -25,6 +25,15 @@ data_etape <- function() {
     dplyr::filter(row_number() == n()) %>% 
     dplyr::ungroup()
   
+  etape_composante <- apogee::inscrits %>% 
+    dplyr::filter(annee == apogee::annee_en_cours()) %>% 
+    dplyr::select(code_etape, code_composante) %>% 
+    tidyr::unnest() %>% 
+    unique() %>% 
+    dplyr::arrange(code_etape, code_composante) %>% 
+    tidyr::nest(code_composante, .key = "code_composante") %>% 
+    dplyr::mutate(code_composante = purrr::map(code_composante, 1))
+  
   etape <- readxl::read_excel(paste0(racine_packages, "apogee/raw/Etape.xlsx"), skip = 1) %>% 
     source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
     source.maj::supprimer_doublons_champ(temoin_annee1_diplome) %>% 
@@ -33,6 +42,7 @@ data_etape <- function() {
                      by = "code_etape") %>% 
     
     dplyr::left_join(etape_diplome_type, by = "code_etape") %>% 
+    dplyr::left_join(etape_composante, by = "code_etape") %>% 
     source.maj::recoder_champs(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")),
                                source = "data_etape", 
                                champs_table = FALSE) %>% 

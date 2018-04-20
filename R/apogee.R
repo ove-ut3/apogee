@@ -114,7 +114,7 @@ temoin_elp_ue <- function(code_elp) {
 #' @export
 liste_formations <- function(annee) {
   
-  liste_formations <- apogee::inscrits %>% 
+  liste_formations <- apogee::etape %>% 
     dplyr::filter(annee == !!annee) %>% 
     dplyr::select(code_etape) %>% 
     unique() %>% 
@@ -154,10 +154,9 @@ annee_en_cours <- function(mois_debut = 9) {
 #' @export
 formations_en_cours <- function() {
   
-  formations_en_cours <- apogee::inscrits %>% 
-    dplyr::filter(annee == apogee::annee_en_cours()) %>% 
+  formations_en_cours <- apogee::etape %>% 
+    dplyr::filter(annee_derniere_etape == apogee::annee_en_cours()) %>% 
     dplyr::select(code_etape, code_composante) %>% 
-    unique() %>% 
     tidyr::unnest(code_composante) %>% 
     dplyr::mutate(lib_composante = apogee::hier_composante_parent(code_composante) %>%
                     apogee::lib_composante()) %>% 
