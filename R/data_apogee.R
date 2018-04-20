@@ -461,17 +461,22 @@ data_stats <- function() {
                        dplyr::filter(row_number() == n()) %>%
                        dplyr::ungroup(),
                      by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
-    dplyr::mutate(code_etape = apogee::histo_etape_succ_2(code_etape)) %>%
+    dplyr::left_join(apogee::resultats_diplome %>% 
+                       dplyr::group_by(annee, code_etape, code_etudiant, inscription_premiere) %>%
+                       dplyr::filter(row_number() == n()) %>%
+                       dplyr::ungroup(),
+                     by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
+    dplyr::mutate(code_etape = apogee::histo_etape_succ_2(code_etape)) %>% # histo_etape_succ_2
     tidyr::unnest(code_etape, .drop = FALSE) %>% 
-    dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, inscrits_peda, inscrits_cpge, code_composante, annee_bac, code_bac, code_type_diplome_anterieur, elp_parcours, code_resultat)
-  
+    dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, inscrits_peda, inscrits_cpge, code_composante, sexe, code_nationalite, annee_bac, code_departement_bac, code_bac, code_type_diplome_anterieur, code_bourse, elp_parcours, code_resultat, code_resultat_diplome)
+
   origine <- apogee::inscrits %>% 
     dplyr::mutate(annee = annee + 1) %>% 
     dplyr::filter(inscription_premiere == "O") %>% 
     dplyr::select(annee, code_etape_pre = code_etape, code_etudiant) %>% 
     dplyr::right_join(stats, by = c("annee", "code_etudiant")) %>% 
     dplyr::mutate(origine_gen1 = ifelse(!is.na(code_etape_pre), "Admission interne", "Admission externe"),
-                  origine_annee = apogee::annee_etape(code_etape_pre),
+                  origine_annee = apogee::annee_etape(apogee::histo_etape_succ(code_etape_pre)),
                   histo_code_etape_pre = apogee::histo_etape_succ_2(code_etape_pre),
                   mention_diplome_pre = purrr::map(histo_code_etape_pre, apogee::hier_etape_mention),
                   mention_diplome = purrr::map(code_etape, apogee::hier_etape_mention),
@@ -510,7 +515,7 @@ data_stats <- function() {
                     TRUE ~ NA_character_
                   )) %>% 
     dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, code_etape_pre, dplyr::starts_with("origine_gen"))
-  
+
   present_ts_examens <- stats %>% 
     dplyr::filter(annee < apogee::annee_en_cours(mois_debut = 11)) %>% 
     dplyr::mutate(present_ts_examens = dplyr::case_when(is.na(code_resultat) ~ NA_character_,
@@ -534,6 +539,10 @@ data_stats <- function() {
   reussite <- stats %>% 
     dplyr::mutate(reussite = ifelse(apogee::lib_resultat(code_resultat) == "Admis", "Oui", "Non")) %>% 
     dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, reussite)
+  
+  reussite_diplome <- stats %>% 
+    dplyr::mutate(reussite_diplome = ifelse(apogee::lib_resultat(code_resultat_diplome) == "Admis", "Oui", "Non")) %>% 
+    dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, reussite_diplome)
   
   poursuite <- apogee::inscrits %>% 
     dplyr::mutate(annee = annee - 1) %>% 
@@ -565,12 +574,27 @@ data_stats <- function() {
                   poursuite = ifelse(poursuite == "Sortie UPS", paste(poursuite, reussite, sep = " - "), poursuite)) %>% 
     dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, code_etape_post, poursuite)
   
-  stats <- stats %>% 
-    dplyr::left_join(origine, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
-    dplyr::left_join(present_ts_examens, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
-    dplyr::left_join(present_1_examen, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
-    dplyr::left_join(reussite, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
-    dplyr::left_join(poursuite, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
+  situation_ups_post <- apogee::resultats_etape %>% 
+    dplyr::right_join(dplyr::select(apogee::inscrits, annee, code_etudiant, code_etape, inscription_premiere),
+                     by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
+    dplyr::filter(inscription_premiere == "O") %>% 
+    dplyr::group_by(annee, code_etudiant, code_etape, inscription_premiere) %>% 
+    dplyr::filter(row_number() == n()) %>% 
+    dplyr::ungroup() %>% 
+    dplyr::select(annee_post = annee, code_etudiant, code_etape_post = code_etape, code_resultat_post = code_resultat) %>% 
+    dplyr::right_join(dplyr::select(stats, annee, code_etudiant, code_etape, inscription_premiere),
+                      by = "code_etudiant") %>% 
+    dplyr::filter(annee_post > annee) %>% 
+    tidyr::nest(annee_post, code_etape_post, code_resultat_post, .key = "situation_ups_post")
   
+  stats <- stats %>% 
+    dplyr::left_join(origine, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>%
+    dplyr::left_join(present_ts_examens, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>%
+    dplyr::left_join(present_1_examen, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>%
+    dplyr::left_join(reussite, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>%
+    dplyr::left_join(reussite_diplome, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>%
+    dplyr::left_join(poursuite, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>%
+    dplyr::left_join(situation_ups_post, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
+
   save("stats", file = paste0(racine_packages, "apogee/data/stats.RData"))
 }
