@@ -52,6 +52,7 @@ histo_etape_succ <- function(code_etape, code_elp = NULL, successeur_final = TRU
 #' Renvoie le code étape successeur (avec prise en charge de l'éclatement).
 #'
 #' @param code_etape Un vecteur de code étape.
+#' @param successeur_final \code{TRUE}, renvoit le successeur le plus récent dans l'historique; \code{FALSE}, renvoie le premier successeur.
 #' @param garder_na \code{TRUE}, les codes sans successeur passent à \code{NA}; \code{FALSE}, les codes sans successeur sont gardés tels quels.
 #'
 #' @return Une liste de code étape successeur.
@@ -60,7 +61,7 @@ histo_etape_succ <- function(code_etape, code_elp = NULL, successeur_final = TRU
 #' Il est créé à partir d'Apogée et de la table "etape_histo" de la base Access Tables_ref (projet Apogee).
 #'
 #' @export
-histo_etape_succ_2 <- function(code_etape, garder_na = FALSE) {
+histo_etape_succ_2 <- function(code_etape, successeur_final = TRUE, garder_na = FALSE) {
   
   histo_etape_succ_2 <- dplyr::tibble(code_etape) %>% 
     dplyr::mutate(.id = row_number()) %>% 
@@ -71,9 +72,35 @@ histo_etape_succ_2 <- function(code_etape, garder_na = FALSE) {
       dplyr::mutate(code_etape_succ = ifelse(is.na(code_etape_succ), code_etape, code_etape_succ))
   }
   
+  if (successeur_final == TRUE) {
+    
+    histo_etape_succ_2 <- histo_etape_succ_2 %>% 
+      dplyr::select(.id, code_etape = code_etape_succ) %>% 
+      dplyr::left_join(apogee::etape_histo, by = "code_etape")
+    
+    while (any(!is.na(histo_etape_succ_2$code_etape_succ))) {
+      
+      if (garder_na == FALSE) {
+        histo_etape_succ_2 <- histo_etape_succ_2 %>% 
+          dplyr::mutate(code_etape_succ = ifelse(is.na(code_etape_succ), code_etape, code_etape_succ))
+      }
+      
+      histo_etape_succ_2 <- histo_etape_succ_2 %>% 
+        dplyr::select(.id, code_etape = code_etape_succ) %>% 
+        dplyr::left_join(apogee::etape_histo, by = "code_etape")
+
+    }
+    
+  }
+  
+  if (garder_na == FALSE) {
+    histo_etape_succ_2 <- histo_etape_succ_2 %>% 
+      dplyr::mutate(code_etape_succ = ifelse(is.na(code_etape_succ), code_etape, code_etape_succ))
+  }
+  
   histo_etape_succ_2 <- histo_etape_succ_2 %>% 
     split(x = .$code_etape_succ, f = .$.id)
-
+  
   names(histo_etape_succ_2) <- code_etape
   
   return(histo_etape_succ_2)

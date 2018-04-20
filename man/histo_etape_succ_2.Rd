@@ -4,10 +4,12 @@
 \alias{histo_etape_succ_2}
 \title{Renvoie le code etape successeur (avec prise en charge de l'éclatement)}
 \usage{
-histo_etape_succ_2(code_etape, garder_na = FALSE)
+histo_etape_succ_2(code_etape, successeur_final = TRUE, garder_na = FALSE)
 }
 \arguments{
 \item{code_etape}{Un vecteur de code étape.}
+
+\item{successeur_final}{\code{TRUE}, renvoit le successeur le plus récent dans l'historique; \code{FALSE}, renvoie le premier successeur.}
 
 \item{garder_na}{\code{TRUE}, les codes sans successeur passent à \code{NA}; \code{FALSE}, les codes sans successeur sont gardés tels quels.}
 }
