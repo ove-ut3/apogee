@@ -59,26 +59,6 @@ etape_derniere_annee <- function(code_etape) {
   return(etape_derniere_annee)
 }
 
-#' Temoin TRUE/FALSE si le code etape est la premiere annee d'un diplome
-#' 
-#' Témoin TRUE/FALSE si le code étape est la première année d'un diplôme.
-#'
-#' @param code_etape Un vecteur de code étape.
-#'
-#' @return Un vecteur de booléens TRUE/FALSE.
-#' 
-#' @export
-temoin_annee1_diplome <- function(code_etape) {
-  
-  temoin_annee1_diplome <- dplyr::tibble(code_etape) %>%
-    dplyr::left_join(apogee::etape, by = "code_etape") %>%
-    dplyr::pull(temoin_annee1_diplome) %>% 
-    dplyr::recode("O" = TRUE, "N" = FALSE)
-  
-  return(temoin_annee1_diplome)
-}
-
-
 #' Transformation de l'annee d'inscription en annee universitaire
 #' 
 #' Transformation de l'année d'inscription en année universitaire.
