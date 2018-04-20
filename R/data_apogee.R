@@ -468,6 +468,9 @@ data_stats <- function() {
                      by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
     dplyr::mutate(code_etape = apogee::histo_etape_succ_2(code_etape)) %>% 
     tidyr::unnest(code_etape, .drop = FALSE) %>% 
+    dplyr::group_by(annee, code_etudiant, code_etape, inscription_premiere) %>% 
+    dplyr::filter(row_number() == n()) %>% 
+    dplyr::ungroup() %>% 
     dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, inscrits_peda, inscrits_cpge, code_composante, sexe, code_nationalite, annee_bac, code_departement_bac, code_bac, code_type_diplome_anterieur, code_bourse, elp_parcours, code_resultat, code_resultat_diplome)
 
   origine <- apogee::inscrits %>% 
