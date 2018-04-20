@@ -18,13 +18,21 @@ data_etape <- function() {
     dplyr::filter(row_number() == n()) %>% 
     dplyr::ungroup()
   
+  etape_diplome_type <- readxl::read_excel(paste0(racine_packages, "apogee/raw/Etape.xlsx"), "Etape_diplome_type", skip = 1) %>% 
+    source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
+    dplyr::select(-annee) %>% 
+    dplyr::group_by(code_etape) %>% 
+    dplyr::filter(row_number() == n()) %>% 
+    dplyr::ungroup()
+  
   etape <- readxl::read_excel(paste0(racine_packages, "apogee/raw/Etape.xlsx"), skip = 1) %>% 
     source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
-    source.maj::supprimer_doublons_champ(code_type_diplome) %>% 
     source.maj::supprimer_doublons_champ(temoin_annee1_diplome) %>% 
     dplyr::rename(lib_etape_apogee = lib_etape) %>% 
     dplyr::left_join(impexp::access_importer("etape", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")),
                      by = "code_etape") %>% 
+    
+    dplyr::left_join(etape_diplome_type, by = "code_etape") %>% 
     source.maj::recoder_champs(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")),
                                source = "data_etape", 
                                champs_table = FALSE) %>% 
