@@ -13,7 +13,6 @@ Imports:
     divr,
     dplyr,
     impexp,
-    magrittr,
     purrr,
     readxl,
     rlang,
