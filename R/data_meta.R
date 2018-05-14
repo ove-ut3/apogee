@@ -251,6 +251,12 @@ data_sise <- function() {
   
   sise_discipline <- impexp::access_importer("sise_discipline", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))
   save("sise_discipline", file = paste0(racine_packages, "apogee/data/sise_discipline.RData"))
+  
+  sise_diplome_lib <- impexp::excel_importer(paste0(racine_packages, "apogee/raw/Diplome.xlsx"), "Diplome_sise_lib", ligne_debut = 2) %>% 
+    source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
+    source.maj::transcoder_champs(impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))
+  
+  save("sise_diplome_lib", file = paste0(racine_packages, "apogee/data/sise_diplome_lib.RData"))
 }
 
 #' data_diplome
