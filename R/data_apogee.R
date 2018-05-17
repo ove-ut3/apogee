@@ -22,7 +22,7 @@ doublon_maj_etudiant <- function(table) {
 #' @keywords internal
 data_individus <- function() {
   
-  individus <- impexp::csv_importer_masse(regex_fichier = "Individus\\.csv", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE, ligne_debut = 2) %>% 
+  individus <- impexp::csv_importer_masse(regex_fichier = "Individus\\.csv", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE, ligne_debut = 2, fonction = "fread") %>% 
     tidyr::unnest() %>% 
     source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
     source.maj::transcoder_champs(impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))
