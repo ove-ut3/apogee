@@ -13,7 +13,7 @@
 conv_etape_sise_diplome <- function(code_etape, annee) {
   
   conv_etape_sise_diplome <- dplyr::tibble(code_etape, annee) %>%
-    dplyr::mutate(.id = row_number()) %>% 
+    dplyr::mutate(.id = dplyr::row_number()) %>% 
     dplyr::left_join(apogee::conv_etape_sise, by = c("code_etape", "annee")) %>% 
     split(x = .$code_diplome_sise, f = .$.id)
   
@@ -37,7 +37,7 @@ conv_etape_sise_diplome <- function(code_etape, annee) {
 conv_etape_discipline_sise <- function(code_etape) {
   
   conv_etape_discipline_sise <- dplyr::tibble(code_etape) %>%
-    dplyr::mutate(.id = row_number()) %>% 
+    dplyr::mutate(.id = dplyr::row_number()) %>% 
     dplyr::left_join(apogee::etape_sise_discipline, by = "code_etape") %>%
     split(x = .$code_discipline_sise, f = .$.id)
   

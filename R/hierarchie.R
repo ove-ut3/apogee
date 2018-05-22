@@ -163,7 +163,7 @@ hier_pcs_parent <- function(code_pcs, parent_final = FALSE, garder_na = FALSE) {
 hier_etape_mention <- function(code_etape) {
   
   hier_etape_mention <- dplyr::tibble(code_etape) %>%
-    dplyr::mutate(.id = row_number()) %>% 
+    dplyr::mutate(.id = dplyr::row_number()) %>% 
     dplyr::left_join(apogee::etape_mention, by = "code_etape") %>%
     split(x = .$code_mention_diplome, f = .$.id)
   
@@ -184,7 +184,7 @@ hier_etape_mention <- function(code_etape) {
 hier_etape_domaine <- function(code_etape) {
   
   hier_etape_domaine <- dplyr::tibble(code_etape) %>%
-    dplyr::mutate(.id = row_number()) %>% 
+    dplyr::mutate(.id = dplyr::row_number()) %>% 
     dplyr::left_join(apogee::etape_domaine, by = "code_etape") %>%
     split(x = .$code_domaine_diplome, f = .$.id)
   

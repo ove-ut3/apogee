@@ -9,20 +9,20 @@ data_etape <- function() {
   annee_premiere_etape <- apogee::inscrits %>% 
     dplyr::select(code_etape, annee_premiere_etape = annee) %>% 
     dplyr::group_by(code_etape) %>% 
-    dplyr::filter(row_number() == 1) %>% 
+    dplyr::filter(dplyr::row_number() == 1) %>% 
     dplyr::ungroup()
   
   annee_derniere_etape <- apogee::inscrits %>% 
     dplyr::select(code_etape, annee_derniere_etape = annee) %>% 
     dplyr::group_by(code_etape) %>% 
-    dplyr::filter(row_number() == n()) %>% 
+    dplyr::filter(dplyr::row_number() == n()) %>% 
     dplyr::ungroup()
   
   etape_diplome_type <- impexp::excel_importer(paste0(racine_packages, "apogee/raw/Etape.xlsx"), "Etape_diplome_type", ligne_debut = 2) %>% 
     source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
     dplyr::select(-annee) %>% 
     dplyr::group_by(code_etape) %>% 
-    dplyr::filter(row_number() == n()) %>% 
+    dplyr::filter(dplyr::row_number() == n()) %>% 
     dplyr::ungroup()
   
   etape_composante <- apogee::inscrits %>% 
@@ -125,7 +125,7 @@ data_etape <- function() {
     dplyr::select(-suppression) %>% 
     dplyr::arrange(code_etape, code_mention_diplome) %>% 
     dplyr::group_by(code_etape) %>% 
-    dplyr::filter(!is.na(code_mention_diplome) | row_number() == 1) %>% 
+    dplyr::filter(!is.na(code_mention_diplome) | dplyr::row_number() == 1) %>% 
     unique()
   save("etape_mention", file = paste0(racine_packages, "apogee/data/etape_mention.RData"))
   
@@ -144,7 +144,7 @@ data_etape <- function() {
     dplyr::select(-suppression) %>% 
     dplyr::arrange(code_etape, code_domaine_diplome) %>% 
     dplyr::group_by(code_etape) %>% 
-    dplyr::filter(!is.na(code_domaine_diplome) | row_number() == 1)
+    dplyr::filter(!is.na(code_domaine_diplome) | dplyr::row_number() == 1)
   save("etape_domaine", file = paste0(racine_packages, "apogee/data/etape_domaine.RData"))
   
   #### Etape - finalité ####
@@ -153,7 +153,7 @@ data_etape <- function() {
     source.maj::recoder_champs(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")), source = "data_etape_finalite") %>% 
     dplyr::arrange(code_etape, code_finalite_diplome) %>% 
     dplyr::group_by(code_etape) %>% 
-    dplyr::filter(!is.na(code_finalite_diplome) | row_number() == 1) %>% 
+    dplyr::filter(!is.na(code_finalite_diplome) | dplyr::row_number() == 1) %>% 
     dplyr::mutate(code_finalite_diplome = ifelse(is.na(code_finalite_diplome),
                                                  dplyr::recode(substr(code_etape, 2, 2),
                                                                "F" = "005",

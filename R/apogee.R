@@ -197,7 +197,7 @@ formations_historique <- function(annee_debut) {
     dplyr::anti_join(apogee::etape_histo, by = "code_etape") %>% 
     dplyr::anti_join(apogee::etape_histo, by = c("code_etape" = "code_etape_succ")) %>% 
     dplyr::mutate(annee = purrr::map2(annee_premiere_etape, annee_derniere_etape, ~ .x:.y)) %>% 
-    dplyr::mutate(id = row_number()) %>% 
+    dplyr::mutate(id = dplyr::row_number()) %>% 
     tidyr::unnest(annee) %>% 
     dplyr::filter(annee >= !!annee_debut) %>% 
     dplyr::mutate(lib_etape = apogee::lib_etape(code_etape)) %>% 
@@ -256,7 +256,7 @@ mise_a_jour_data <- function() {
 compatibilite_mention_diplome_l <- function(code_mention_diplome_l) {
   
   compatibilite_mention_diplome_l <- dplyr::tibble(code_mention_diplome_l) %>%
-    dplyr::mutate(.id = row_number()) %>% 
+    dplyr::mutate(.id = dplyr::row_number()) %>% 
     dplyr::left_join(apogee::diplome_mention_lm, by = "code_mention_diplome_l") %>%
     split(x = .$code_mention_diplome_m, f = .$.id)
   
@@ -277,7 +277,7 @@ compatibilite_mention_diplome_l <- function(code_mention_diplome_l) {
 compatibilite_mention_diplome_m <- function(code_mention_diplome_m) {
   
   compatibilite_mention_diplome_m <- dplyr::tibble(code_mention_diplome_m) %>%
-    dplyr::mutate(.id = row_number()) %>% 
+    dplyr::mutate(.id = dplyr::row_number()) %>% 
     dplyr::left_join(apogee::diplome_mention_lm, by = "code_mention_diplome_m") %>%
     split(x = .$code_mention_diplome_l, f = .$.id)
   

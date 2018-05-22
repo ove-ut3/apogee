@@ -64,7 +64,7 @@ histo_etape_succ <- function(code_etape, code_elp = NULL, successeur_final = TRU
 histo_etape_succ_2 <- function(code_etape, successeur_final = TRUE, garder_na = FALSE) {
   
   histo_etape_succ_2 <- dplyr::tibble(code_etape) %>% 
-    dplyr::mutate(.id = row_number()) %>% 
+    dplyr::mutate(.id = dplyr::row_number()) %>% 
     dplyr::left_join(apogee::etape_histo, by = "code_etape")
   
   if (garder_na == FALSE) {
