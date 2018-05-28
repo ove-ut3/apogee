@@ -47,7 +47,7 @@ histo_etape_succ <- function(code_etape, code_elp = NULL, successeur_final = TRU
   return(histo_etape_succ)
 }
 
-#' Renvoie le code etape successeur (avec prise en charge de l'éclatement)
+#' Renvoie le code etape successeur (avec prise en charge de l'eclatement)
 #'
 #' Renvoie le code étape successeur (avec prise en charge de l'éclatement).
 #'

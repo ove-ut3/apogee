@@ -2,7 +2,7 @@
 % Please edit documentation in R/apogee.R
 \name{annee_en_cours}
 \alias{annee_en_cours}
-\title{Retourne l'année universitaire en cours}
+\title{Retourne l'annee universitaire en cours}
 \usage{
 annee_en_cours(mois_debut = 9)
 }

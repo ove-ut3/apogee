@@ -146,7 +146,7 @@ liste_formations <- function(annee = NULL) {
   return(liste_formations)
 }
 
-#' Retourne l'année universitaire en cours
+#' Retourne l'annee universitaire en cours
 #' 
 #' Retourne l'année universitaire en cours selon le mois de début d'année défini
 #'
