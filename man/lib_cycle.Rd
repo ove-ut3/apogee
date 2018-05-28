@@ -2,7 +2,7 @@
 % Please edit documentation in R/libelle.R
 \name{lib_cycle}
 \alias{lib_cycle}
-\title{Renvoie le libelle de cycle de formation a partir du code}
+\title{Renvoie le libelle a partir du code cycle de formation}
 \usage{
 lib_cycle(code_cycle)
 }
@@ -15,7 +15,7 @@ Un vecteur contenant les libellés de cycle.
 Jeu de données source : \code{apogee::cycle}.\cr
 }
 \description{
-Renvoie le libellé de cycle de formation à partir du code.
+Renvoie le libellé à partir du code cycle de formation.
 }
 \examples{
 apogee::lib_cycle(c("1", "3"))

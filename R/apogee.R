@@ -146,9 +146,9 @@ formations_liste <- function(annee = NULL) {
   return(liste_formations)
 }
 
-#' Retourne l'annee universitaire en cours
+#' Renvoie l'annee universitaire en cours
 #' 
-#' Retourne l'année universitaire en cours selon le mois de début d'année défini
+#' Renvoie l'année universitaire en cours selon le mois de début d'année défini
 #'
 #' @param mois_debut Mois de début de l'année, septembre par défaut
 #'

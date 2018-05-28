@@ -2,7 +2,7 @@
 % Please edit documentation in R/libelle.R
 \name{lib_bourse}
 \alias{lib_bourse}
-\title{Renvoie le libelle de bourse}
+\title{Renvoie le libelle a partir du code bourse}
 \usage{
 lib_bourse(code_bourse)
 }
@@ -15,5 +15,5 @@ Un vecteur contenant les libellés de bourse.
 Jeu de données source : \code{apogee::bourse}.\cr
 }
 \description{
-Renvoie le libellé de bourse.
+Renvoie le libellé à partir du code bourse.
 }

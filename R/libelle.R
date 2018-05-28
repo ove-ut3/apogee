@@ -202,9 +202,9 @@ lib_finalite_diplome <- function(code_finalite_diplome) {
   return(lib_finalite_diplome)
 }
 
-#' Renvoie le libelle de bourse
+#' Renvoie le libelle a partir du code bourse
 #'
-#' Renvoie le libellé de bourse.
+#' Renvoie le libellé à partir du code bourse.
 #'
 #' @param code_type_diplome Un vecteur de code de bourse.
 #'
@@ -590,9 +590,9 @@ lib_type_diplome_anterieur <- function(code_type_diplome_anterieur) {
   return(lib_type_diplome_anterieur)
 }
 
-#' Renvoie le libelle d'academie a partir du code
+#' Renvoie le libelle a partir du code academie
 #'
-#' Renvoie le libellé d'académie à partir du code.
+#' Renvoie le libellé à partir du code académie.
 #'
 #' @param code_academie Un vecteur de code académie.
 #'
@@ -614,9 +614,9 @@ lib_academie <- function(code_academie) {
   return(lib_academie)
 }
 
-#' Renvoie le libelle de cycle de formation a partir du code
+#' Renvoie le libelle a partir du code cycle de formation
 #'
-#' Renvoie le libellé de cycle de formation à partir du code.
+#' Renvoie le libellé à partir du code cycle de formation.
 #'
 #' @param code_cycle Un vecteur de code cycle.
 #'

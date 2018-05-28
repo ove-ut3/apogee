@@ -2,7 +2,7 @@
 % Please edit documentation in R/libelle.R
 \name{lib_academie}
 \alias{lib_academie}
-\title{Renvoie le libelle d'academie a partir du code}
+\title{Renvoie le libelle a partir du code academie}
 \usage{
 lib_academie(code_academie)
 }
@@ -16,7 +16,7 @@ Jeu de données source : \code{apogee::academie}.\cr
 Il est créé à partir de la table "academie" de la base Access "Tables_ref.accdb".
 }
 \description{
-Renvoie le libellé d'académie à partir du code.
+Renvoie le libellé à partir du code académie.
 }
 \examples{
 apogee::lib_academie(c("01", "09"))
