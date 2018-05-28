@@ -112,7 +112,7 @@ temoin_elp_ue <- function(code_elp) {
 #' @return Un tibble des formations
 #' 
 #' @export
-liste_formations <- function(annee = NULL) {
+formations_liste <- function(annee = NULL) {
   
   if (is.null(annee)) {
     annee <- apogee::annee_en_cours()
