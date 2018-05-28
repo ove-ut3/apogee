@@ -115,9 +115,8 @@ temoin_elp_ue <- function(code_elp) {
 liste_formations <- function(annee) {
   
   liste_formations <- apogee::etape %>% 
-    dplyr::filter(annee == !!annee) %>% 
+    dplyr::filter(annee_premiere_etape <= !!annee & annee_derniere_etape >= !!annee) %>% 
     dplyr::select(code_etape) %>% 
-    unique() %>% 
     dplyr::mutate(lib_etape = apogee::lib_etape(code_etape),
                   acronyme_etape = apogee::acronyme_etape(code_etape),
                   type_diplome = apogee::hier_etape_type_diplome(code_etape) %>% apogee::acronyme_type_diplome(),
