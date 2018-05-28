@@ -107,54 +107,19 @@ temoin_elp_ue <- function(code_elp) {
 #' 
 #' Liste des formations d'une année universitaire
 #'
-#' @param annee Année
+#' @param annee Année (par défaut, celle en cours)
 #'
-#' @return Un tibble des fromations
+#' @return Un tibble des formations
 #' 
 #' @export
-liste_formations <- function(annee) {
+liste_formations <- function(annee = NULL) {
+  
+  if (is.null(annee)) {
+    annee <- apogee::annee_en_cours()
+  }
   
   liste_formations <- apogee::etape %>% 
     dplyr::filter(annee_premiere_etape <= !!annee & annee_derniere_etape >= !!annee) %>% 
-    dplyr::select(code_etape) %>% 
-    dplyr::mutate(lib_etape = apogee::lib_etape(code_etape),
-                  acronyme_etape = apogee::acronyme_etape(code_etape),
-                  type_diplome = apogee::hier_etape_type_diplome(code_etape) %>% apogee::acronyme_type_diplome(),
-                  type_diplome = ifelse(is.na(type_diplome), apogee::hier_etape_type_diplome(code_etape), type_diplome),
-                  annee_etape = apogee::annee_etape(code_etape))
-  
-  return(liste_formations)
-}
-
-#' Retourne l'année universitaire en cours
-#' 
-#' Retourne l'année universitaire en cours selon le mois de début d'année défini
-#'
-#' @param mois_debut Mois de début de l'année, septembre par défaut
-#'
-#' @return Une valeur integer contenant l'année en cours
-#' 
-#' @export
-annee_en_cours <- function(mois_debut = 9) {
-  
-  annee_en_cours <- lubridate::year(lubridate::today())
-  
-  if (lubridate::month(lubridate::today()) < mois_debut) {
-    annee_en_cours <- annee_en_cours - 1
-  }
-  
-  return(annee_en_cours)
-}
-
-#' Liste des formations de l'annee en cours
-#' 
-#' Liste des formations de l'année en cours.
-#'
-#' @export
-formations_en_cours <- function() {
-  
-  formations_en_cours <- apogee::etape %>% 
-    dplyr::filter(annee_derniere_etape == apogee::annee_en_cours()) %>% 
     dplyr::select(code_etape, code_composante) %>% 
     tidyr::unnest(code_composante) %>% 
     dplyr::mutate(lib_composante = apogee::hier_composante_parent(code_composante) %>%
@@ -178,7 +143,27 @@ formations_en_cours <- function() {
                      by = "code_etape") %>% 
     dplyr::mutate(lib_etape_apogee = ifelse(lib_etape_apogee, "Apogée", "OVE"))
   
-  return(formations_en_cours)
+  return(liste_formations)
+}
+
+#' Retourne l'année universitaire en cours
+#' 
+#' Retourne l'année universitaire en cours selon le mois de début d'année défini
+#'
+#' @param mois_debut Mois de début de l'année, septembre par défaut
+#'
+#' @return Une valeur integer contenant l'année en cours
+#' 
+#' @export
+annee_en_cours <- function(mois_debut = 9) {
+  
+  annee_en_cours <- lubridate::year(lubridate::today())
+  
+  if (lubridate::month(lubridate::today()) < mois_debut) {
+    annee_en_cours <- annee_en_cours - 1
+  }
+  
+  return(annee_en_cours)
 }
 
 #' Historique des formations

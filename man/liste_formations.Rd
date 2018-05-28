@@ -4,13 +4,13 @@
 \alias{liste_formations}
 \title{Liste des formations d'une annee universitaire}
 \usage{
-liste_formations(annee)
+liste_formations(annee = NULL)
 }
 \arguments{
-\item{annee}{Année}
+\item{annee}{Année (par défaut, celle en cours)}
 }
 \value{
-Un tibble des fromations
+Un tibble des formations
 }
 \description{
 Liste des formations d'une année universitaire
