@@ -245,7 +245,7 @@ data_inscrits_elp <- function(derniere_annee = TRUE) {
     n_csv <- Inf
   }
   
-  inscrits_elp <- impexp::csv_importer_masse("Inscrits_ELP.+?\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE, n_csv = n_csv, ligne_debut = 2) %>% 
+  inscrits_elp <- impexp::csv_importer_masse("Inscrits_ELP.*?\\.csv$", chemin = paste0(racine_packages, "apogee/raw"), archive_zip = TRUE, n_csv = n_csv, ligne_debut = 2) %>% 
     dplyr::transmute(import = lapply(import, source.maj::renommer_champs, impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))),
                      import = lapply(import, source.maj::transcoder_champs, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
