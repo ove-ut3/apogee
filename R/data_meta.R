@@ -23,7 +23,9 @@ data_etape <- function() {
     dplyr::select(-annee) %>% 
     dplyr::group_by(code_etape) %>% 
     dplyr::filter(dplyr::row_number() == n()) %>% 
-    dplyr::ungroup()
+    dplyr::ungroup() %>% 
+    divr::anti_join_bind(impexp::access_importer("etape_diplome_type_ajout", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>% 
+                           dplyr::select(-date_maj), ., by = "code_etape")
   
   etape_composante <- apogee::inscrits %>% 
     dplyr::filter(annee == apogee::annee_en_cours()) %>% 
