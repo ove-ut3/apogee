@@ -50,11 +50,19 @@ data_etape <- function() {
     dplyr::mutate(lib_etape_apogee = ifelse(lib_etape != lib_etape_apogee, FALSE, TRUE)) %>% 
     dplyr::select(-annee_etape_apogee) %>% 
     dplyr::left_join(annee_premiere_etape, by = "code_etape") %>% 
-    dplyr::left_join(annee_derniere_etape, by = "code_etape")
+    dplyr::left_join(annee_derniere_etape, by = "code_etape") %>% 
+    dplyr::mutate(actif = dplyr::if_else(annee_derniere_etape == apogee::annee_en_cours(), TRUE, FALSE, FALSE))
   
   divr::doublons(etape, code_etape)
 
   save("etape", file = paste0(racine_packages, "apogee/data/etape.RData"))
+  
+  # Mise à jour du champ ACTIF dans la base Access
+  etape %>% 
+    dplyr::filter(actif) %>% 
+    dplyr::pull(code_etape) %>% 
+    paste0("UPDATE etape SET ACTIF = 'O' WHERE CODE_ETAPE = '", .,"';") %>% 
+    impexp::access_executer_sql(paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))
   
   #### Etape -Intégration SCUIO-IP ####
   
