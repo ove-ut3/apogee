@@ -159,3 +159,36 @@ histo_elp_succ <- function(code_elp, successeur_final = TRUE, garder_na = FALSE)
   
   return(histo_elp_succ)
 }
+
+#' Renvoie le code de mention de diplome successeur
+#'
+#' Renvoie le code de mention de diplôme successeur.
+#'
+#' @param code_etape Un vecteur de code de mention de diplôme.
+#' @param successeur_final \code{TRUE}, renvoit le successeur le plus récent dans l'historique; \code{FALSE}, renvoie le premier successeur.
+#' @param garder_na \code{TRUE}, les codes sans successeur passent à \code{NA}; \code{FALSE}, les codes sans successeur sont gardés tels quels.
+#'
+#' @return Un vecteur de code de mention de diplôme successeur.
+#'
+#' Jeu de données source : \code{apogee::diplome_mention_histo}.\cr
+#' Il est créé à partir d'Apogée et de la table "diplome_mention_histo" de la base Access Tables_ref (projet Apogee).
+#'
+#' @export
+histo_mention_diplome_succ <- function(code_mention_diplome, successeur_final = TRUE, garder_na = FALSE) {
+  
+  histo_mention_diplome_succ <- dplyr::tibble(code_mention_diplome) %>%
+    dplyr::left_join(apogee::diplome_mention_histo, by = "code_mention_diplome") %>%
+    dplyr::pull(code_mention_diplome_succ)
+  
+  if (garder_na == FALSE) {
+    histo_mention_diplome_succ <- ifelse(is.na(histo_mention_diplome_succ), code_mention_diplome, histo_mention_diplome_succ)
+  }
+  
+  if (successeur_final == TRUE) {
+    if (any(!is.na(apogee::histo_mention_diplome_succ(histo_mention_diplome_succ, successeur_final = FALSE, garder_na = TRUE)))) {
+      histo_mention_diplome_succ <- Recall(histo_mention_diplome_succ, successeur_final = successeur_final, garder_na = garder_na)
+    }
+  }
+  
+  return(histo_mention_diplome_succ)
+}
