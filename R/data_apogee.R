@@ -482,8 +482,12 @@ data_stats <- function() {
     dplyr::mutate(origine_gen1 = ifelse(!is.na(code_etape_pre), "Admission interne", "Admission externe"),
                   origine_annee = apogee::annee_etape(apogee::histo_etape_succ(code_etape_pre)),
                   histo_code_etape_pre = apogee::histo_etape_succ_2(code_etape_pre),
-                  mention_diplome_pre = purrr::map(histo_code_etape_pre, apogee::hier_etape_mention),
-                  mention_diplome = purrr::map(code_etape, apogee::hier_etape_mention),
+                  mention_diplome_pre = purrr::map(histo_code_etape_pre, apogee::hier_etape_mention) %>% 
+                    purrr::map(purrr::flatten_chr) %>% 
+                    purrr::map(apogee::histo_mention_diplome_succ),
+                  mention_diplome = purrr::map(code_etape, apogee::hier_etape_mention) %>% 
+                    purrr::map(purrr::flatten_chr) %>% 
+                    purrr::map(apogee::histo_mention_diplome_succ),
                   mention_diplome_comp = ifelse(apogee::hier_etape_type_diplome(code_etape) == "LMD/M1",
                                                 purrr::map(mention_diplome, ~ apogee::compatibilite_mention_diplome_m(.[[1]])),
                                                 mention_diplome),
@@ -562,11 +566,15 @@ data_stats <- function() {
                   annee_etape_post = apogee::annee_etape(code_etape_post),
                   filiere = apogee::hier_etape_filiere(code_etape),
                   histo_code_etape_post = apogee::histo_etape_succ_2(code_etape_post),
-                  mention_diplome = purrr::map(code_etape, apogee::hier_etape_mention),
+                  mention_diplome = purrr::map(code_etape, apogee::hier_etape_mention) %>% 
+                    purrr::map(purrr::flatten_chr) %>% 
+                    purrr::map(apogee::histo_mention_diplome_succ),
                   mention_diplome_comp = ifelse(apogee::hier_etape_type_diplome(code_etape) == "LMD/L3",
                                                 purrr::map(mention_diplome, ~ apogee::compatibilite_mention_diplome_l(.[[1]])),
                                                 mention_diplome),
-                  mention_diplome_post = purrr::map(histo_code_etape_post, apogee::hier_etape_mention),
+                  mention_diplome_post = purrr::map(histo_code_etape_post, apogee::hier_etape_mention) %>% 
+                    purrr::map(purrr::flatten_chr) %>% 
+                    purrr::map(apogee::histo_mention_diplome_succ),
                   poursuite = dplyr::case_when(
                     is.na(code_etape_post) ~ "Sortie UPS",
                     purrr::map2_lgl(code_etape, histo_code_etape_post, ~ .x %in% .y) ~ "Redoublement",
