@@ -103,6 +103,24 @@ temoin_elp_ue <- function(code_elp) {
   return(temoin_elp_ue)
 }
 
+#' Temoin TRUE/FALSE si le code_etape est actif
+#' 
+#' Témoin TRUE/FALSE si le code_etape est actif.
+#'
+#' @param code_etape Un vecteur de code_etape.
+#'
+#' @return Un vecteur de booléens TRUE/FALSE.
+#' 
+#' @export
+temoin_etape_actif <- function(code_etape) {
+  
+  temoin_etape_actif <- dplyr::tibble(code_etape) %>% 
+    dplyr::left_join(apogee::etape, by = "code_etape") %>% 
+    dplyr::pull(actif)
+  
+  return(temoin_etape_actif)
+}
+
 #' Liste des formations d'une annee universitaire
 #' 
 #' Liste des formations d'une année universitaire
