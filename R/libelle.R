@@ -657,3 +657,24 @@ lib_diplome_sise <- function(code_diplome_sise) {
   
   return(lib_diplome_sise)
 }
+
+#' Renvoie l'acronyme a partir du code de domaine de diplome
+#'
+#' Renvoie l'acronyme à partir du code de domaine de diplôme.
+#'
+#' @param code_bac Un vecteur de code de domaine de diplôme.
+#'
+#' @return Un vecteur contenant les acronymes de domaine de diplôme.
+#'
+#' Jeu de données source : \code{apogee::diplome_domaine}.\cr
+#' Il est créé à partir de la table "diplome_domaine" de la base Access "Tables_ref.accdb".
+#'
+#' @export
+acronyme_domaine_diplome <- function(code_domaine_diplome) {
+  
+  acronyme_domaine_diplome <- dplyr::tibble(code_domaine_diplome) %>%
+    dplyr::left_join(apogee::diplome_domaine, by = "code_domaine_diplome") %>%
+    dplyr::pull(acronyme_domaine_diplome)
+  
+  return(acronyme_domaine_diplome)
+}

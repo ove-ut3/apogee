@@ -2,6 +2,7 @@
 
 export("%>%")
 export(acronyme_bac)
+export(acronyme_domaine_diplome)
 export(acronyme_etape)
 export(acronyme_type_diplome)
 export(annee_en_cours)
