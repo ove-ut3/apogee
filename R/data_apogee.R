@@ -268,7 +268,7 @@ data_inscrits_elp <- function(derniere_annee = TRUE) {
 data_resultats_elp <- function(derniere_annee = TRUE) {
 
   if (derniere_annee == TRUE) {
-    n_csv <- -1
+    n_csv <- -2
   } else {
     n_csv <- Inf
   }
