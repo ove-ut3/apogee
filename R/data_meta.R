@@ -27,12 +27,11 @@ data_etape <- function() {
     divr::anti_join_bind(impexp::access_importer("etape_diplome_type_ajout", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>% 
                            dplyr::select(-date_maj), ., by = "code_etape")
   
-  etape_composante <- apogee::inscrits %>% 
-    dplyr::filter(annee == apogee::annee_en_cours()) %>% 
-    dplyr::select(code_etape, code_composante) %>% 
-    tidyr::unnest() %>% 
-    unique() %>% 
-    dplyr::arrange(code_etape, code_composante) %>% 
+  etape_composante <- impexp::excel_importer(paste0(racine_packages, "apogee/raw/Etape.xlsx"), "Etape_composante", ligne_debut = 2) %>% 
+    source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
+    dplyr::anti_join(impexp::access_importer("etape_composante", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>% 
+                       tidyr::drop_na(suppression),
+                     by = c("code_etape", "code_composante")) %>% 
     tidyr::nest(code_composante, .key = "code_composante") %>% 
     dplyr::mutate(code_composante = purrr::map(code_composante, 1))
   
@@ -42,11 +41,9 @@ data_etape <- function() {
     dplyr::rename(lib_etape_apogee = lib_etape) %>% 
     dplyr::left_join(impexp::access_importer("etape", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")),
                      by = "code_etape") %>% 
-    
     dplyr::left_join(etape_diplome_type, by = "code_etape") %>% 
     dplyr::left_join(etape_composante, by = "code_etape") %>% 
-    source.maj::recoder_champs(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")),
-                               source = "data_etape") %>% 
+    source.maj::recoder_champs(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")), source = "data_etape") %>% 
     dplyr::mutate(lib_etape_apogee = ifelse(lib_etape != lib_etape_apogee, FALSE, TRUE)) %>% 
     dplyr::select(-annee_etape_apogee) %>% 
     dplyr::left_join(annee_premiere_etape, by = "code_etape") %>% 
