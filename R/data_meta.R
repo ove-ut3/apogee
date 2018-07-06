@@ -50,6 +50,32 @@ data_etape <- function() {
     dplyr::left_join(annee_derniere_etape, by = "code_etape") %>% 
     dplyr::mutate(actif = dplyr::if_else(annee_derniere_etape == apogee::annee_en_cours(), TRUE, FALSE, FALSE))
   
+  etape_ville <- etape %>% 
+    dplyr::filter(actif,
+                  is.na(ville),
+                  code_type_diplome %in% c("DUT", "Licence pr")) %>% 
+    tidyr::unnest(code_composante) %>% 
+    dplyr::left_join(dplyr::rename(apogee::composante, ville_composante = ville), 
+                     by = "code_composante") %>% 
+    dplyr::mutate(ville = ifelse(!is.na(ville_composante), ville_composante, ville),
+                  lib_etape_lower = tolower(lib_etape))
+  
+  jointure <- dplyr::select(etape_ville, code_etape, code_type_diplome, ville, annee_etape, lib_etape_lower)
+  
+  etape_ville2 <- etape_ville %>% 
+    dplyr::select(lib_etape_lower, ville, code_type_diplome, annee_etape) %>% 
+    unique() %>% 
+    dplyr::group_by(lib_etape_lower, code_type_diplome, annee_etape) %>% 
+    dplyr::filter(n() >= 2) %>% 
+    dplyr::ungroup() %>% 
+    dplyr::left_join(jointure, by = c("lib_etape_lower", "code_type_diplome", "annee_etape", "ville"))
+  
+  etape <- etape %>% 
+    dplyr::left_join(dplyr::select(etape_ville2, code_etape, ville_maj = ville), by = "code_etape") %>% 
+    dplyr::mutate(ville = ifelse(!is.na(ville_maj), ville_maj, ville)) %>% 
+    dplyr::select(-ville_maj) %>% 
+    source.maj::recoder_champs(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")), source = "data_etape")
+  
   divr::doublons(etape, code_etape)
 
   save("etape", file = paste0(racine_packages, "apogee/data/etape.RData"))
