@@ -219,7 +219,7 @@ data_etape <- function() {
   
   save("etape_finalite", file = paste0(racine_packages, "apogee/data/etape_finalite.RData"))
   
-  #### Etape - Discipline SISE ####
+  #### Etape - discipline SISE ####
   etape_sise_discipline <- impexp::excel_importer(paste0(racine_packages, "apogee/raw/Etape.xlsx"), "Etape_discipline_sise") %>% 
     source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
     dplyr::mutate(code_discipline_sise = stringr::str_remove(code_discipline_sise, "^00") %>% 
@@ -230,6 +230,7 @@ data_etape <- function() {
     dplyr::left_join(impexp::access_importer("etape_discipline_sise", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")), by = c("code_etape", "code_discipline_sise")) %>% 
     dplyr::filter(is.na(suppression)) %>% 
     dplyr::select(-suppression)
+  
   save("etape_sise_discipline", file = paste0(racine_packages, "apogee/data/etape_sise_discipline.RData"))
   
   #### Etape - secteur DUT et LP ####
@@ -256,6 +257,7 @@ data_etape <- function() {
   cycle <- impexp::excel_importer(paste0(racine_packages, "apogee/raw/Etape.xlsx"), "Cycle") %>% 
     source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))
   save("cycle", file = paste0(racine_packages, "apogee/data/cycle.RData"))
+  
 }
 
 #' data_sise
