@@ -173,6 +173,9 @@ data_etape <- function() {
     dplyr::group_by(code_etape) %>% 
     dplyr::filter(!is.na(code_mention_diplome) | dplyr::row_number() == 1) %>% 
     unique()
+  
+  divr::doublons(etape_mention, code_etape, code_mention_diplome)
+  
   save("etape_mention", file = paste0(racine_packages, "apogee/data/etape_mention.RData"))
   
   #### Etape - domaine ####
@@ -191,6 +194,9 @@ data_etape <- function() {
     dplyr::arrange(code_etape, code_domaine_diplome) %>% 
     dplyr::group_by(code_etape) %>% 
     dplyr::filter(!is.na(code_domaine_diplome) | dplyr::row_number() == 1)
+  
+  divr::doublons(etape_domaine, code_etape, code_domaine_diplome)
+  
   save("etape_domaine", file = paste0(racine_packages, "apogee/data/etape_domaine.RData"))
   
   #### Etape - finalité ####
