@@ -81,10 +81,23 @@ data_etape <- function() {
   save("etape", file = paste0(racine_packages, "apogee/data/etape.RData"))
   
   # Mise à jour du champ ACTIF dans la base Access
-  etape %>% 
-    dplyr::filter(actif) %>% 
-    dplyr::pull(code_etape) %>% 
-    paste0("UPDATE etape SET ACTIF = 'O' WHERE CODE_ETAPE = '", .,"';") %>% 
+  impexp::access_importer("etape", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>%
+    dplyr::filter(is.na(actif)) %>%
+    dplyr::semi_join(dplyr::filter(etape, actif), by = "code_etape") %>%
+    dplyr::pull(code_etape) %>%
+    paste0("UPDATE etape SET ACTIF = 'O' WHERE CODE_ETAPE = '", .,"';") %>%
+    impexp::access_executer_sql(paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))
+   
+  # Suppression des lignes obsolètes
+  impexp::access_importer("etape", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>%
+    dplyr::mutate(code_etape_succ = apogee::histo_etape_succ_2(code_etape),
+                  etape_derniere_annee = apogee::etape_derniere_annee(code_etape)) %>%
+    tidyr::unnest(code_etape_succ) %>%
+    dplyr::filter(code_etape != code_etape_succ & etape_derniere_annee < enquete.ip::annee_en_cours()) %>%
+    dplyr::group_by(code_etape) %>%
+    dplyr::filter(n() == 1) %>%
+    dplyr::pull(code_etape) %>%
+    paste0("DELETE FROM etape WHERE CODE_ETAPE = '", .,"';") %>%
     impexp::access_executer_sql(paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))
   
   #### Etape -Intégration SCUIO-IP ####
