@@ -136,7 +136,9 @@ data_inscrits <- function(derniere_annee = TRUE) {
                   inscription_annulee = ifelse(is.na(inscription_annulee), FALSE, inscription_annulee))
   
   inscrits_annules <- dplyr::filter(inscrits, inscription_annulee) %>% 
-    dplyr::select(-inscription_annulee)
+    dplyr::select(-inscription_annulee) %>% 
+    apogee::nest_inscrits(code_composante) %>%
+    apogee::nest_inscrits(code_version_etape)
   
   if (derniere_annee == TRUE) {
     inscrits_annules <- divr::anti_join_bind(apogee::inscrits_annules, inscrits_annules, by = "annee")
