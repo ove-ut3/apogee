@@ -6,14 +6,14 @@ data_etape <- function() {
   
   #### Etape ####
   
-  annee_premiere_etape <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge, apogee::inscrits_annules) %>% 
+  annee_premiere_etape <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge) %>% 
     dplyr::arrange(annee, code_etape) %>% 
     dplyr::select(code_etape, annee_premiere_etape = annee) %>% 
     dplyr::group_by(code_etape) %>% 
     dplyr::filter(dplyr::row_number() == 1) %>% 
     dplyr::ungroup()
   
-  annee_derniere_etape <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge, apogee::inscrits_annules) %>% 
+  annee_derniere_etape <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge) %>% 
     dplyr::arrange(annee, code_etape) %>% 
     dplyr::select(code_etape, annee_derniere_etape = annee) %>% 
     dplyr::group_by(code_etape) %>% 
@@ -89,7 +89,7 @@ data_etape <- function() {
     dplyr::pull(code_etape) %>%
     paste0("UPDATE etape SET ACTIF = 'O' WHERE CODE_ETAPE = '", .,"';") %>%
     impexp::access_executer_sql(paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))
-   
+  
   # Suppression des lignes obsolètes
   impexp::access_importer("etape", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>%
     dplyr::mutate(code_etape_succ = apogee::histo_etape_succ_2(code_etape),
