@@ -354,6 +354,10 @@ data_composante <- function() {
     source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
     tidyr::drop_na(code_type_composante)
   save("composante_type", file = paste0(racine_packages, "apogee/data/composante_type.RData"))
+  
+  composante_histo <- impexp::access_importer("composante_histo", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))
+  save("composante_histo", file = paste0(racine_packages, "apogee/data/composante_histo.RData"))
+  
 }
 
 #' data_diplome_version

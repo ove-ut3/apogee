@@ -192,3 +192,36 @@ histo_mention_diplome_succ <- function(code_mention_diplome, successeur_final = 
   
   return(histo_mention_diplome_succ)
 }
+
+#' Renvoie le code de composante successeur
+#'
+#' Renvoie le code de composante successeur.
+#'
+#' @param code_etape Un vecteur de code de composante.
+#' @param successeur_final \code{TRUE}, renvoit le successeur le plus récent dans l'historique; \code{FALSE}, renvoie le premier successeur.
+#' @param garder_na \code{TRUE}, les codes sans successeur passent à \code{NA}; \code{FALSE}, les codes sans successeur sont gardés tels quels.
+#'
+#' @return Un vecteur de code de composante successeur.
+#'
+#' Jeu de données source : \code{apogee::composante_histo}.\cr
+#' Il est créé à partir d'Apogée et de la table "composante_histo" de la base Access Tables_ref (projet Apogee).
+#'
+#' @export
+histo_composante_succ <- function(code_composante, successeur_final = TRUE, garder_na = FALSE) {
+  
+  histo_composante_succ <- dplyr::tibble(code_composante) %>%
+    dplyr::left_join(apogee::composante_histo, by = "code_composante") %>%
+    dplyr::pull(code_composante_succ)
+  
+  if (garder_na == FALSE) {
+    histo_composante_succ <- ifelse(is.na(histo_composante_succ), code_composante, histo_composante_succ)
+  }
+  
+  if (successeur_final == TRUE) {
+    if (any(!is.na(apogee::histo_composante_succ(histo_composante_succ, successeur_final = FALSE, garder_na = TRUE)))) {
+      histo_composante_succ <- Recall(histo_composante_succ, successeur_final = successeur_final, garder_na = garder_na)
+    }
+  }
+  
+  return(histo_composante_succ)
+}
