@@ -90,17 +90,36 @@ data_etape <- function() {
     paste0("UPDATE etape SET ACTIF = 'O' WHERE CODE_ETAPE = '", .,"';") %>%
     impexp::access_executer_sql(paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))
   
+  impexp::access_importer("etape", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>%
+    dplyr::filter(!is.na(actif)) %>%
+    dplyr::semi_join(dplyr::filter(etape, !actif), by = "code_etape") %>%
+    dplyr::pull(code_etape) %>%
+    paste0("UPDATE etape SET ACTIF = '' WHERE CODE_ETAPE = '", .,"';") %>%
+    impexp::access_executer_sql(paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))
+  
   # Suppression des lignes obsolètes
   impexp::access_importer("etape", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>%
     dplyr::mutate(code_etape_succ = apogee::histo_etape_succ_2(code_etape),
+                  type_diplome = apogee::hier_etape_type_diplome(code_etape) %>% 
+                    apogee::acronyme_type_diplome(),
                   etape_derniere_annee = apogee::etape_derniere_annee(code_etape)) %>%
     tidyr::unnest(code_etape_succ) %>%
-    dplyr::filter(code_etape != code_etape_succ & etape_derniere_annee < enquete.ip::annee_en_cours()) %>%
+    dplyr::filter((type_diplome %in% c("DUT", "LP", "M2", "M2 enseignement", "Préparation concours") & etape_derniere_annee < enquete.ip::annee_en_cours()) |
+                    (!type_diplome %in% c("DUT", "LP", "M2", "M2 enseignement", "Préparation concours") & etape_derniere_annee < apogee::annee_en_cours())) %>% 
     dplyr::group_by(code_etape) %>%
-    dplyr::filter(n() == 1) %>%
+    dplyr::filter(n() == 1) %>% 
     dplyr::pull(code_etape) %>%
     paste0("DELETE FROM etape WHERE CODE_ETAPE = '", .,"';") %>%
     impexp::access_executer_sql(paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))
+  
+  impexp::access_importer("etape", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>% 
+    dplyr::anti_join(dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge), 
+                     by = "code_etape") %>% 
+    dplyr::anti_join(apogee::diplomes, by = "code_etape") %>% 
+    dplyr::pull(code_etape) %>% 
+    paste0("DELETE FROM etape WHERE CODE_ETAPE = '", .,"';") %>%
+    impexp::access_executer_sql(paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))
+  
   
   #### Etape -Intégration SCUIO-IP ####
   
