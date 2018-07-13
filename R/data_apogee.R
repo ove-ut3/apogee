@@ -179,6 +179,8 @@ data_inscrits <- function(derniere_annee = TRUE) {
   inscrits <- impexp::access_importer("inscrits_ajout", paste0(racine_packages, "apogee/raw/Tables_ref_individus.accdb")) %>% 
     dplyr::select(-commentaire, -date_maj) %>% 
     dplyr::anti_join(inscrits, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
+    apogee::nest_inscrits(code_composante) %>% 
+    apogee::nest_inscrits(code_version_etape) %>% 
     dplyr::bind_rows(inscrits) %>% 
     dplyr::arrange(annee, code_etape, code_etudiant, inscription_premiere)
   
