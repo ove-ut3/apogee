@@ -476,7 +476,7 @@ data_stats <- function() {
     dplyr::group_by(annee, code_etudiant, code_etape, inscription_premiere) %>% 
     dplyr::filter(dplyr::row_number() == n()) %>% 
     dplyr::ungroup() %>% 
-    dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, inscrits_peda, inscrits_cpge, code_composante, sexe, code_nationalite, annee_bac, code_departement_bac, code_bac, code_type_diplome_anterieur, code_bourse, code_regime_inscription, elp_parcours, code_resultat, code_resultat_diplome)
+    dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, inscrits_peda, inscrits_cpge, code_composante, date_naissance, sexe, code_nationalite, annee_bac, code_departement_bac, code_bac, code_type_diplome_anterieur, code_bourse, code_regime_inscription, elp_parcours, code_resultat, code_resultat_diplome)
 
   origine <- apogee::inscrits %>% 
     dplyr::mutate(annee = annee + 1) %>% 
