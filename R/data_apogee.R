@@ -610,7 +610,8 @@ data_stats <- function() {
     dplyr::left_join(reussite, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>%
     dplyr::left_join(reussite_diplome, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>%
     dplyr::left_join(poursuite, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>%
-    dplyr::left_join(situation_ups_post, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
+    dplyr::left_join(situation_ups_post, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
+    dplyr::mutate(situation_ups_post = purrr::map_if(situation_ups_post, is.null, ~ dplyr::tibble()))
 
   save("stats", file = paste0(racine_packages, "apogee/data/stats.RData"))
 }
