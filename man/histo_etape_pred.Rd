@@ -4,10 +4,14 @@
 \alias{histo_etape_pred}
 \title{Renvoie les codes etape predecesseurs}
 \usage{
-histo_etape_pred(code_etape)
+histo_etape_pred(code_etape, predecesseur_final = TRUE, garder_na = FALSE)
 }
 \arguments{
 \item{code_etape}{Un vecteur de code étape.}
+
+\item{predecesseur_final}{\code{TRUE}, renvoit le prédécesseur le plus ancien dans l'historique; \code{FALSE}, renvoie le premier prédécesseur.}
+
+\item{garder_na}{\code{TRUE}, les codes sans prédécesseur passent à \code{NA}; \code{FALSE}, les codes sans successeur sont gardés tels quels.}
 }
 \value{
 Une liste de vecteurs de code étape prédécesseur.

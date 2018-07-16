@@ -111,6 +111,8 @@ histo_etape_succ_2 <- function(code_etape, successeur_final = TRUE, garder_na = 
 #' Renvoie les codes étape prédécesseurs.
 #'
 #' @param code_etape Un vecteur de code étape.
+#' @param predecesseur_final \code{TRUE}, renvoit le prédécesseur le plus ancien dans l'historique; \code{FALSE}, renvoie le premier prédécesseur.
+#' @param garder_na \code{TRUE}, les codes sans prédécesseur passent à \code{NA}; \code{FALSE}, les codes sans successeur sont gardés tels quels.
 #'
 #' @return Une liste de vecteurs de code étape prédécesseur.
 #'
@@ -118,14 +120,48 @@ histo_etape_succ_2 <- function(code_etape, successeur_final = TRUE, garder_na = 
 #' Il est créé à partir d'Apogée et de la table "etape_historique" de la base Access Tables_ref (projet Apogee).
 #'
 #' @export
-histo_etape_pred <- function(code_etape) {
+histo_etape_pred <- function(code_etape, predecesseur_final = TRUE, garder_na = FALSE) {
   
-  histo_etape_pred <- dplyr::tibble(code_etape_succ = code_etape) %>% 
+  histo_etape_pred <- dplyr::tibble(code_etape) %>% 
     dplyr::mutate(.id = dplyr::row_number()) %>% 
-    dplyr::left_join(apogee::etape_histo, by = "code_etape_succ")
+    dplyr::left_join(dplyr::select(apogee::etape_histo, code_etape = code_etape_succ, code_etape_pred = code_etape),
+                     by = "code_etape")
+  
+  if (garder_na == FALSE) {
+    histo_etape_pred <- histo_etape_pred %>% 
+      dplyr::mutate(code_etape_pred = ifelse(is.na(code_etape_pred), code_etape, code_etape_pred))
+  }
+  
+  if (predecesseur_final == TRUE) {
+    
+    histo_etape_pred <- histo_etape_pred %>% 
+      dplyr::select(.id, code_etape = code_etape_pred) %>% 
+      dplyr::left_join(dplyr::select(apogee::etape_histo, code_etape = code_etape_succ, code_etape_pred = code_etape),
+                       by = "code_etape")
+    
+    while (any(!is.na(histo_etape_pred$code_etape_pred))) {
+      
+      if (garder_na == FALSE) {
+        histo_etape_pred <- histo_etape_pred %>% 
+          dplyr::mutate(code_etape_pred = ifelse(is.na(code_etape_pred), code_etape, code_etape_pred))
+      }
+      
+      histo_etape_pred <- histo_etape_pred %>% 
+        dplyr::select(.id, code_etape = code_etape_pred) %>% 
+        dplyr::left_join(dplyr::select(apogee::etape_histo, code_etape = code_etape_succ, code_etape_pred = code_etape),
+                         by = "code_etape")
+      
+    }
+    
+  }
+  
+  if (garder_na == FALSE) {
+    histo_etape_pred <- histo_etape_pred %>% 
+      dplyr::mutate(code_etape_pred = ifelse(is.na(code_etape_pred), code_etape, code_etape_pred))
+  }
   
   histo_etape_pred <- histo_etape_pred %>% 
-    split(x = .$code_etape, f = .$.id)
+    split(x = .$code_etape_pred, f = .$.id)
   
   names(histo_etape_pred) <- code_etape
   
