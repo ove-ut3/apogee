@@ -434,6 +434,13 @@ data_diplomes <- function(derniere_annee = TRUE) {
     dplyr::semi_join(dplyr::select(apogee::inscrits, annee, code_etape, code_etudiant, inscription_premiere),
                      by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
 
+  #### Suppression des étudiants de DUT en 1ère année ####
+  
+  diplomes <- diplomes %>% 
+    dplyr::filter(apogee::hier_etape_type_diplome(code_etape) == "DUT",
+                  apogee::annee_etape(code_etape) == 1) %>% 
+    dplyr::anti_join(diplomes, ., by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
+
   if (derniere_annee == TRUE) {
     diplomes <- divr::anti_join_bind(apogee::diplomes, diplomes, by = "annee")
   }
