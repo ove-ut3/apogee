@@ -24,18 +24,30 @@ annee_etape <- function(code_etape) {
 #' Renvoie la première annee d'une étape à partir du code étape.
 #'
 #' @param code_etape Un vecteur de code étape.
+#' @param historique Témoin de prise en compte de l'historique des code_etape.
 #'
 #' @return Un vecteur contenant les années.
 #'
 #' Jeu de données source : \code{apogee::etape}.\cr
 #'
 #' @export
-etape_premiere_annee <- function(code_etape) {
+etape_premiere_annee <- function(code_etape, historique = FALSE) {
   
   etape_premiere_annee <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape, by = "code_etape") %>%
     dplyr::pull(annee_premiere_etape)
   
+  if (historique == TRUE) {
+    
+    histo_etape_premiere_annee <- apogee::histo_etape_pred(code_etape) %>%
+      purrr::map(apogee::etape_premiere_annee, historique = FALSE) %>%
+      purrr::map_int(min)
+    
+    etape_premiere_annee <- ifelse(!is.na(histo_etape_premiere_annee), histo_etape_premiere_annee, etape_premiere_annee)
+  }
+  
+  names(etape_premiere_annee) <- code_etape
+
   return(etape_premiere_annee)
 }
 

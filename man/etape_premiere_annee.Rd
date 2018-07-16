@@ -4,10 +4,12 @@
 \alias{etape_premiere_annee}
 \title{Renvoie la premiere annee d'une etape a partir du code etape}
 \usage{
-etape_premiere_annee(code_etape)
+etape_premiere_annee(code_etape, historique = FALSE)
 }
 \arguments{
 \item{code_etape}{Un vecteur de code étape.}
+
+\item{historique}{Témoin de prise en compte de l'historique des code_etape.}
 }
 \value{
 Un vecteur contenant les années.
