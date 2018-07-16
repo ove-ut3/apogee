@@ -120,9 +120,14 @@ histo_etape_succ_2 <- function(code_etape, successeur_final = TRUE, garder_na = 
 #' @export
 histo_etape_pred <- function(code_etape) {
   
-  histo_etape_pred <- dplyr::tibble(code_etape_succ = code_etape) %>%
-    dplyr::left_join(apogee::etape_histo, by = "code_etape_succ") %>%
-    split(x = .$code_etape, f = .$code_etape_succ)
+  histo_etape_pred <- dplyr::tibble(code_etape_succ = code_etape) %>% 
+    dplyr::mutate(.id = dplyr::row_number()) %>% 
+    dplyr::left_join(apogee::etape_histo, by = "code_etape_succ")
+  
+  histo_etape_pred <- histo_etape_pred %>% 
+    split(x = .$code_etape, f = .$.id)
+  
+  names(histo_etape_pred) <- code_etape
   
   return(histo_etape_pred)
 }
