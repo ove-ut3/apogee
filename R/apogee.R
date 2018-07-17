@@ -218,7 +218,7 @@ formations_historique <- function(annee_debut) {
     tidyr::spread(champ, valeur) %>% 
     dplyr::select(-id) %>% 
     split(f = dplyr::pull(., acronyme_type_diplome)) %>% 
-    impexp::excel_exporter("formations_historique.xlsx")
+    impexp::excel_exporter(paste0(racine_packages, "apogee/formations_historique.xlsx"))
 }
 
 #' Mise a jour mensuelle des donnees Apogee (individus et meta-donnees)
