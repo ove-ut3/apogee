@@ -244,7 +244,7 @@ data_etape <- function() {
   etape_sise_discipline <- impexp::excel_importer(paste0(racine_packages, "apogee/raw/Etape.xlsx"), "Etape_discipline_sise") %>% 
     source.maj::renommer_champs(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
     dplyr::mutate(code_discipline_sise = stringr::str_remove(code_discipline_sise, "^00") %>% 
-                    caractr::paste_na("SD", ., sep = "")) %>% 
+                    stringr::str_c("SD", .)) %>% 
     dplyr::bind_rows(impexp::access_importer("etape_discipline_sise", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>% 
                        dplyr::filter(is.na(suppression)) %>% 
                        dplyr::select(-suppression)) %>% 
