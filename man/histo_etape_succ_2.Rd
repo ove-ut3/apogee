@@ -4,7 +4,8 @@
 \alias{histo_etape_succ_2}
 \title{Renvoie le code etape successeur (avec prise en charge de l'eclatement)}
 \usage{
-histo_etape_succ_2(code_etape, successeur_final = TRUE, garder_na = FALSE)
+histo_etape_succ_2(code_etape, successeur_final = TRUE,
+  garder_na = FALSE)
 }
 \arguments{
 \item{code_etape}{Un vecteur de code étape.}
