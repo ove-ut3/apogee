@@ -37,7 +37,7 @@ lib_etape <- function(code_etape, type_diplome = TRUE, annee_etape = TRUE, ville
   if (type_diplome == TRUE) {
     lib_etape <- lib_etape %>% 
       dplyr::mutate(type_diplome = apogee::acronyme_type_diplome(code_type_diplome),
-                    champ_lib_etape = ifelse(lib_etape_apogee == FALSE & type_diplome %in% c("L1", "L2", "DUT", "L3", "LP", "M1", "M1 Enseignement", "M2", "M2 enseignement", "Préparation concours", "Doctorat"), caractr::paste2(type_diplome, champ_lib_etape), champ_lib_etape))
+                    champ_lib_etape = ifelse(lib_etape_apogee == FALSE & type_diplome %in% c("L1", "L2", "DUT", "L3", "LP", "M1", "M1 Enseignement", "M2", "M2 enseignement", "Préparation concours", "Doctorat"), caractr::str_paste(type_diplome, champ_lib_etape), champ_lib_etape))
   }
   
   if (annee_etape == TRUE) {
@@ -652,7 +652,7 @@ lib_diplome_sise <- function(code_diplome_sise) {
   
   lib_diplome_sise <- dplyr::tibble(code_diplome_sise) %>%
     dplyr::left_join(apogee::sise_diplome_lib, by = "code_diplome_sise") %>%
-    dplyr::mutate(lib_diplome_sise = caractr::paste2(lib_diplome_sise_1, lib_diplome_sise_2, sep = " - ")) %>% 
+    dplyr::mutate(lib_diplome_sise = caractr::str_paste(lib_diplome_sise_1, lib_diplome_sise_2, sep = " - ")) %>% 
     dplyr::pull(lib_diplome_sise)
   
   return(lib_diplome_sise)
