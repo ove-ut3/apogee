@@ -44,7 +44,7 @@ lib_etape <- function(code_etape, type_diplome = TRUE, annee_etape = TRUE, ville
     lib_etape <- lib_etape %>% 
       dplyr::mutate(champ_lib_etape = ifelse(code_type_diplome %in% c("DUT", "DE Infirm.", "Certif Cap", "DEUST"), 
                                              paste0(champ_lib_etape, " - ", apogee::annee_etape(code_etape) %>% 
-                                                      caractr::conv_nombre_toutes_lettres(type = "ieme_chiffre_f"), " année"),
+                                                      caractr::str_conv_number_letter(type = "ieme_number", female = TRUE), " année"),
                                              champ_lib_etape))
   }
   
