@@ -156,12 +156,12 @@ data_inscrits <- function(derniere_annee = TRUE) {
   
   elp_parcours <- apogee::inscrits_elp %>% 
     dplyr::filter(code_elp %in% apogee::etape_histo$code_elp) %>% 
-    dplyr::anti_join(divr::doublons(., annee, code_etape, code_etudiant, inscription_premiere),
+    dplyr::anti_join(divr::duplicate(., annee, code_etape, code_etudiant, inscription_premiere),
                      by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
     dplyr::rename(elp_parcours = code_elp)
   
   # Vérifier la présence de double parcours
-  doublons <- divr::doublons(elp_parcours, annee, code_etape, code_etudiant, inscription_premiere)
+  doublons <- divr::duplicate(elp_parcours, annee, code_etape, code_etudiant, inscription_premiere)
   if (nrow(doublons) != 0) {
     message("Présence de doublons dans les parcours ELP rattachés aux inscriptions => concaténation des doubles parcours...")
     
@@ -326,7 +326,7 @@ data_resultats_etape <- function(derniere_annee = TRUE) {
   #### doublons session ####
   
   doublons <- resultats_etape %>% 
-    divr::doublons(annee, code_etape, code_etudiant, inscription_premiere, lib_session) %>% 
+    divr::duplicate(annee, code_etape, code_etudiant, inscription_premiere, lib_session) %>% 
     dplyr::mutate(admis = ifelse(code_resultat %in% c("ADM", "ADJ"), 1, NA_integer_)) %>% 
     dplyr::arrange(annee, code_etape, code_etudiant, inscription_premiere, lib_session, admis) %>% 
     dplyr::group_by(annee, code_etape, code_etudiant, inscription_premiere, lib_session) %>% 
