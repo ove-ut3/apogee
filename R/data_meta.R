@@ -267,7 +267,7 @@ data_sise <- function() {
   
   conv_etape_sise <- impexp::excel_importer(paste0(racine_packages, "apogee/raw/Etape.xlsx"), "Etape_sise", ligne_debut = 2) %>% 
     patchr::rename(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
-    source.maj::transcoder_champs(impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
+    patchr::transcode(impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
     dplyr::filter(annee >= 2007) %>% 
     dplyr::mutate(code_diplome_sise = as.character(code_diplome_sise)) %>% 
     dplyr::left_join(impexp::access_importer("diplome_sise", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>% 
@@ -292,7 +292,7 @@ data_sise <- function() {
   
   sise_diplome <- impexp::excel_importer(paste0(racine_packages, "apogee/raw/Diplome.xlsx"), "Diplome_sise", ligne_debut = 2) %>% 
     patchr::rename(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
-    source.maj::transcoder_champs(impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
+    patchr::transcode(impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
     dplyr::filter(annee >= 2007) %>% 
     dplyr::select(-annee) %>% 
     unique()
@@ -307,7 +307,7 @@ data_sise <- function() {
   
   sise_diplome_lib <- impexp::excel_importer(paste0(racine_packages, "apogee/raw/Diplome.xlsx"), "Diplome_sise_lib", ligne_debut = 2) %>% 
     patchr::rename(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
-    source.maj::transcoder_champs(impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))
+    patchr::transcode(impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))
   
   save("sise_diplome_lib", file = paste0(racine_packages, "apogee/data/sise_diplome_lib.RData"))
 }
@@ -366,7 +366,7 @@ data_diplome_version <- function() {
   #### Diplôme version ####
   diplome_version <- impexp::excel_importer(paste0(racine_packages, "apogee/raw/Diplome_version.xlsx"), ligne_debut = 2) %>% 
     patchr::rename(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
-    source.maj::transcoder_champs(impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
+    patchr::transcode(impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
     tidyr::nest(code_domaine_diplome, .key = "code_domaine_diplome") %>% 
     dplyr::mutate(code_domaine_diplome = purrr::map(code_domaine_diplome, ~ .[[1]]))
   save("diplome_version", file = paste0(racine_packages, "apogee/data/diplome_version.RData"))
