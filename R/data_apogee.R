@@ -131,7 +131,8 @@ data_inscrits <- function(derniere_annee = TRUE) {
                      import = purrr::map(import, patchr::transcode, impexp::access_importer("_contents", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
     apogee::doublon_maj_etudiant() %>% 
-    source.maj::recoder_champs(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")), source = "data_inscrits") %>% 
+    patchr::recode_formula(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>% 
+                             patchr::filter_data_patch(source = "data_inscrits")) %>% 
     dplyr::mutate(inscription_annulee = inscription_en_cours == "N" | !is.na(date_annulation) | inscription_resiliee == "O" | !is.na(date_resiliation),
                   inscription_annulee = ifelse(is.na(inscription_annulee), FALSE, inscription_annulee))
   

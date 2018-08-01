@@ -45,7 +45,8 @@ data_etape <- function() {
                      by = "code_etape") %>% 
     dplyr::left_join(etape_diplome_type, by = "code_etape") %>% 
     dplyr::left_join(etape_composante, by = "code_etape") %>% 
-    source.maj::recoder_champs(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")), source = "data_etape") %>% 
+    patchr::recode_formula(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>% 
+                             patchr::filter_data_patch(source = "data_etape")) %>% 
     dplyr::mutate(lib_etape_apogee = ifelse(lib_etape != lib_etape_apogee, FALSE, TRUE)) %>% 
     dplyr::select(-annee_etape_apogee) %>% 
     dplyr::left_join(annee_premiere_etape, by = "code_etape") %>% 
@@ -76,7 +77,8 @@ data_etape <- function() {
     dplyr::left_join(dplyr::select(etape_ville2, code_etape, ville_maj = ville), by = "code_etape") %>% 
     dplyr::mutate(ville = ifelse(!is.na(ville_maj), ville_maj, ville)) %>% 
     dplyr::select(-ville_maj) %>% 
-    source.maj::recoder_champs(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")), source = "data_etape")
+    patchr::recode_formula(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>% 
+                             patchr::filter_data_patch(source = "data_etape"))
   
   divr::duplicate(etape, code_etape)
 
@@ -201,7 +203,8 @@ data_etape <- function() {
   #### Etape - finalité ####
   etape_finalite <- impexp::excel_importer(paste0(racine_packages, "apogee/raw/Etape.xlsx"), "Etape_finalite", ligne_debut = 2) %>% 
     patchr::rename(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
-    source.maj::recoder_champs(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")), source = "data_etape_finalite") %>% 
+    patchr::recode_formula(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>% 
+                             patchr::filter_data_patch(source = "data_etape_finalite")) %>% 
     dplyr::arrange(code_etape, code_finalite_diplome) %>% 
     dplyr::group_by(code_etape) %>% 
     dplyr::filter(!is.na(code_finalite_diplome) | dplyr::row_number() == 1) %>% 
