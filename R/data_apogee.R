@@ -142,7 +142,7 @@ data_inscrits <- function(derniere_annee = TRUE) {
     apogee::nest_inscrits(code_version_etape)
   
   if (derniere_annee == TRUE) {
-    inscrits_annules <- divr::anti_join_bind(apogee::inscrits_annules, inscrits_annules, by = "annee")
+    inscrits_annules <- patchr::anti_join_bind(apogee::inscrits_annules, inscrits_annules, by = "annee")
   }
   
   save("inscrits_annules", file = paste0(racine_packages, "apogee/data/inscrits_annules.RData"))
@@ -157,12 +157,12 @@ data_inscrits <- function(derniere_annee = TRUE) {
   
   elp_parcours <- apogee::inscrits_elp %>% 
     dplyr::filter(code_elp %in% apogee::etape_histo$code_elp) %>% 
-    dplyr::anti_join(divr::duplicate(., annee, code_etape, code_etudiant, inscription_premiere),
+    dplyr::anti_join(patchr::duplicate(., annee, code_etape, code_etudiant, inscription_premiere),
                      by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
     dplyr::rename(elp_parcours = code_elp)
   
   # Vérifier la présence de double parcours
-  doublons <- divr::duplicate(elp_parcours, annee, code_etape, code_etudiant, inscription_premiere)
+  doublons <- patchr::duplicate(elp_parcours, annee, code_etape, code_etudiant, inscription_premiere)
   if (nrow(doublons) != 0) {
     message("Présence de doublons dans les parcours ELP rattachés aux inscriptions => concaténation des doubles parcours...")
     
@@ -191,7 +191,7 @@ data_inscrits <- function(derniere_annee = TRUE) {
     dplyr::filter(code_profil_etudiant %in% "CP" | apogee::hier_etape_filiere(code_etape) %in% "CPGE")
   
   if (derniere_annee == TRUE) {
-    inscrits_cpge <- divr::anti_join_bind(apogee::inscrits_cpge, inscrits_cpge, by = "annee")
+    inscrits_cpge <- patchr::anti_join_bind(apogee::inscrits_cpge, inscrits_cpge, by = "annee")
   }
   
   save("inscrits_cpge", file = paste0(racine_packages, "apogee/data/inscrits_cpge.RData"))
@@ -203,7 +203,7 @@ data_inscrits <- function(derniere_annee = TRUE) {
   #### Sauvegarde finale ####
   
   if (derniere_annee == TRUE) {
-    inscrits <- divr::anti_join_bind(apogee::inscrits, inscrits, by = "annee")
+    inscrits <- patchr::anti_join_bind(apogee::inscrits, inscrits, by = "annee")
   }
 
   save("inscrits", file = paste0(racine_packages, "apogee/data/inscrits.RData"))
@@ -230,7 +230,7 @@ data_inscrits_peda <- function(derniere_annee = TRUE) {
     apogee::doublon_maj_etudiant()
   
   if (derniere_annee == TRUE) {
-    inscrits_peda <- divr::anti_join_bind(apogee::inscrits_peda, inscrits_peda, by = "annee")
+    inscrits_peda <- patchr::anti_join_bind(apogee::inscrits_peda, inscrits_peda, by = "annee")
   }
   
   save("inscrits_peda", file = paste0(racine_packages, "apogee/data/inscrits_peda.RData"))
@@ -258,7 +258,7 @@ data_inscrits_elp <- function(derniere_annee = TRUE) {
     # dplyr::semi_join(apogee::inscrits, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
   
   if (derniere_annee == TRUE) {
-    inscrits_elp <- divr::anti_join_bind(apogee::inscrits_elp, inscrits_elp, by = "annee")
+    inscrits_elp <- patchr::anti_join_bind(apogee::inscrits_elp, inscrits_elp, by = "annee")
   }
   
   save("inscrits_elp", file = paste0(racine_packages, "apogee/data/inscrits_elp.RData"))
@@ -285,7 +285,7 @@ data_resultats_elp <- function(derniere_annee = TRUE) {
     apogee::doublon_maj_etudiant()
   
   if (derniere_annee == TRUE) {
-    resultats_elp <- divr::anti_join_bind(apogee::resultats_elp, resultats_elp, by = "annee")
+    resultats_elp <- patchr::anti_join_bind(apogee::resultats_elp, resultats_elp, by = "annee")
   }
   
   save("resultats_elp", file = paste0(racine_packages, "apogee/data/resultats_elp.RData"))
@@ -327,7 +327,7 @@ data_resultats_etape <- function(derniere_annee = TRUE) {
   #### doublons session ####
   
   doublons <- resultats_etape %>% 
-    divr::duplicate(annee, code_etape, code_etudiant, inscription_premiere, lib_session) %>% 
+    patchr::duplicate(annee, code_etape, code_etudiant, inscription_premiere, lib_session) %>% 
     dplyr::mutate(admis = ifelse(code_resultat %in% c("ADM", "ADJ"), 1, NA_integer_)) %>% 
     dplyr::arrange(annee, code_etape, code_etudiant, inscription_premiere, lib_session, admis) %>% 
     dplyr::group_by(annee, code_etape, code_etudiant, inscription_premiere, lib_session) %>% 
@@ -355,7 +355,7 @@ data_resultats_etape <- function(derniere_annee = TRUE) {
   #### Sauvegarde ####
   
   if (derniere_annee == TRUE) {
-    resultats_etape <- divr::anti_join_bind(apogee::resultats_etape, resultats_etape, by = "annee")
+    resultats_etape <- patchr::anti_join_bind(apogee::resultats_etape, resultats_etape, by = "annee")
   }
   
   save("resultats_etape", file = paste0(racine_packages, "apogee/data/resultats_etape.RData"))
@@ -388,7 +388,7 @@ data_resultats_diplome <- function(derniere_annee = TRUE) {
                      by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
 
   if (derniere_annee == TRUE) {
-    resultats_diplome <- divr::anti_join_bind(apogee::resultats_diplome, resultats_diplome, by = "annee")
+    resultats_diplome <- patchr::anti_join_bind(apogee::resultats_diplome, resultats_diplome, by = "annee")
   }
   
   save("resultats_diplome", file = paste0(racine_packages, "apogee/data/resultats_diplome.RData"))
@@ -443,7 +443,7 @@ data_diplomes <- function(derniere_annee = TRUE) {
     dplyr::anti_join(diplomes, ., by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
 
   if (derniere_annee == TRUE) {
-    diplomes <- divr::anti_join_bind(apogee::diplomes, diplomes, by = "annee")
+    diplomes <- patchr::anti_join_bind(apogee::diplomes, diplomes, by = "annee")
   }
   
   save("diplomes", file = paste0(racine_packages, "apogee/data/diplomes.RData"))

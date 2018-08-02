@@ -26,7 +26,7 @@ data_etape <- function() {
     dplyr::group_by(code_etape) %>% 
     dplyr::filter(dplyr::row_number() == n()) %>% 
     dplyr::ungroup() %>% 
-    divr::anti_join_bind(impexp::access_importer("etape_diplome_type_ajout", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>% 
+    patchr::anti_join_bind(impexp::access_importer("etape_diplome_type_ajout", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>% 
                            dplyr::select(-date_maj), ., by = "code_etape")
   
   etape_composante <- impexp::excel_importer(paste0(racine_packages, "apogee/raw/Etape.xlsx"), "Etape_composante", ligne_debut = 2) %>% 
@@ -80,7 +80,7 @@ data_etape <- function() {
     patchr::recode_formula(impexp::access_importer("_recodage", paste0(racine_packages, "apogee/raw/Tables_ref.accdb")) %>% 
                              patchr::filter_data_patch(source = "data_etape"))
   
-  divr::duplicate(etape, code_etape)
+  patchr::duplicate(etape, code_etape)
 
   save("etape", file = paste0(racine_packages, "apogee/data/etape.RData"))
   
@@ -128,18 +128,18 @@ data_etape <- function() {
     dplyr::filter(is.na(suppression_histo))
   
   dplyr::filter(etape_histo, is.na(code_elp)) %>% 
-    divr::duplicate(code_etape, code_etape_succ)
+    patchr::duplicate(code_etape, code_etape_succ)
   
   dplyr::filter(etape_histo, !is.na(code_elp)) %>% 
-    divr::duplicate(code_etape, code_elp, code_etape_succ)
+    patchr::duplicate(code_etape, code_elp, code_etape_succ)
   
   # Eclatements
   eclatement <- etape_histo %>% 
-    divr::duplicate(code_etape) %>% 
+    patchr::duplicate(code_etape) %>% 
     dplyr::mutate(doublon = "éclatement")
   
   eclatement_elp <- etape_histo %>% 
-    divr::duplicate(code_etape, code_elp) %>% 
+    patchr::duplicate(code_etape, code_elp) %>% 
     dplyr::mutate(doublon_elp = "éclatement")
   
   etape_histo <- etape_histo %>% 
@@ -175,7 +175,7 @@ data_etape <- function() {
     dplyr::filter(!is.na(code_mention_diplome) | dplyr::row_number() == 1) %>% 
     unique()
   
-  divr::duplicate(etape_mention, code_etape, code_mention_diplome)
+  patchr::duplicate(etape_mention, code_etape, code_mention_diplome)
   
   save("etape_mention", file = paste0(racine_packages, "apogee/data/etape_mention.RData"))
   
@@ -196,7 +196,7 @@ data_etape <- function() {
     dplyr::group_by(code_etape) %>% 
     dplyr::filter(!is.na(code_domaine_diplome) | dplyr::row_number() == 1)
   
-  divr::duplicate(etape_domaine, code_etape, code_domaine_diplome)
+  patchr::duplicate(etape_domaine, code_etape, code_domaine_diplome)
   
   save("etape_domaine", file = paste0(racine_packages, "apogee/data/etape_domaine.RData"))
   
@@ -217,7 +217,7 @@ data_etape <- function() {
                                                                .default = NA_character_),
                                                  code_finalite_diplome))
   
-  divr::duplicate(etape_finalite, code_etape)
+  patchr::duplicate(etape_finalite, code_etape)
   
   save("etape_finalite", file = paste0(racine_packages, "apogee/data/etape_finalite.RData"))
   
@@ -301,7 +301,7 @@ data_sise <- function() {
     unique()
   
   sise_diplome <- sise_diplome %>% 
-    dplyr::anti_join(divr::duplicate(sise_diplome, code_diplome), by = "code_diplome")
+    dplyr::anti_join(patchr::duplicate(sise_diplome, code_diplome), by = "code_diplome")
   
   save("sise_diplome", file = paste0(racine_packages, "apogee/data/sise_diplome.RData"))
   
@@ -477,7 +477,7 @@ data_elp <- function() {
     patchr::rename(impexp::access_importer("_rename", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
     dplyr::bind_rows(impexp::access_importer("elp_ajout", paste0(racine_packages, "apogee/raw/Tables_ref.accdb"))) %>% 
     dplyr::arrange(code_elp)
-  divr::duplicate(elp, code_elp)
+  patchr::duplicate(elp, code_elp)
   save("elp", file = paste0(racine_packages, "apogee/data/elp.RData"))
   
   # ELP nature
