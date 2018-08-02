@@ -11,5 +11,5 @@ inst/**/Diplomes*
 inst/**/Individus*
 inst/**/Inscrits*
 inst/**/Resultats*
+inst/extdata/scuio-ip/*
 inst/extdata/Tables_ref_individus.accdb
-raw/scuio-ip/*
