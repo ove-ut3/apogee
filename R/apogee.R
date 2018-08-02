@@ -1,3 +1,35 @@
+#' Mise a jour mensuelle des donnees Apogee (individus et meta-donnees)
+#' 
+#' Mise à jour mensuelle des données Apogée (individus et méta-données).
+#'
+#' @export
+#' @keywords internal
+mise_a_jour_data <- function() {
+  
+  # Méta-données
+  apogee::data_etape()
+  apogee::data_sise()
+  apogee::data_diplome()
+  apogee::data_composante()
+  apogee::data_diplome_version()
+  apogee::data_inscription()
+  apogee::data_elp()
+  apogee::data_resultat()
+  
+  # Données par individu
+  apogee::data_individus()
+  apogee::data_individus_diplome_origine()
+  apogee::data_individus_formation_origine()
+  apogee::data_inscrits()
+  apogee::data_inscrits_peda()
+  apogee::data_inscrits_elp()
+  apogee::data_resultats_elp()
+  apogee::data_resultats_etape()
+  apogee::data_resultats_diplome()
+  apogee::data_diplomes()
+  
+}
+
 #' Renvoie l'annee d'etape a partir du code etape
 #'
 #' Renvoie l'année d'étape à partir du code étape (Bac+1 -> 1, Bac+3 -> 3, etc).
@@ -220,38 +252,6 @@ formations_historique <- function(annee_debut) {
     split(f = dplyr::pull(., acronyme_type_diplome))
   
   return(formations_historique)
-}
-
-#' Mise a jour mensuelle des donnees Apogee (individus et meta-donnees)
-#' 
-#' Mise à jour mensuelle des données Apogée (individus et méta-données).
-#'
-#' @export
-#' @keywords internal
-mise_a_jour_data <- function() {
-  
-  # Méta-données
-  apogee::data_etape()
-  apogee::data_sise()
-  apogee::data_diplome()
-  apogee::data_composante()
-  apogee::data_diplome_version()
-  apogee::data_inscription()
-  apogee::data_elp()
-  apogee::data_resultat()
-  
-  # Données par individu
-  apogee::data_individus()
-  apogee::data_individus_diplome_origine()
-  apogee::data_individus_formation_origine()
-  apogee::data_inscrits()
-  apogee::data_inscrits_peda()
-  apogee::data_inscrits_elp()
-  apogee::data_resultats_elp()
-  apogee::data_resultats_etape()
-  apogee::data_resultats_diplome()
-  apogee::data_diplomes()
-  
 }
 
 #' Renvoie les mentions master compatibles
