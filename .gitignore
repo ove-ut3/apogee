@@ -7,9 +7,9 @@ data/individus*
 data/inscrits*
 data/resultats*
 data/stats*
-raw/**/Diplomes*
-raw/**/Individus*
-raw/**/Inscrits*
-raw/**/Resultats*
-raw/scuio-ip/*
+inst/**/Diplomes*
+inst/**/Individus*
+inst/**/Inscrits*
+inst/**/Resultats*
 inst/extdata/Tables_ref_individus.accdb
+raw/scuio-ip/*
