@@ -205,7 +205,7 @@ annee_en_cours <- function(mois_debut = 9) {
 #' @export
 formations_historique <- function(annee_debut) {
   
-  apogee::formations_liste() %>% 
+  formations_historique <- apogee::formations_liste() %>% 
     dplyr::anti_join(apogee::etape_histo, by = c("code_etape" = "code_etape_succ")) %>% 
     dplyr::mutate(annee = purrr::map2(apogee::etape_premiere_annee(code_etape), apogee::etape_derniere_annee(code_etape), ~ .x:.y)) %>% 
     dplyr::mutate(id = dplyr::row_number()) %>% 
@@ -217,8 +217,9 @@ formations_historique <- function(annee_debut) {
     tidyr::unite(champ, annee, champ, sep = "##") %>% 
     tidyr::spread(champ, valeur) %>% 
     dplyr::select(-id) %>% 
-    split(f = dplyr::pull(., acronyme_type_diplome)) %>% 
-    impexp::excel_exporter(paste0(racine_packages, "apogee/formations_historique.xlsx"))
+    split(f = dplyr::pull(., acronyme_type_diplome))
+  
+  return(formations_historique)
 }
 
 #' Mise a jour mensuelle des donnees Apogee (individus et meta-donnees)
