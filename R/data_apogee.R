@@ -52,7 +52,7 @@ data_individus <- function() {
   
   individus <- dplyr::left_join(individus, individus_departement_naissance, by = "code_etudiant")
   
-  save("individus", file = paste0(racine_packages, "apogee/data/individus.RData"))
+  save("individus", file = "data/individus.RData")
 }
 
 #' data_individus_origine
@@ -67,7 +67,7 @@ data_individus_diplome_origine <- function() {
     patchr::transcode(impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     dplyr::arrange(code_etudiant, annee_diplome_obtenu)
     
-  save("individus_diplome_origine", file = paste0(racine_packages, "apogee/data/individus_diplome_origine.RData"))
+  save("individus_diplome_origine", file = "data/individus_diplome_origine.RData")
 }
 
 #' data_individus_formation_origine
@@ -81,7 +81,7 @@ data_individus_formation_origine <- function() {
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     patchr::transcode(impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))
   
-  save("individus_formation_origine", file = paste0(racine_packages, "apogee/data/individus_formation_origine.RData"))
+  save("individus_formation_origine", file = "data/individus_formation_origine.RData")
 }
 
 #' nest_inscrits
@@ -145,7 +145,7 @@ data_inscrits <- function(derniere_annee = TRUE) {
     inscrits_annules <- patchr::anti_join_bind(apogee::inscrits_annules, inscrits_annules, by = "annee")
   }
   
-  save("inscrits_annules", file = paste0(racine_packages, "apogee/data/inscrits_annules.RData"))
+  save("inscrits_annules", file = "data/inscrits_annules.RData")
   
   inscrits <- inscrits %>% 
     dplyr::filter(!inscription_annulee) %>% 
@@ -194,7 +194,7 @@ data_inscrits <- function(derniere_annee = TRUE) {
     inscrits_cpge <- patchr::anti_join_bind(apogee::inscrits_cpge, inscrits_cpge, by = "annee")
   }
   
-  save("inscrits_cpge", file = paste0(racine_packages, "apogee/data/inscrits_cpge.RData"))
+  save("inscrits_cpge", file = "data/inscrits_cpge.RData")
   
   inscrits <- inscrits %>% 
     dplyr::filter(!code_profil_etudiant %in% "CP",
@@ -206,7 +206,7 @@ data_inscrits <- function(derniere_annee = TRUE) {
     inscrits <- patchr::anti_join_bind(apogee::inscrits, inscrits, by = "annee")
   }
 
-  save("inscrits", file = paste0(racine_packages, "apogee/data/inscrits.RData"))
+  save("inscrits", file = "data/inscrits.RData")
 }
 
 #' data_inscrits_peda
@@ -233,7 +233,7 @@ data_inscrits_peda <- function(derniere_annee = TRUE) {
     inscrits_peda <- patchr::anti_join_bind(apogee::inscrits_peda, inscrits_peda, by = "annee")
   }
   
-  save("inscrits_peda", file = paste0(racine_packages, "apogee/data/inscrits_peda.RData"))
+  save("inscrits_peda", file = "data/inscrits_peda.RData")
 }
 
 #' data_inscrits_elp
@@ -261,7 +261,7 @@ data_inscrits_elp <- function(derniere_annee = TRUE) {
     inscrits_elp <- patchr::anti_join_bind(apogee::inscrits_elp, inscrits_elp, by = "annee")
   }
   
-  save("inscrits_elp", file = paste0(racine_packages, "apogee/data/inscrits_elp.RData"))
+  save("inscrits_elp", file = "data/inscrits_elp.RData")
 }
 
 #' data_resultats_elp
@@ -288,7 +288,7 @@ data_resultats_elp <- function(derniere_annee = TRUE) {
     resultats_elp <- patchr::anti_join_bind(apogee::resultats_elp, resultats_elp, by = "annee")
   }
   
-  save("resultats_elp", file = paste0(racine_packages, "apogee/data/resultats_elp.RData"))
+  save("resultats_elp", file = "data/resultats_elp.RData")
 }
 
 #' data_resultats_etape
@@ -358,7 +358,7 @@ data_resultats_etape <- function(derniere_annee = TRUE) {
     resultats_etape <- patchr::anti_join_bind(apogee::resultats_etape, resultats_etape, by = "annee")
   }
   
-  save("resultats_etape", file = paste0(racine_packages, "apogee/data/resultats_etape.RData"))
+  save("resultats_etape", file = "data/resultats_etape.RData")
 }
 
 #' data_resultats_diplome
@@ -391,7 +391,7 @@ data_resultats_diplome <- function(derniere_annee = TRUE) {
     resultats_diplome <- patchr::anti_join_bind(apogee::resultats_diplome, resultats_diplome, by = "annee")
   }
   
-  save("resultats_diplome", file = paste0(racine_packages, "apogee/data/resultats_diplome.RData"))
+  save("resultats_diplome", file = "data/resultats_diplome.RData")
 }
 
 #' data_diplomes
@@ -446,7 +446,7 @@ data_diplomes <- function(derniere_annee = TRUE) {
     diplomes <- patchr::anti_join_bind(apogee::diplomes, diplomes, by = "annee")
   }
   
-  save("diplomes", file = paste0(racine_packages, "apogee/data/diplomes.RData"))
+  save("diplomes", file = "data/diplomes.RData")
 }
 
 #' data_stats
@@ -621,5 +621,5 @@ data_stats <- function() {
     dplyr::left_join(situation_ups_post, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
     dplyr::mutate(situation_ups_post = purrr::map_if(situation_ups_post, is.null, ~ dplyr::tibble()))
 
-  save("stats", file = paste0(racine_packages, "apogee/data/stats.RData"))
+  save("stats", file = "data/stats.RData")
 }

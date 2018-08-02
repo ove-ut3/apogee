@@ -82,7 +82,7 @@ data_etape <- function() {
   
   patchr::duplicate(etape, code_etape)
 
-  save("etape", file = paste0(racine_packages, "apogee/data/etape.RData"))
+  save("etape", file = "data/etape.RData")
   
   # Mise à jour du champ ACTIF dans la base Access
   impexp::access_import("etape", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")) %>%
@@ -150,12 +150,12 @@ data_etape <- function() {
     dplyr::mutate(doublon = ifelse(!is.na(doublon_elp), doublon_elp, doublon)) %>% 
     dplyr::arrange(code_etape, code_elp, code_etape_succ)
   
-  save("etape_histo", file = paste0(racine_packages, "apogee/data/etape_histo.RData"))
+  save("etape_histo", file = "data/etape_histo.RData")
   
   #### Flux ####
   
   etape_flux <- impexp::access_import("etape_flux", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
-  save("etape_flux", file = paste0(racine_packages, "apogee/data/etape_flux.RData"))
+  save("etape_flux", file = "data/etape_flux.RData")
   
   #### Etape - mention ####
   
@@ -177,7 +177,7 @@ data_etape <- function() {
   
   patchr::duplicate(etape_mention, code_etape, code_mention_diplome)
   
-  save("etape_mention", file = paste0(racine_packages, "apogee/data/etape_mention.RData"))
+  save("etape_mention", file = "data/etape_mention.RData")
   
   #### Etape - domaine ####
   
@@ -198,7 +198,7 @@ data_etape <- function() {
   
   patchr::duplicate(etape_domaine, code_etape, code_domaine_diplome)
   
-  save("etape_domaine", file = paste0(racine_packages, "apogee/data/etape_domaine.RData"))
+  save("etape_domaine", file = "data/etape_domaine.RData")
   
   #### Etape - finalité ####
   etape_finalite <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Etape.xlsx"), "Etape_finalite", ligne_debut = 2) %>% 
@@ -219,7 +219,7 @@ data_etape <- function() {
   
   patchr::duplicate(etape_finalite, code_etape)
   
-  save("etape_finalite", file = paste0(racine_packages, "apogee/data/etape_finalite.RData"))
+  save("etape_finalite", file = "data/etape_finalite.RData")
   
   #### Etape - discipline SISE ####
   etape_sise_discipline <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Etape.xlsx"), "Etape_discipline_sise") %>% 
@@ -233,12 +233,12 @@ data_etape <- function() {
     dplyr::filter(is.na(suppression)) %>% 
     dplyr::select(-suppression)
   
-  save("etape_sise_discipline", file = paste0(racine_packages, "apogee/data/etape_sise_discipline.RData"))
+  save("etape_sise_discipline", file = "data/etape_sise_discipline.RData")
   
   #### Etape - secteur DUT et LP ####
   
   etape_secteur <- impexp::access_import("etape_secteur", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
-  save("etape_secteur", file = paste0(racine_packages, "apogee/data/etape_secteur.RData"))
+  save("etape_secteur", file = "data/etape_secteur.RData")
   
   #### Etape - spécialité ####
   
@@ -247,18 +247,18 @@ data_etape <- function() {
     dplyr::anti_join(dplyr::filter(., !is.na(code_specialite_diplome)) %>% 
                        dplyr::mutate(code_specialite_diplome = NA_character_),
                      by = c("code_etape", "code_specialite_diplome"))
-  save("etape_specialite_diplome", file = paste0(racine_packages, "apogee/data/etape_specialite_diplome.RData"))
+  save("etape_specialite_diplome", file = "data/etape_specialite_diplome.RData")
   
   #### Etape - cycle ####
   
   etape_cycle <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Etape.xlsx"), "Etape_cycle") %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))
-  save("etape_cycle", file = paste0(racine_packages, "apogee/data/etape_cycle.RData"))
+  save("etape_cycle", file = "data/etape_cycle.RData")
   
   #### Cycle
   cycle <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Etape.xlsx"), "Cycle") %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))
-  save("cycle", file = paste0(racine_packages, "apogee/data/cycle.RData"))
+  save("cycle", file = "data/cycle.RData")
   
 }
 
@@ -291,7 +291,7 @@ data_sise <- function() {
     dplyr::mutate(code_diplome_sise = ifelse(!is.na(code_diplome_maj), code_diplome_maj, code_diplome_sise)) %>% 
     dplyr::select(code_etape, annee, code_diplome_sise) %>% 
     unique()
-  save("conv_etape_sise", file = paste0(racine_packages, "apogee/data/conv_etape_sise.RData"))
+  save("conv_etape_sise", file = "data/conv_etape_sise.RData")
   
   sise_diplome <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Diplome.xlsx"), "Diplome_sise", ligne_debut = 2) %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
@@ -303,16 +303,16 @@ data_sise <- function() {
   sise_diplome <- sise_diplome %>% 
     dplyr::anti_join(patchr::duplicate(sise_diplome, code_diplome), by = "code_diplome")
   
-  save("sise_diplome", file = paste0(racine_packages, "apogee/data/sise_diplome.RData"))
+  save("sise_diplome", file = "data/sise_diplome.RData")
   
   sise_discipline <- impexp::access_import("sise_discipline", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
-  save("sise_discipline", file = paste0(racine_packages, "apogee/data/sise_discipline.RData"))
+  save("sise_discipline", file = "data/sise_discipline.RData")
   
   sise_diplome_lib <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Diplome.xlsx"), "Diplome_sise_lib", ligne_debut = 2) %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     patchr::transcode(impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))
   
-  save("sise_diplome_lib", file = paste0(racine_packages, "apogee/data/sise_diplome_lib.RData"))
+  save("sise_diplome_lib", file = "data/sise_diplome_lib.RData")
 }
 
 #' data_diplome
@@ -323,15 +323,15 @@ data_diplome <- function() {
   
   diplome <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Diplome.xlsx"), ligne_debut = 2) %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))
-  save("diplome", file = paste0(racine_packages, "apogee/data/diplome.RData"))
+  save("diplome", file = "data/diplome.RData")
   
   diplome_type <- impexp::access_import("diplome_type", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
-  save("diplome_type", file = paste0(racine_packages, "apogee/data/diplome_type.RData"))
+  save("diplome_type", file = "data/diplome_type.RData")
   
   diplome_anterieur_type <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Diplome.xlsx"), "Diplome_anterieur_origine", ligne_debut = 2) %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     dplyr::add_row(code_type_diplome_anterieur = NA_character_, lib_type_diplome_anterieur = "Non-ventilé")
-  save("diplome_anterieur_type", file = paste0(racine_packages, "apogee/data/diplome_anterieur_type.RData"))
+  save("diplome_anterieur_type", file = "data/diplome_anterieur_type.RData")
 }
 
 #' data_composante
@@ -348,15 +348,15 @@ data_composante <- function() {
     dplyr::mutate(lib_composante = ifelse(!is.na(lib_composante_maj), lib_composante_maj, lib_composante)) %>% 
     dplyr::select(-lib_composante_maj) %>% 
     tidyr::drop_na(code_composante)
-  save("composante", file = paste0(racine_packages, "apogee/data/composante.RData"))
+  save("composante", file = "data/composante.RData")
   
   composante_type <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Composante.xlsx"), "Composante_type", ligne_debut = 2) %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     tidyr::drop_na(code_type_composante)
-  save("composante_type", file = paste0(racine_packages, "apogee/data/composante_type.RData"))
+  save("composante_type", file = "data/composante_type.RData")
   
   composante_histo <- impexp::access_import("composante_histo", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
-  save("composante_histo", file = paste0(racine_packages, "apogee/data/composante_histo.RData"))
+  save("composante_histo", file = "data/composante_histo.RData")
   
 }
 
@@ -372,7 +372,7 @@ data_diplome_version <- function() {
     patchr::transcode(impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     tidyr::nest(code_domaine_diplome, .key = "code_domaine_diplome") %>% 
     dplyr::mutate(code_domaine_diplome = purrr::map(code_domaine_diplome, ~ .[[1]]))
-  save("diplome_version", file = paste0(racine_packages, "apogee/data/diplome_version.RData"))
+  save("diplome_version", file = "data/diplome_version.RData")
   
   #### Domaine ####
   diplome_domaine <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Diplome_version.xlsx"), "Formation_domaine", ligne_debut = 2) %>% 
@@ -382,13 +382,13 @@ data_diplome_version <- function() {
                      by = "code_domaine_diplome") %>% 
     dplyr::mutate(lib_domaine_diplome = ifelse(!is.na(maj_lib_domaine_diplome), maj_lib_domaine_diplome, lib_domaine_diplome)) %>% 
     dplyr::select(-maj_lib_domaine_diplome)
-  save("diplome_domaine", file = paste0(racine_packages, "apogee/data/diplome_domaine.RData"))
+  save("diplome_domaine", file = "data/diplome_domaine.RData")
   
   #### Finalité ####
   diplome_finalite <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Diplome_version.xlsx"), "Finalite", ligne_debut = 2) %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     dplyr::bind_rows(impexp::access_import("diplome_finalite_ajout", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))
-  save("diplome_finalite", file = paste0(racine_packages, "apogee/data/diplome_finalite.RData"))
+  save("diplome_finalite", file = "data/diplome_finalite.RData")
   
   #### Mention ####
   diplome_mention <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Diplome_version.xlsx"), "Mention", ligne_debut = 2) %>% 
@@ -398,23 +398,23 @@ data_diplome_version <- function() {
                      by = "code_mention_diplome") %>% 
     dplyr::mutate(lib_mention_diplome = ifelse(!is.na(maj_lib_mention_diplome), maj_lib_mention_diplome, lib_mention_diplome)) %>% 
     dplyr::select(-maj_lib_mention_diplome)
-  save("diplome_mention", file = paste0(racine_packages, "apogee/data/diplome_mention.RData"))
+  save("diplome_mention", file = "data/diplome_mention.RData")
   
   #### Mention - historique ####
   
   diplome_mention_histo <- impexp::access_import("diplome_mention_histo", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
-  save("diplome_mention_histo", file = paste0(racine_packages, "apogee/data/diplome_mention_histo.RData"))
+  save("diplome_mention_histo", file = "data/diplome_mention_histo.RData")
   
   #### Mention - compatibilité licence et master ####
   
   diplome_mention_lm <- impexp::access_import("diplome_mention_lm", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
-  save("diplome_mention_lm", file = paste0(racine_packages, "apogee/data/diplome_mention_lm.RData"))
+  save("diplome_mention_lm", file = "data/diplome_mention_lm.RData")
   
   #### Spécialité ####
   diplome_specialite <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Diplome_version.xlsx"), "Specialite") %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     tidyr::drop_na(code_specialite_diplome)
-  save("diplome_specialite", file = paste0(racine_packages, "apogee/data/diplome_specialite.RData"))
+  save("diplome_specialite", file = "data/diplome_specialite.RData")
 }
 
 #' data_inscription
@@ -426,44 +426,44 @@ data_inscription <- function() {
   profil_etudiant <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Inscription.xlsx"), "Profil_etudiant", ligne_debut = 2) %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     tidyr::drop_na(code_profil_etudiant)
-  save("profil_etudiant", file = paste0(racine_packages, "apogee/data/profil_etudiant.RData"))
+  save("profil_etudiant", file = "data/profil_etudiant.RData")
   
   regime_inscription <- impexp::access_import("regime_inscription", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
-  save("regime_inscription", file = paste0(racine_packages, "apogee/data/regime_inscription.RData"))
+  save("regime_inscription", file = "data/regime_inscription.RData")
   
   statut_etudiant <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Inscription.xlsx"), "Statut_etudiant", ligne_debut = 2) %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     tidyr::drop_na(code_statut_etudiant)
-  save("statut_etudiant", file = paste0(racine_packages, "apogee/data/statut_etudiant.RData"))
+  save("statut_etudiant", file = "data/statut_etudiant.RData")
   
   # Sexe
   sexe <- impexp::access_import("sexe", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
-  save("sexe", file = paste0(racine_packages, "apogee/data/sexe.RData"))
+  save("sexe", file = "data/sexe.RData")
   
   # PCS
   pcs <- impexp::access_import("pcs", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
-  save("pcs", file = paste0(racine_packages, "apogee/data/pcs.RData"))
+  save("pcs", file = "data/pcs.RData")
   
   # Bac
   bac <- impexp::access_import("bac", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
-  save("bac", file = paste0(racine_packages, "apogee/data/bac.RData"))
+  save("bac", file = "data/bac.RData")
   
   bac_mention <- impexp::access_import("bac_mention", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
-  save("bac_mention", file = paste0(racine_packages, "apogee/data/bac_mention.RData"))
+  save("bac_mention", file = "data/bac_mention.RData")
   
   bourse <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Inscription.xlsx"), "Bourse", ligne_debut = 2) %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))
-  save("bourse", file = paste0(racine_packages, "apogee/data/bourse.RData"))
+  save("bourse", file = "data/bourse.RData")
   
   situation_sociale <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Inscription.xlsx"), "Situation_sociale", ligne_debut = 2) %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))
-  save("situation_sociale", file = paste0(racine_packages, "apogee/data/situation_sociale.RData"))
+  save("situation_sociale", file = "data/situation_sociale.RData")
   
   # Type d'établissement
   etablissement_type <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Individu.xlsx"), "Type établissement") %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     dplyr::add_row(code_type_etab = NA_character_, lib_type_etab = "Non-ventilé")
-  save("etablissement_type", file = paste0(racine_packages, "apogee/data/etablissement_type.RData"))
+  save("etablissement_type", file = "data/etablissement_type.RData")
 }
 
 #' data_elp
@@ -478,21 +478,21 @@ data_elp <- function() {
     dplyr::bind_rows(impexp::access_import("elp_ajout", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     dplyr::arrange(code_elp)
   patchr::duplicate(elp, code_elp)
-  save("elp", file = paste0(racine_packages, "apogee/data/elp.RData"))
+  save("elp", file = "data/elp.RData")
   
   # ELP nature
   elp_nature <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/ELP.xlsx"), "ELP - Nature", ligne_debut = 2) %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))
-  save("elp_nature", file = paste0(racine_packages, "apogee/data/elp_nature.RData"))
+  save("elp_nature", file = "data/elp_nature.RData")
   
   # ELP Période
   elp_periode <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/ELP.xlsx"), "ELP - Periode", ligne_debut = 2) %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))
-  save("elp_periode", file = paste0(racine_packages, "apogee/data/elp_periode.RData"))
+  save("elp_periode", file = "data/elp_periode.RData")
   
   # ELP histo
   elp_histo <- impexp::access_import("elp_histo", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
-  save("elp_histo", file = paste0(racine_packages, "apogee/data/elp_histo.RData"))
+  save("elp_histo", file = "data/elp_histo.RData")
   
 }
 
@@ -504,7 +504,7 @@ data_resultat <- function() {
   
   resultat <- impexp::excel_importer(paste0(find.package("apogee"), "/extdata/Resultat.xlsx"), ligne_debut = 2) %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))
-  save("resultat", file = paste0(racine_packages, "apogee/data/resultat.RData"))
+  save("resultat", file = "data/resultat.RData")
   
 }
 
@@ -515,8 +515,8 @@ data_resultat <- function() {
 data_academie <- function() {
   
   academie <- impexp::access_import("academie", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
-  save("academie", file = paste0(racine_packages, "apogee/data/academie.RData"))
+  save("academie", file = "data/academie.RData")
   
   departement_academie <- impexp::access_import("departement_academie", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
-  save("departement_academie", file = paste0(racine_packages, "apogee/data/departement_academie.RData"))
+  save("departement_academie", file = "data/departement_academie.RData")
 }
