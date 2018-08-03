@@ -90,14 +90,14 @@ data_etape <- function() {
     dplyr::semi_join(dplyr::filter(etape, actif), by = "code_etape") %>%
     dplyr::pull(code_etape) %>%
     paste0("UPDATE etape SET ACTIF = 'O' WHERE CODE_ETAPE = '", .,"';") %>%
-    impexp::access_executer_sql(paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
+    impexp::access_execute_sql(paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
   
   impexp::access_import("etape", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")) %>%
     dplyr::filter(!is.na(actif)) %>%
     dplyr::semi_join(dplyr::filter(etape, !actif), by = "code_etape") %>%
     dplyr::pull(code_etape) %>%
     paste0("UPDATE etape SET ACTIF = '' WHERE CODE_ETAPE = '", .,"';") %>%
-    impexp::access_executer_sql(paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
+    impexp::access_execute_sql(paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
   
   # Suppression des lignes obsolètes
   impexp::access_import("etape", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")) %>%
@@ -112,7 +112,7 @@ data_etape <- function() {
     dplyr::filter(n() == 1) %>% 
     dplyr::pull(code_etape) %>%
     paste0("DELETE FROM etape WHERE CODE_ETAPE = '", .,"';") %>%
-    impexp::access_executer_sql(paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
+    impexp::access_execute_sql(paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
   
   impexp::access_import("etape", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")) %>% 
     dplyr::anti_join(dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge), 
@@ -120,7 +120,7 @@ data_etape <- function() {
     dplyr::anti_join(apogee::diplomes, by = "code_etape") %>% 
     dplyr::pull(code_etape) %>% 
     paste0("DELETE FROM etape WHERE CODE_ETAPE = '", .,"';") %>%
-    impexp::access_executer_sql(paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
+    impexp::access_execute_sql(paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
 
   #### Historique ####
   
