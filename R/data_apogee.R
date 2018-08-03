@@ -345,7 +345,7 @@ data_resultats_etape <- function(derniere_annee = TRUE) {
   suppression_session2 <- apogee::resultats_etape %>% 
     dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, lib_session, code_resultat) %>% 
     tidyr::spread(lib_session, code_resultat) %>% 
-    impexp::normaliser_nom_champs() %>% 
+    patchr::normalise_colnames() %>% 
     dplyr::filter(session_1 %in% c("ADM", "ADJ") & !session_2 %in% c(NA_character_, "ADM", "ADJ")) %>% 
     dplyr::mutate(lib_session = "Session 2")
   
