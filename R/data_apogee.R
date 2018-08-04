@@ -22,12 +22,12 @@ doublon_maj_etudiant <- function(table) {
 #' @keywords internal
 data_individus <- function() {
   
-  individus <- impexp::csv_importer_masse(regex_fichier = "Individus\\.csv", chemin = paste0(find.package("apogee"), "/extdata"), archive_zip = TRUE, ligne_debut = 2, fonction = "fread") %>% 
+  individus <- impexp::csv_import_path("Individus\\.csv", path = paste0(find.package("apogee"), "/extdata"), zip = TRUE, skip = 1) %>% 
     tidyr::unnest() %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     patchr::transcode(impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))
   
-  individus_bac <- impexp::csv_importer_masse("Individus - Bac\\.csv", chemin = paste0(find.package("apogee"), "/extdata"), archive_zip = TRUE, ligne_debut = 2) %>% 
+  individus_bac <- impexp::csv_import_path("Individus - Bac\\.csv", path = paste0(find.package("apogee"), "/extdata"), zip = TRUE, skip = 1) %>% 
     tidyr::unnest() %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     patchr::transcode(impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
@@ -38,14 +38,14 @@ data_individus <- function() {
   
   individus <- dplyr::left_join(individus, individus_bac, by = "code_etudiant")
   
-  individus_mail_ups <- impexp::csv_importer_masse("Individus - Mail UPS\\.csv", chemin = paste0(find.package("apogee"), "/extdata"), archive_zip = TRUE, ligne_debut = 2) %>% 
+  individus_mail_ups <- impexp::csv_import_path("Individus - Mail UPS\\.csv", path = paste0(find.package("apogee"), "/extdata"), zip = TRUE, skip = 1) %>% 
     tidyr::unnest() %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     patchr::transcode(impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))
   
   individus <- dplyr::left_join(individus, individus_mail_ups, by = "code_etudiant")
   
-  individus_departement_naissance <- impexp::csv_importer_masse("Individus_departement_naissance\\.csv", chemin = paste0(find.package("apogee"), "/extdata"), archive_zip = TRUE, ligne_debut = 2) %>% 
+  individus_departement_naissance <- impexp::csv_import_path("Individus_departement_naissance\\.csv", path = paste0(find.package("apogee"), "/extdata"), zip = TRUE, skip = 1) %>% 
     tidyr::unnest() %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     patchr::transcode(impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))
@@ -61,7 +61,7 @@ data_individus <- function() {
 #' @keywords internal
 data_individus_diplome_origine <- function() {
   
-  individus_diplome_origine <- impexp::csv_importer_masse("Individus_diplome_origine\\.csv", chemin = paste0(find.package("apogee"), "/extdata"), archive_zip = TRUE, ligne_debut = 2) %>% 
+  individus_diplome_origine <- impexp::csv_import_path("Individus_diplome_origine\\.csv", path = paste0(find.package("apogee"), "/extdata"), zip = TRUE, skip = 1) %>% 
     tidyr::unnest() %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     patchr::transcode(impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
@@ -76,7 +76,7 @@ data_individus_diplome_origine <- function() {
 #' @keywords internal
 data_individus_formation_origine <- function() {
   
-  individus_formation_origine <- impexp::csv_importer_masse("Individus_formation_origine\\.csv", chemin = paste0(find.package("apogee"), "/extdata"), archive_zip = TRUE, ligne_debut = 2) %>% 
+  individus_formation_origine <- impexp::csv_import_path("Individus_formation_origine\\.csv", path = paste0(find.package("apogee"), "/extdata"), zip = TRUE, skip = 1) %>% 
     tidyr::unnest() %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     patchr::transcode(impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))
@@ -126,7 +126,7 @@ data_inscrits <- function(derniere_annee = TRUE) {
     n_csv <- Inf
   }
   
-  inscrits <- impexp::csv_importer_masse("Inscrits\\.csv$", chemin = paste0(find.package("apogee"), "/extdata"), ligne_debut = 2, archive_zip = TRUE, n_csv = n_csv) %>% 
+  inscrits <- impexp::csv_import_path("Inscrits\\.csv$", path = paste0(find.package("apogee"), "/extdata"), skip = 1, zip = TRUE, n_csv = n_csv) %>% 
     dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))),
                      import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
@@ -223,7 +223,7 @@ data_inscrits_peda <- function(derniere_annee = TRUE) {
     n_csv <- Inf
   }
   
-  inscrits_peda <- impexp::csv_importer_masse("Inscrits_peda\\.csv$", chemin = paste0(find.package("apogee"), "/extdata"), ligne_debut = 2, archive_zip = TRUE, n_csv = n_csv) %>% 
+  inscrits_peda <- impexp::csv_import_path("Inscrits_peda\\.csv$", path = paste0(find.package("apogee"), "/extdata"), skip = 1, zip = TRUE, n_csv = n_csv) %>% 
     dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))),
                      import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
@@ -250,7 +250,7 @@ data_inscrits_elp <- function(derniere_annee = TRUE) {
     n_csv <- Inf
   }
   
-  inscrits_elp <- impexp::csv_importer_masse("Inscrits_ELP.*?\\.csv$", chemin = paste0(find.package("apogee"), "/extdata"), archive_zip = TRUE, n_csv = n_csv, ligne_debut = 2) %>% 
+  inscrits_elp <- impexp::csv_import_path("Inscrits_ELP.*?\\.csv$", path = paste0(find.package("apogee"), "/extdata"), zip = TRUE, n_csv = n_csv, skip = 1) %>% 
     dplyr::transmute(import = lapply(import, patchr::rename, impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))),
                      import = lapply(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
@@ -278,7 +278,7 @@ data_resultats_elp <- function(derniere_annee = TRUE) {
     n_csv <- Inf
   }
   
-  resultats_elp <- impexp::csv_importer_masse("^Resultats_ELP.*?\\.csv$", chemin = paste0(find.package("apogee"), "/extdata"), archive_zip = TRUE, n_csv = n_csv, ligne_debut = 2) %>% 
+  resultats_elp <- impexp::csv_import_path("^Resultats_ELP.*?\\.csv$", path = paste0(find.package("apogee"), "/extdata"), zip = TRUE, n_csv = n_csv, skip = 1) %>% 
     dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))),
                      import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
@@ -305,14 +305,14 @@ data_resultats_etape <- function(derniere_annee = TRUE) {
     n_csv <- Inf
   }
   
-  resultats_etape <- impexp::csv_importer_masse("Resultats_etape\\.csv$", chemin = paste0(find.package("apogee"), "/extdata"), archive_zip = TRUE, n_csv = n_csv, ligne_debut = 2) %>% 
+  resultats_etape <- impexp::csv_import_path("Resultats_etape\\.csv$", path = paste0(find.package("apogee"), "/extdata"), zip = TRUE, n_csv = n_csv, skip = 1) %>% 
     dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))),
                      import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
     apogee::doublon_maj_etudiant()
   
   #### PACES ####
-  resultats_paces <- impexp::csv_importer_masse("Resultats_etape_paces\\.csv$", chemin = paste0(find.package("apogee"), "/extdata"), archive_zip = TRUE, ligne_debut = 2) %>% 
+  resultats_paces <- impexp::csv_import_path("Resultats_etape_paces\\.csv$", path = paste0(find.package("apogee"), "/extdata"), zip = TRUE, skip = 1) %>% 
     dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))),
                      import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
@@ -375,7 +375,7 @@ data_resultats_diplome <- function(derniere_annee = TRUE) {
     n_csv <- Inf
   }
   
-  resultats_diplome <- impexp::csv_importer_masse("Resultats_diplome\\.csv$", chemin = paste0(find.package("apogee"), "/extdata"), archive_zip = TRUE, n_csv = n_csv, ligne_debut = 2) %>% 
+  resultats_diplome <- impexp::csv_import_path("Resultats_diplome\\.csv$", path = paste0(find.package("apogee"), "/extdata"), zip = TRUE, n_csv = n_csv, skip = 1) %>% 
     dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))),
                      import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
@@ -408,7 +408,7 @@ data_diplomes <- function(derniere_annee = TRUE) {
     n_csv <- Inf
   }
   
-  diplomes <- impexp::csv_importer_masse("Diplomes\\.csv$", chemin = paste0(find.package("apogee"), "/extdata"), archive_zip = TRUE, n_csv = n_csv, ligne_debut = 2) %>% 
+  diplomes <- impexp::csv_import_path("Diplomes\\.csv$", path = paste0(find.package("apogee"), "/extdata"), zip = TRUE, n_csv = n_csv, skip = 1) %>% 
     dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))),
                      import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
