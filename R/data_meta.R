@@ -39,7 +39,7 @@ data_etape <- function() {
   
   etape <- readxl::read_excel(paste0(find.package("apogee"), "/extdata/Etape.xlsx"), skip = 1) %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
-    source.maj::supprimer_doublons_champ(temoin_annee1_diplome) %>% 
+    patchr::remove_duplicate(temoin_annee1_diplome) %>% 
     dplyr::rename(lib_etape_apogee = lib_etape) %>% 
     dplyr::left_join(impexp::access_import("etape", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")),
                      by = "code_etape") %>% 
