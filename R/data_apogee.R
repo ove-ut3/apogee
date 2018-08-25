@@ -128,7 +128,7 @@ data_inscrits <- function(derniere_annee = TRUE) {
   
   inscrits <- impexp::csv_import_path("Inscrits\\.csv$", path = paste0(find.package("apogee"), "/extdata"), skip = 1, zip = TRUE, n_csv = n_csv) %>% 
     dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))),
-                     import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>% 
+                     import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>%
     tidyr::unnest() %>% 
     apogee::doublon_maj_etudiant() %>% 
     patchr::recode_formula(impexp::access_import("_recodage", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")) %>% 
