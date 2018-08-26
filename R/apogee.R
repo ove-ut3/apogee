@@ -1,9 +1,3 @@
-#' Mise a jour mensuelle des donnees Apogee (individus et meta-donnees)
-#' 
-#' Mise à jour mensuelle des données Apogée (individus et méta-données).
-#'
-#' @export
-#' @keywords internal
 mise_a_jour_data <- function() {
   
   # Méta-données

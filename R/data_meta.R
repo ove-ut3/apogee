@@ -1,7 +1,3 @@
-#' data_etape
-#'
-#' @export
-#' @keywords internal
 data_etape <- function() {
   
   #### Etape ####
@@ -262,10 +258,6 @@ data_etape <- function() {
   
 }
 
-#' data_sise
-#'
-#' @export
-#' @keywords internal
 data_sise <- function() {
   
   conv_etape_sise <- readxl::read_excel(paste0(find.package("apogee"), "/extdata/Etape.xlsx"), "Etape_sise", skip = 1) %>% 
@@ -315,10 +307,6 @@ data_sise <- function() {
   save("sise_diplome_lib", file = "data/sise_diplome_lib.RData")
 }
 
-#' data_diplome
-#'
-#' @export
-#' @keywords internal
 data_diplome <- function() {
   
   diplome <- readxl::read_excel(paste0(find.package("apogee"), "/extdata/Diplome.xlsx"), skip = 1) %>% 
@@ -334,10 +322,6 @@ data_diplome <- function() {
   save("diplome_anterieur_type", file = "data/diplome_anterieur_type.RData")
 }
 
-#' data_composante
-#'
-#' @export
-#' @keywords internal
 data_composante <- function() {
   
   composante <- readxl::read_excel(paste0(find.package("apogee"), "/extdata/Composante.xlsx"), skip = 1) %>% 
@@ -360,10 +344,6 @@ data_composante <- function() {
   
 }
 
-#' data_diplome_version
-#'
-#' @export
-#' @keywords internal
 data_diplome_version <- function() {
   
   #### Diplôme version ####
@@ -417,10 +397,6 @@ data_diplome_version <- function() {
   save("diplome_specialite", file = "data/diplome_specialite.RData")
 }
 
-#' data_inscription
-#'
-#' @export
-#' @keywords internal
 data_inscription <- function() {
   
   profil_etudiant <- readxl::read_excel(paste0(find.package("apogee"), "/extdata/Inscription.xlsx"), "Profil_etudiant", skip = 1) %>% 
@@ -466,10 +442,6 @@ data_inscription <- function() {
   save("etablissement_type", file = "data/etablissement_type.RData")
 }
 
-#' data_elp
-#'
-#' @export
-#' @keywords internal
 data_elp <- function() {
   
   # ELP
@@ -496,10 +468,6 @@ data_elp <- function() {
   
 }
 
-#' data_resultat
-#'
-#' @export
-#' @keywords internal
 data_resultat <- function() {
   
   resultat <- readxl::read_excel(paste0(find.package("apogee"), "/extdata/Resultat.xlsx"), skip = 1) %>% 
@@ -508,10 +476,6 @@ data_resultat <- function() {
   
 }
 
-#' data_academie
-#'
-#' @export
-#' @keywords internal
 data_academie <- function() {
   
   academie <- impexp::access_import("academie", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))

@@ -1,9 +1,3 @@
-#' doublon_maj_etudiant
-#'
-#' @param table \dots
-#'
-#' @export
-#' @keywords internal
 doublon_maj_etudiant <- function(table) {
   
   table <- table %>% 
@@ -16,10 +10,6 @@ doublon_maj_etudiant <- function(table) {
   return(table)
 }
 
-#' data_individus
-#'
-#' @export
-#' @keywords internal
 data_individus <- function() {
   
   individus <- impexp::csv_import_path("Individus\\.csv", path = paste0(find.package("apogee"), "/extdata"), zip = TRUE, skip = 1) %>% 
@@ -55,10 +45,6 @@ data_individus <- function() {
   save("individus", file = "data/individus.RData")
 }
 
-#' data_individus_origine
-#'
-#' @export
-#' @keywords internal
 data_individus_diplome_origine <- function() {
   
   individus_diplome_origine <- impexp::csv_import_path("Individus_diplome_origine\\.csv", path = paste0(find.package("apogee"), "/extdata"), zip = TRUE, skip = 1) %>% 
@@ -70,10 +56,6 @@ data_individus_diplome_origine <- function() {
   save("individus_diplome_origine", file = "data/individus_diplome_origine.RData")
 }
 
-#' data_individus_formation_origine
-#'
-#' @export
-#' @keywords internal
 data_individus_formation_origine <- function() {
   
   individus_formation_origine <- impexp::csv_import_path("Individus_formation_origine\\.csv", path = paste0(find.package("apogee"), "/extdata"), zip = TRUE, skip = 1) %>% 
@@ -84,14 +66,6 @@ data_individus_formation_origine <- function() {
   save("individus_formation_origine", file = "data/individus_formation_origine.RData")
 }
 
-#' nest_inscrits
-#'
-#' @param table \dots
-#' @param champ_nest \dots
-#' @param cle \dots
-#'
-#' @export
-#' @keywords internal
 nest_inscrits <- function(table, champ_nest, cle = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) {
   
   quo_champ_nest <- dplyr::enquo(champ_nest)
@@ -112,12 +86,6 @@ nest_inscrits <- function(table, champ_nest, cle = c("annee", "code_etape", "cod
   return(nest2)
 }
 
-#' data_inscrits
-#'
-#' @param derniere_annee \dots
-#'
-#' @export
-#' @keywords internal
 data_inscrits <- function(derniere_annee = TRUE) {
   
   if (derniere_annee == TRUE) {
@@ -209,12 +177,6 @@ data_inscrits <- function(derniere_annee = TRUE) {
   save("inscrits", file = "data/inscrits.RData")
 }
 
-#' data_inscrits_peda
-#'
-#' @param derniere_annee \dots
-#' 
-#' @export
-#' @keywords internal
 data_inscrits_peda <- function(derniere_annee = TRUE) {
   
   if (derniere_annee == TRUE) {
@@ -236,12 +198,6 @@ data_inscrits_peda <- function(derniere_annee = TRUE) {
   save("inscrits_peda", file = "data/inscrits_peda.RData")
 }
 
-#' data_inscrits_elp
-#'
-#' @param derniere_annee \dots
-#' 
-#' @export
-#' @keywords internal
 data_inscrits_elp <- function(derniere_annee = TRUE) {
   
   if (derniere_annee == TRUE) {
@@ -264,12 +220,6 @@ data_inscrits_elp <- function(derniere_annee = TRUE) {
   save("inscrits_elp", file = "data/inscrits_elp.RData")
 }
 
-#' data_resultats_elp
-#'
-#' @param derniere_annee \dots
-#' 
-#' @export
-#' @keywords internal
 data_resultats_elp <- function(derniere_annee = TRUE) {
 
   if (derniere_annee == TRUE) {
@@ -291,12 +241,6 @@ data_resultats_elp <- function(derniere_annee = TRUE) {
   save("resultats_elp", file = "data/resultats_elp.RData")
 }
 
-#' data_resultats_etape
-#'
-#' @param derniere_annee \dots
-#' 
-#' @export
-#' @keywords internal
 data_resultats_etape <- function(derniere_annee = TRUE) {
   
   if (derniere_annee == TRUE) {
@@ -361,12 +305,6 @@ data_resultats_etape <- function(derniere_annee = TRUE) {
   save("resultats_etape", file = "data/resultats_etape.RData")
 }
 
-#' data_resultats_diplome
-#'
-#' @param derniere_annee \dots
-#' 
-#' @export
-#' @keywords internal
 data_resultats_diplome <- function(derniere_annee = TRUE) {
   
   if (derniere_annee == TRUE) {
@@ -394,12 +332,6 @@ data_resultats_diplome <- function(derniere_annee = TRUE) {
   save("resultats_diplome", file = "data/resultats_diplome.RData")
 }
 
-#' data_diplomes
-#'
-#' @param derniere_annee \dots
-#' 
-#' @export
-#' @keywords internal
 data_diplomes <- function(derniere_annee = TRUE) {
   
   if (derniere_annee == TRUE) {
@@ -449,10 +381,6 @@ data_diplomes <- function(derniere_annee = TRUE) {
   save("diplomes", file = "data/diplomes.RData")
 }
 
-#' data_stats
-#'
-#' @export
-#' @keywords internal
 data_stats <- function() {
   
   stats <- apogee::inscrits %>%
