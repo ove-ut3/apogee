@@ -98,7 +98,7 @@ data_inscrits <- function(derniere_annee = TRUE) {
     dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))),
                      import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>%
     tidyr::unnest() %>% 
-    apogee::doublon_maj_etudiant() %>% 
+    doublon_maj_etudiant() %>% 
     patchr::recode_formula(impexp::access_import("_recodage", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")) %>% 
                              patchr::filter_data_patch(source = "data_inscrits")) %>% 
     dplyr::mutate(inscription_annulee = inscription_en_cours == "N" | !is.na(date_annulation) | inscription_resiliee == "O" | !is.na(date_resiliation),
@@ -106,8 +106,8 @@ data_inscrits <- function(derniere_annee = TRUE) {
   
   inscrits_annules <- dplyr::filter(inscrits, inscription_annulee) %>% 
     dplyr::select(-inscription_annulee) %>% 
-    apogee::nest_inscrits(code_composante) %>%
-    apogee::nest_inscrits(code_version_etape)
+    nest_inscrits(code_composante) %>%
+    nest_inscrits(code_version_etape)
   
   if (derniere_annee == TRUE) {
     inscrits_annules <- patchr::anti_join_bind(apogee::inscrits_annules, inscrits_annules, by = "annee")
@@ -118,8 +118,8 @@ data_inscrits <- function(derniere_annee = TRUE) {
   inscrits <- inscrits %>% 
     dplyr::filter(!inscription_annulee) %>% 
     dplyr::select(-inscription_annulee) %>% 
-    apogee::nest_inscrits(code_composante) %>%
-    apogee::nest_inscrits(code_version_etape)
+    nest_inscrits(code_composante) %>%
+    nest_inscrits(code_version_etape)
   
   #### Ajout ELP parcours ####
   
@@ -148,8 +148,8 @@ data_inscrits <- function(derniere_annee = TRUE) {
   inscrits <- impexp::access_import("inscrits_ajout", paste0(find.package("apogee"), "/extdata/Tables_ref_individus.accdb")) %>% 
     dplyr::select(-commentaire, -date_maj) %>% 
     dplyr::anti_join(inscrits, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
-    apogee::nest_inscrits(code_composante) %>% 
-    apogee::nest_inscrits(code_version_etape) %>% 
+    nest_inscrits(code_composante) %>% 
+    nest_inscrits(code_version_etape) %>% 
     dplyr::bind_rows(inscrits) %>% 
     dplyr::arrange(annee, code_etape, code_etudiant, inscription_premiere)
   
@@ -189,7 +189,7 @@ data_inscrits_peda <- function(derniere_annee = TRUE) {
     dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))),
                      import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
-    apogee::doublon_maj_etudiant()
+    doublon_maj_etudiant()
   
   if (derniere_annee == TRUE) {
     inscrits_peda <- patchr::anti_join_bind(apogee::inscrits_peda, inscrits_peda, by = "annee")
@@ -210,7 +210,7 @@ data_inscrits_elp <- function(derniere_annee = TRUE) {
     dplyr::transmute(import = lapply(import, patchr::rename, impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))),
                      import = lapply(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
-    apogee::doublon_maj_etudiant() # %>% 
+    doublon_maj_etudiant() # %>% 
     # dplyr::semi_join(apogee::inscrits, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
   
   if (derniere_annee == TRUE) {
@@ -232,7 +232,7 @@ data_resultats_elp <- function(derniere_annee = TRUE) {
     dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))),
                      import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
-    apogee::doublon_maj_etudiant()
+    doublon_maj_etudiant()
   
   if (derniere_annee == TRUE) {
     resultats_elp <- patchr::anti_join_bind(apogee::resultats_elp, resultats_elp, by = "annee")
@@ -253,14 +253,14 @@ data_resultats_etape <- function(derniere_annee = TRUE) {
     dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))),
                      import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
-    apogee::doublon_maj_etudiant()
+    doublon_maj_etudiant()
   
   #### PACES ####
   resultats_paces <- impexp::csv_import_path("Resultats_etape_paces\\.csv$", path = paste0(find.package("apogee"), "/extdata"), zip = TRUE, skip = 1) %>% 
     dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))),
                      import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
-    apogee::doublon_maj_etudiant() %>% 
+    doublon_maj_etudiant() %>% 
     dplyr::rename(note_etape = note_elp, code_resultat = code_resultat_elp) %>% 
     dplyr::filter(code_resultat == "ADM")
   
@@ -317,7 +317,7 @@ data_resultats_diplome <- function(derniere_annee = TRUE) {
     dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))),
                      import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
-    apogee::doublon_maj_etudiant()
+    doublon_maj_etudiant()
 
   #### Suppression diplômés non-existants chez les inscrits ####
   
@@ -344,7 +344,7 @@ data_diplomes <- function(derniere_annee = TRUE) {
     dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))),
                      import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")))) %>% 
     tidyr::unnest() %>% 
-    apogee::doublon_maj_etudiant()
+    doublon_maj_etudiant()
   
   #### Ajout diplômés Base Access ####
   
