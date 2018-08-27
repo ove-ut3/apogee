@@ -2,6 +2,8 @@ library(shinydashboard)
 library(shinyWidgets)
 library(magrittr)
 
+# https://groups.google.com/forum/#!topic/shiny-discuss/Q1ZvnjDCzUM
+
 formations <- apogee::formations_liste() %>% 
   dplyr::select(-lib_etape_apogee) %>% 
   dplyr::mutate(annee_etape = stringr::str_c("Bac+", annee_etape)) %>% 
