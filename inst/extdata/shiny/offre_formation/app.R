@@ -147,7 +147,7 @@ server <- function(input, output, session) {
                       pageLength = -1,
                       dom = 'Brt',
                       buttons = c('csv', 'excel'),
-                      scrollY = '82vh',
+                      scrollY = '81vh',
                       autoWidth = TRUE#,
                       # columnDefs = list(list(width = '10%', targets = 0),
                       #                   list(width = '12%', targets = 1),
