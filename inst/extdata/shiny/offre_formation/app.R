@@ -106,7 +106,6 @@ columnFilterSet <- function(input, output, session, df, cols) {
   }
   
   observeEvent(input$clear_all_filters_button, {
-    cat("clear", "\n")
     filters <- lapply(cols, function(i) {
       callModule(columnFilter, paste0("col", i), df= df, col_num =i, create_choice_filter(i), reset=T)
     })
