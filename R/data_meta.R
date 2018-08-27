@@ -25,14 +25,6 @@ data_etape <- function() {
     patchr::anti_join_bind(impexp::access_import("etape_diplome_type_ajout", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")) %>% 
                            dplyr::select(-date_maj), ., by = "code_etape")
   
-  etape_composante <- readxl::read_excel(paste0(find.package("apogee"), "/extdata/Etape.xlsx"), "Etape_composante", skip = 1) %>% 
-    patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
-    dplyr::anti_join(impexp::access_import("etape_composante", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")) %>% 
-                       tidyr::drop_na(suppression),
-                     by = c("code_etape", "code_composante")) %>% 
-    tidyr::nest(code_composante, .key = "code_composante") %>% 
-    dplyr::mutate(code_composante = purrr::map(code_composante, 1))
-  
   etape <- readxl::read_excel(paste0(find.package("apogee"), "/extdata/Etape.xlsx"), skip = 1) %>% 
     patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
     patchr::remove_duplicate(temoin_annee1_diplome) %>% 
@@ -40,20 +32,19 @@ data_etape <- function() {
     dplyr::left_join(impexp::access_import("etape", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")),
                      by = "code_etape") %>% 
     dplyr::left_join(etape_diplome_type, by = "code_etape") %>% 
-    dplyr::left_join(etape_composante, by = "code_etape") %>% 
     patchr::recode_formula(impexp::access_import("_recodage", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")) %>% 
                              patchr::filter_data_patch(source = "data_etape")) %>% 
     dplyr::mutate(lib_etape_apogee = ifelse(lib_etape != lib_etape_apogee, FALSE, TRUE)) %>% 
     dplyr::select(-annee_etape_apogee) %>% 
     dplyr::left_join(annee_premiere_etape, by = "code_etape") %>% 
     dplyr::left_join(annee_derniere_etape, by = "code_etape") %>% 
-    dplyr::mutate(actif = dplyr::if_else(annee_derniere_etape == apogee::annee_en_cours(), TRUE, FALSE, FALSE))
+    dplyr::mutate(actif = dplyr::if_else(annee_derniere_etape >= apogee::annee_en_cours(), TRUE, FALSE, FALSE))
   
   etape_ville <- etape %>% 
     dplyr::filter(actif,
                   is.na(ville),
                   code_type_diplome %in% c("DUT", "Licence pr")) %>% 
-    tidyr::unnest(code_composante) %>% 
+    dplyr::left_join(apogee::etape_composante, by = "code_etape") %>% 
     dplyr::left_join(dplyr::rename(apogee::composante, ville_composante = ville), 
                      by = "code_composante") %>% 
     dplyr::mutate(ville = ifelse(!is.na(ville_composante), ville_composante, ville),
@@ -152,6 +143,21 @@ data_etape <- function() {
   
   etape_flux <- impexp::access_import("etape_flux", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))
   save("etape_flux", file = "data/etape_flux.RData")
+  
+  #### Etape - Composante ####
+  
+  etape_composante <- readxl::read_excel(paste0(find.package("apogee"), "/extdata/Etape.xlsx"), "Etape_composante", skip = 1) %>% 
+    patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
+    dplyr::anti_join(impexp::access_import("etape_composante", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb")) %>% 
+                       tidyr::drop_na(suppression),
+                     by = c("code_etape", "code_composante")) %>% 
+    dplyr::arrange(code_etape, code_composante, annee) %>% 
+    dplyr::group_by(code_etape, code_composante) %>% 
+    dplyr::summarise(derniere_annee = max(annee)) %>% 
+    dplyr::ungroup() %>% 
+    dplyr::mutate(actif = dplyr::if_else(derniere_annee >= apogee::annee_en_cours(), TRUE, FALSE, FALSE))
+  
+  save("etape_composante", file = "data/etape_composante.RData")
   
   #### Etape - mention ####
   
