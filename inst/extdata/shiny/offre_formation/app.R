@@ -11,7 +11,7 @@ formations <- apogee::formations_liste() %>%
                          annee_etape = "Pas d'année"))
 
 cols_name <- names(formations) %>% 
-  dplyr::recode("lib_composante" = "Composante", "acronyme_type_diplome" = "Type diplôme", "lib_mention" = "Mention", "annee_etape" = "Année formation")
+  dplyr::recode("lib_composante" = "Composante", "acronyme_type_diplome" = "Type diplôme", "lib_mention" = "Mention", "annee_etape" = "Année formation", "lib_etape" = "Libellé formation")
 
 columnFilterUI <- function(id) {
   ns <- NS(id)
@@ -22,10 +22,17 @@ columnFilter <- function(input, output, session, df, col_num, choice_filter, res
   
   if (reset) {
     
-    updateSelectInput(session, "filter_value",
-                      choices = sort(unique(df()[,col_num,drop=TRUE])),
-                      selected = NULL
-    )
+    if (cols_name[col_num] == "Libellé formation") {
+      
+      updateTextInput(session, "filter_value", value = "", placeholder = "Entrez du texte...")
+      
+    } else {
+      
+      updateSelectInput(session, "filter_value",
+                        choices = sort(unique(df()[,col_num,drop=TRUE])),
+                        selected = NULL)
+      
+    }
     
   } else {
   
@@ -36,15 +43,23 @@ columnFilter <- function(input, output, session, df, col_num, choice_filter, res
       req(col_num <= ncol(df()))
       
       freezeReactiveValue(input, "filter_value")
-      
-      choices <- sort(unique(df()[,col_num,drop=TRUE]))
   
-      # names(df())[[col_num]]
-      pickerInput(session$ns("filter_value"), cols_name[col_num], multiple = T, 
-                  choices = choices, selected = choices,
-                  options = list(`actions-box` = T, `select-all-text` = "Tout sélectionner",
-                                 `deselect-all-text` = "Tout désélectionner",
-                                 `none-selected-text` = "Aucune sélection"))
+      if (cols_name[col_num] == "Libellé formation") {
+        
+        textInput(session$ns("filter_value"), label = "Libellé formation", placeholder = "Entrez du texte...")
+        
+      } else {
+        
+        choices <- sort(unique(df()[,col_num,drop=TRUE]))
+        
+        # names(df())[[col_num]]
+        pickerInput(session$ns("filter_value"), cols_name[col_num], multiple = T, 
+                    choices = choices, selected = choices,
+                    options = list(`actions-box` = T, `select-all-text` = "Tout sélectionner",
+                                   `deselect-all-text` = "Tout désélectionner",
+                                   `none-selected-text` = "Aucune sélection"))
+        
+      }
   
     })
     
@@ -74,6 +89,8 @@ columnFilter <- function(input, output, session, df, col_num, choice_filter, res
       TRUE
     } else if (!isTruthy(input$filter_value)) {
       TRUE
+    } else if (cols_name[col_num] == "Libellé formation") {
+      stringr::str_detect(df()[,col_num,drop=TRUE], stringr::fixed(input$filter_value, ignore_case = TRUE))
     } else {
       df()[,col_num,drop=TRUE] %in% input$filter_value
     }
@@ -111,6 +128,12 @@ columnFilterSet <- function(input, output, session, df, cols) {
     })
   })
   
+  # observeEvent(input$clear_all_filters_button, {
+  #   
+  #   updateTextInput(session, inputId = "formation", value = "")
+  #   
+  # })
+  
   
   # filters is a list of reactive expressions, each of which is a
   # logical vector of rows to be selected.
@@ -132,7 +155,7 @@ ui <- dashboardPage(
   dashboardHeader(title = paste("Offre de formation")),
   dashboardSidebar(width = 250, sidebarMenu(
     menuItem("Filtres", tabName = "formations"),
-    columnFilterSetUI("filterset", cols = c(1, 2, 7, 3))
+    columnFilterSetUI("filterset", cols = c(1, 2, 7, 3, 5))
   )),
   dashboardBody(
     tabItems(
@@ -156,15 +179,14 @@ server <- function(input, output, session) {
     formations
   })
   
-  filtered_data <- callModule(columnFilterSet, "filterset", df = selected_data, cols = c(1, 2, 7, 3))
+  filtered_data <- callModule(columnFilterSet, "filterset", df = selected_data, cols = c(1, 2, 7, 3, 5))
+
   
-  output$table <- DT::renderDataTable({ 
-    
-    #browser()
+  output$table <- DT::renderDataTable({
     
     filtered_data() %>% 
       DT::datatable(selection = list(mode = 'single', selected = 1),
-                    colnames = c('Composante' = 'lib_composante', 'Type diplôme' = 'acronyme_type_diplome', 'Année formation' = 'annee_etape', 'Code étape' = 'code_etape', 'Libellé' = 'lib_etape', 'Acronyme' = 'acronyme_etape', 'Mention' = 'lib_mention', 'Option' = 'option', 'Particularité' = 'particularite', 'Ville' = 'ville'),
+                    colnames = c('Composante' = 'lib_composante', 'Type diplôme' = 'acronyme_type_diplome', 'Année formation' = 'annee_etape', 'Code étape' = 'code_etape', 'Libellé formation' = 'lib_etape', 'Acronyme' = 'acronyme_etape', 'Mention' = 'lib_mention', 'Option' = 'option', 'Particularité' = 'particularite', 'Ville' = 'ville'),
                     rownames = FALSE,
                     extensions = 'Buttons',
                     options = list(
@@ -180,6 +202,7 @@ server <- function(input, output, session) {
     )
     
     })
+
 }
 
 shinyApp(ui, server)
