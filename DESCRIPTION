@@ -11,12 +11,7 @@ LazyData: true
 Imports:
     caractr,
     dplyr,
-    impexp,
     lubridate,
-    patchr,
     purrr,
-    readxl,
-    rlang,
-    stringr,
     tidyr
 RoxygenNote: 6.1.0

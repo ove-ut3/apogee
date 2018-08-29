@@ -1,29 +1,3 @@
-mise_a_jour_data <- function() {
-  
-  # Méta-données
-  data_etape()
-  data_sise()
-  data_diplome()
-  data_composante()
-  data_diplome_version()
-  data_inscription()
-  data_elp()
-  data_resultat()
-  
-  # Données par individu
-  data_individus()
-  data_individus_diplome_origine()
-  data_individus_formation_origine()
-  data_inscrits()
-  data_inscrits_peda()
-  data_inscrits_elp()
-  data_resultats_elp()
-  data_resultats_etape()
-  apogee::data_resultats_diplome()
-  apogee::data_diplomes()
-  
-}
-
 #' Renvoie l'annee d'etape a partir du code etape
 #'
 #' Renvoie l'année d'étape à partir du code étape (Bac+1 -> 1, Bac+3 -> 3, etc).
