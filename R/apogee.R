@@ -168,9 +168,12 @@ formations_liste <- function(annee = NULL) {
                   annee_etape = apogee::annee_etape(code_etape),
                   lib_mention = apogee::hier_etape_mention(code_etape) %>% 
                     purrr::map(apogee::lib_mention_diplome) %>% 
+                    purrr::map_chr(caractr::str_paste, collapse = " ; "),
+                  lib_domaine = apogee::hier_etape_domaine(code_etape) %>% 
+                    purrr::map(apogee::lib_domaine_diplome) %>% 
                     purrr::map_chr(caractr::str_paste, collapse = " ; ")) %>% 
     dplyr::arrange(lib_composante, acronyme_type_diplome, annee_etape, code_etape) %>% 
-    dplyr::select(lib_composante, acronyme_type_diplome, annee_etape, code_etape, lib_etape, acronyme_etape, lib_mention) %>% 
+    dplyr::select(lib_composante, acronyme_type_diplome, annee_etape, code_etape, lib_etape, acronyme_etape, lib_mention, lib_domaine) %>% 
     dplyr::left_join(apogee::etape %>% dplyr::select(code_etape, option, particularite, ville, lib_etape_apogee),
                      by = "code_etape") %>% 
     dplyr::mutate(lib_etape_apogee = ifelse(lib_etape_apogee, "Apogée", "OVE"))
