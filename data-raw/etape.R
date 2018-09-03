@@ -117,8 +117,8 @@ devtools::use_data(etape_composante, overwrite = TRUE)
 #### Etape - mention ####
 
 etape_mention <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_mention", skip = 1) %>% 
-  patchr::rename(impexp::access_import("_rename", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
-  dplyr::bind_rows(impexp::access_import("etape_mention_diplome", paste0(find.package("apogee"), "/extdata/Tables_ref.accdb"))) %>% 
+  patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb")) %>% 
+  dplyr::bind_rows(impexp::access_import("etape_mention_diplome", "data-raw/Tables_ref.accdb")) %>% 
   dplyr::arrange(code_etape, code_mention_diplome)
 
 etape_mention <- etape_mention %>% 
