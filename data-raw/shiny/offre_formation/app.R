@@ -175,7 +175,7 @@ ui <- dashboardPage(
   dashboardHeader(title = paste("Offre de formation", apogee::annee_u(annee)), titleWidth = 270),
   dashboardSidebar(width = 270, sidebarMenu(
     menuItem(h4("Filtres"), tabName = "formations", startExpanded = TRUE),
-    h5(textOutput("n_formations")),
+    column(12, h5(textOutput("n_formations")), offset = 0.5),
     columnFilterSetUI("filterset", cols = c(1, 2, 7, 8, 3, 5)),
     column(12, h4("")),
     menuItem(h4("Téléchargment"), tabName = "export", startExpanded = TRUE),
