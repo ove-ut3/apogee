@@ -149,10 +149,10 @@ formations_liste <- function(annee = NULL) {
   }
   
   liste_formations <- apogee::etape %>% 
-    dplyr::filter(actif) %>% 
-    dplyr::select(-actif) %>% 
-    dplyr::left_join(apogee::etape_composante, by = "code_etape") %>% 
-    dplyr::filter(actif) %>% 
+    dplyr::filter(!!annee >= annee_premiere_etape & !!annee <= annee_derniere_etape) %>% 
+    dplyr::left_join(apogee::etape_composante %>% 
+                       dplyr::filter(!!annee >= premiere_annee & !!annee <= derniere_annee),
+                     by = "code_etape") %>% 
     dplyr::select(code_etape, code_composante) %>% 
     dplyr::mutate(lib_composante = apogee::hier_composante_parent(code_composante) %>%
                     apogee::lib_composante()) %>% 

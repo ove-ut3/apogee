@@ -42,7 +42,9 @@ etape_ville <- etape %>%
   dplyr::filter(actif,
                 is.na(ville),
                 code_type_diplome %in% c("DUT", "Licence pr")) %>% 
-  dplyr::left_join(apogee::etape_composante, by = "code_etape") %>% 
+  dplyr::filter(code_etape == "INCCA1") %>% 
+  dplyr::left_join(dplyr::filter(apogee::etape_composante, derniere_annee >= apogee::annee_en_cours()),
+                   by = "code_etape") %>% 
   dplyr::left_join(dplyr::rename(apogee::composante, ville_composante = ville), 
                    by = "code_composante") %>% 
   dplyr::mutate(ville = ifelse(!is.na(ville_composante), ville_composante, ville),
@@ -108,9 +110,9 @@ etape_composante <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_composante"
                    by = c("code_etape", "code_composante")) %>% 
   dplyr::arrange(code_etape, code_composante, annee) %>% 
   dplyr::group_by(code_etape, code_composante) %>% 
-  dplyr::summarise(derniere_annee = max(annee)) %>% 
-  dplyr::ungroup() %>% 
-  dplyr::mutate(actif = dplyr::if_else(derniere_annee >= apogee::annee_en_cours(), TRUE, FALSE, FALSE))
+  dplyr::summarise(premiere_annee = min(annee),
+                   derniere_annee = max(annee)) %>% 
+  dplyr::ungroup()
 
 devtools::use_data(etape_composante, overwrite = TRUE)
 
