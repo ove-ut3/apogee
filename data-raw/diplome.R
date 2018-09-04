@@ -7,7 +7,13 @@ devtools::use_data(diplome, overwrite = TRUE)
 
 #### Diplôme - type ####
 
-diplome_type <- impexp::access_import("diplome_type", "data-raw/Tables_ref.accdb")
+diplome_type <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_diplome_type") %>% 
+  patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb")) %>% 
+  dplyr::select(code_type_diplome) %>% 
+  unique() %>% 
+  dplyr::full_join(impexp::access_import("diplome_type", "data-raw/Tables_ref.accdb"), by = "code_type_diplome") %>% 
+  dplyr::arrange(code_type_diplome) %>% 
+  dplyr::mutate(acronyme_type_diplome = ifelse(is.na(acronyme_type_diplome), code_type_diplome, acronyme_type_diplome))
 
 devtools::use_data(diplome_type, overwrite = TRUE)
 
