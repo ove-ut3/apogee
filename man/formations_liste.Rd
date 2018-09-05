@@ -4,10 +4,12 @@
 \alias{formations_liste}
 \title{Liste des formations d'une annee universitaire}
 \usage{
-formations_liste(annee = NULL)
+formations_liste(annee = NULL, unique = TRUE)
 }
 \arguments{
 \item{annee}{Année (par défaut, celle en cours)}
+
+\item{unique}{Si \code{TRUE}, la table est dédoublonnée par code_etape.}
 }
 \value{
 Un tibble des formations
