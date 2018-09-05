@@ -4,7 +4,7 @@
 \alias{histo_etape_pred}
 \title{Renvoie les codes etape predecesseurs}
 \usage{
-histo_etape_pred(code_etape, predecesseur_final = TRUE,
+histo_etape_pred(code_etape, annee = NULL, predecesseur_final = FALSE,
   garder_na = FALSE)
 }
 \arguments{

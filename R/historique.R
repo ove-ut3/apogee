@@ -120,12 +120,21 @@ histo_etape_succ_2 <- function(code_etape, successeur_final = TRUE, garder_na = 
 #' Il est créé à partir d'Apogée et de la table "etape_historique" de la base Access Tables_ref (projet Apogee).
 #'
 #' @export
-histo_etape_pred <- function(code_etape, predecesseur_final = TRUE, garder_na = FALSE) {
+histo_etape_pred <- function(code_etape, annee = NULL, predecesseur_final = FALSE, garder_na = FALSE) {
+  
+  etape_histo <- dplyr::select(apogee::etape_histo, code_etape = code_etape_succ, code_etape_pred = code_etape)
+  
+  if (!is.null(annee)) {
+    predecesseur_final <- TRUE
+    
+    etape_histo <- etape_histo %>% 
+      dplyr::semi_join(dplyr::filter(apogee::etape, annee_derniere_etape >= !!annee), 
+                       by = c("code_etape_pred" = "code_etape"))
+  }
   
   histo_etape_pred <- dplyr::tibble(code_etape) %>% 
     dplyr::mutate(.id = dplyr::row_number()) %>% 
-    dplyr::left_join(dplyr::select(apogee::etape_histo, code_etape = code_etape_succ, code_etape_pred = code_etape),
-                     by = "code_etape")
+    dplyr::left_join(etape_histo, by = "code_etape")
   
   if (garder_na == FALSE) {
     histo_etape_pred <- histo_etape_pred %>% 
@@ -136,8 +145,7 @@ histo_etape_pred <- function(code_etape, predecesseur_final = TRUE, garder_na = 
     
     histo_etape_pred <- histo_etape_pred %>% 
       dplyr::select(.id, code_etape = code_etape_pred) %>% 
-      dplyr::left_join(dplyr::select(apogee::etape_histo, code_etape = code_etape_succ, code_etape_pred = code_etape),
-                       by = "code_etape")
+      dplyr::left_join(etape_histo, by = "code_etape")
     
     while (any(!is.na(histo_etape_pred$code_etape_pred))) {
       
@@ -148,8 +156,7 @@ histo_etape_pred <- function(code_etape, predecesseur_final = TRUE, garder_na = 
       
       histo_etape_pred <- histo_etape_pred %>% 
         dplyr::select(.id, code_etape = code_etape_pred) %>% 
-        dplyr::left_join(dplyr::select(apogee::etape_histo, code_etape = code_etape_succ, code_etape_pred = code_etape),
-                         by = "code_etape")
+        dplyr::left_join(etape_histo, by = "code_etape")
       
     }
     
