@@ -6,9 +6,19 @@ library(magrittr)
 
 annee <- 2017
 
-formations <- apogee::formations_liste(annee) %>% 
+formations <- apogee::formations_liste(annee, unique = FALSE) %>% 
   dplyr::mutate(lib_etape = apogee::lib_etape(code_etape, type_diplome = FALSE, annee = FALSE),
-                annee_etape = stringr::str_c("Bac+", annee_etape)) %>% 
+                annee_etape = stringr::str_c("Bac+", annee_etape),
+                annee_etape = ifelse(annee_etape == "Bac+0", "Bac", annee_etape)) %>% 
+  tidyr::replace_na(list(lib_mention = "Pas de mention",
+                         lib_domaine = "Pas de domaine",
+                         annee_etape = "Pas d'année")) %>% 
+  dplyr::select(lib_composante, acronyme_type_diplome, annee_etape, code_etape, lib_etape, acronyme_etape, lib_mention, lib_domaine)
+
+formations_unique <- apogee::formations_liste(annee) %>% 
+  dplyr::mutate(lib_etape = apogee::lib_etape(code_etape, type_diplome = FALSE, annee = FALSE),
+                annee_etape = stringr::str_c("Bac+", annee_etape),
+                annee_etape = ifelse(annee_etape == "Bac+0", "Bac", annee_etape)) %>% 
   tidyr::replace_na(list(lib_mention = "Pas de mention",
                          lib_domaine = "Pas de domaine",
                          annee_etape = "Pas d'année")) %>% 
@@ -97,54 +107,46 @@ columnFilter <- function(input, output, session, df, col_num, choice_filter, res
     } else if (cols_name[col_num] == "Libellé formation") {
       stringr::str_detect(df()[,col_num,drop=TRUE], stringr::fixed(input$filter_value, ignore_case = TRUE))
     } else {
-      # filter_value <- input$filter_value
-      # if (!filter_value %in% df()[,col_num,drop=TRUE]) {
-      #   filter_value <- iconv(filter_value, from = "UTF-8")
-      #   Encoding(filter_value) <- "latin1"
-      #   filter_value <- iconv(filter_value, from = "UTF-8")
-      # }
-      # df()[,col_num,drop=TRUE] %in% filter_value
-      
       df()[,col_num,drop=TRUE] %in% input$filter_value
     }
   })
 }
 
-columnFilterSetUI <- function(id, cols) {
+columnFilterSetUI <- function(id, cols_num) {
   ns <- NS(id)
   
   list(
     actionButton(ns("clear_all_filters_button"), "Remise à zéro des filtres"),
-    lapply(cols, function(i) {
+    lapply(cols_num, function(i) {
         columnFilterUI(ns(paste0("col", i)))
     })
   )
   
 }
 
-columnFilterSet <- function(input, output, session, df, cols) {
+columnFilterSet <- function(input, output, session, df, cols_num) {
   
   # Each column filter needs to only display the choices that are
   # permitted after all the OTHER filters have had their say. But
   # each column filter must not take its own filter into account
-  # (hence we do filter[-col], not filter, in the reactive below).
-  create_choice_filter <- function(col) {
+  # (hence we do filter[-col_num], not filter, in the reactive below).
+  create_choice_filter <- function(col_num, cols_num) {
     reactive({
-      filter_values <- lapply(filters[-col], do.call, args = list())
+      filter_values <- lapply(filters[-which(cols_num == col_num)], do.call, args = list())
       Reduce(`&`, filter_values, TRUE)
     })
   }
   
   observeEvent(input$clear_all_filters_button, {
-    filters <- lapply(cols, function(i) {
-      callModule(columnFilter, paste0("col", i), df= df, col_num =i, create_choice_filter(i), reset=T)
+    filters <- lapply(cols_num, function(col_num) {
+      callModule(columnFilter, paste0("col", col_num), df= df, col_num =col_num, create_choice_filter(col_num, cols_num), reset=T)
     })
   })
 
   # filters is a list of reactive expressions, each of which is a
   # logical vector of rows to be selected.
-  filters <- lapply(cols, function(i) {
-    callModule(columnFilter, paste0("col", i), df, i, create_choice_filter(i))
+  filters <- lapply(cols_num, function(col_num) {
+    callModule(columnFilter, paste0("col", col_num), df= df, col_num =col_num, create_choice_filter(col_num, cols_num))
   })
   
   reactive({
@@ -176,7 +178,7 @@ ui <- dashboardPage(
   dashboardSidebar(width = 270, sidebarMenu(
     menuItem(h4("Filtres"), tabName = "formations", startExpanded = TRUE),
     column(12, h5(textOutput("n_formations")), offset = 0.5),
-    columnFilterSetUI("filterset", cols = c(1, 2, 7, 8, 3, 5)),
+    columnFilterSetUI("filterset", cols_num = c(1, 2, 7, 8, 3, 5)),
     column(12, h4("")),
     menuItem(h4("Téléchargment"), tabName = "export", startExpanded = TRUE),
     column(4, downloadButton("csv", "CSV")),
@@ -204,21 +206,29 @@ server <- function(input, output, session) {
     formations
   })
   
-  filtered_data <- callModule(columnFilterSet, "filterset", df = selected_data, cols = c(1, 2, 7, 8, 3, 5))
-
+  filtered_data <- callModule(columnFilterSet, "filterset", df = selected_data, cols_num = c(1, 2, 7, 8, 3, 5))
+  
+  filtered_data2 <- reactive({
+    formations_unique %>% 
+      dplyr::semi_join(filtered_data(), by = "code_etape")
+  })
+  
   output$n_formations <- reactive({
-    if (nrow(formations) == nrow(filtered_data())) {
-      paste(nrow(formations), "formations au total")
+    n_formations <- length(unique(filtered_data2()$code_etape))
+    if (n_formations == nrow(formations_unique)) {
+      paste(nrow(formations_unique), "formations au total")
+    } else if (n_formations == 1) {
+      paste(n_formations, "formation filtrée")
     } else {
-      paste(nrow(filtered_data()), "formations filtrées")
+      paste(n_formations, "formations filtrées")
     }
   })
   
   #session$sendCustomMessage(type = 'launch-modal', "chargement") # launch the modal
   
   output$table <- DT::renderDataTable({
-    
-    filtered_data() %>% 
+
+    filtered_data2() %>% 
       DT::datatable(selection = list(mode = 'single', selected = 1),
                     colnames = c('Composante' = 'lib_composante', 'Type diplôme' = 'acronyme_type_diplome', 'Année formation' = 'annee_etape', 'Code étape' = 'code_etape', 'Libellé formation' = 'lib_etape', 'Acronyme' = 'acronyme_etape', 'Mention' = 'lib_mention', 'Domaine' = 'lib_domaine'), #'Option' = 'option', 'Particularité' = 'particularite', 'Ville' = 'ville'
                     rownames = FALSE,
