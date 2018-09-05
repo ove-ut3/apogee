@@ -111,6 +111,7 @@ histo_etape_succ_2 <- function(code_etape, successeur_final = TRUE, garder_na = 
 #' Renvoie les codes étape prédécesseurs.
 #'
 #' @param code_etape Un vecteur de code étape.
+#' @param annee Année universitaire (2014 pour 2014/15) jusqu'à laquelle stopper l'historique.
 #' @param predecesseur_final \code{TRUE}, renvoit le prédécesseur le plus ancien dans l'historique; \code{FALSE}, renvoie le premier prédécesseur.
 #' @param garder_na \code{TRUE}, les codes sans prédécesseur passent à \code{NA}; \code{FALSE}, les codes sans successeur sont gardés tels quels.
 #'
