@@ -42,7 +42,6 @@ etape_ville <- etape %>%
   dplyr::filter(actif,
                 is.na(ville),
                 code_type_diplome %in% c("DUT", "Licence pr")) %>% 
-  dplyr::filter(code_etape == "INCCA1") %>% 
   dplyr::left_join(dplyr::filter(apogee::etape_composante, derniere_annee >= apogee::annee_en_cours()),
                    by = "code_etape") %>% 
   dplyr::left_join(dplyr::rename(apogee::composante, ville_composante = ville), 
