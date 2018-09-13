@@ -637,9 +637,9 @@ lib_cycle <- function(code_cycle) {
   return(lib_cycle)
 }
 
-#' Renvoie le libelle a partir du code diplome SISE
+#' Renvoie le libelle 1 a partir du code diplome SISE
 #'
-#' Renvoie le libellé à partir du diplôme SISE.
+#' Renvoie le libellé 1 à partir du diplôme SISE.
 #'
 #' @param code_diplome Un vecteur de code diplôme SISE.
 #'
@@ -648,14 +648,33 @@ lib_cycle <- function(code_cycle) {
 #' Jeu de données source : \code{apogee::sise_diplome_lib}.\cr
 #'
 #' @export
-lib_diplome_sise <- function(code_diplome_sise) {
+lib_diplome_sise_1 <- function(code_diplome_sise) {
   
-  lib_diplome_sise <- dplyr::tibble(code_diplome_sise) %>%
+  lib_diplome_sise_1 <- dplyr::tibble(code_diplome_sise) %>%
     dplyr::left_join(apogee::sise_diplome_lib, by = "code_diplome_sise") %>%
-    dplyr::mutate(lib_diplome_sise = caractr::str_paste(lib_diplome_sise_1, lib_diplome_sise_2, sep = " - ")) %>% 
-    dplyr::pull(lib_diplome_sise)
+    dplyr::pull(lib_diplome_sise_1)
   
-  return(lib_diplome_sise)
+  return(lib_diplome_sise_1)
+}
+
+#' Renvoie le libelle 2 a partir du code diplome SISE
+#'
+#' Renvoie le libellé 2 à partir du diplôme SISE.
+#'
+#' @param code_diplome Un vecteur de code diplôme SISE.
+#'
+#' @return Un vecteur contenant les libellés de diplôme SISE.
+#'
+#' Jeu de données source : \code{apogee::sise_diplome_lib}.\cr
+#'
+#' @export
+lib_diplome_sise_2 <- function(code_diplome_sise) {
+  
+  lib_diplome_sise_2 <- dplyr::tibble(code_diplome_sise) %>%
+    dplyr::left_join(apogee::sise_diplome_lib, by = "code_diplome_sise") %>%
+    dplyr::pull(lib_diplome_sise_2)
+  
+  return(lib_diplome_sise_2)
 }
 
 #' Renvoie l'acronyme a partir du code de domaine de diplome
