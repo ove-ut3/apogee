@@ -199,7 +199,7 @@ resultats_paces <- impexp::csv_import_path("Resultats_etape_paces\\.csv$", path 
   tidyr::unnest() %>% 
   doublon_maj_etudiant() %>% 
   dplyr::rename(note_etape = note_elp, code_resultat = code_resultat_elp) %>% 
-  dplyr::filter(code_resultat == "ADM")
+  dplyr::filter(apogee::lib_resultat(code_resultat) == "Admis")
 
 resultats_etape <- resultats_etape %>% 
   dplyr::anti_join(resultats_paces, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
@@ -227,7 +227,7 @@ suppression_session2 <- apogee::resultats_etape %>%
   dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, lib_session, code_resultat) %>% 
   tidyr::spread(lib_session, code_resultat) %>% 
   patchr::normalise_colnames() %>% 
-  dplyr::filter(session_1 %in% c("ADM", "ADJ") & !session_2 %in% c(NA_character_, "ADM", "ADJ")) %>% 
+  dplyr::filter(apogee::lib_resultat(session_1) == "Admis" & !apogee::lib_resultat(session_2) %in% c(NA_character_, "Admis")) %>% 
   dplyr::mutate(lib_session = "Session 2")
 
 resultats_etape <- resultats_etape %>% 
