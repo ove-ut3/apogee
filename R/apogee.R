@@ -202,11 +202,13 @@ formations_liste <- function(annee = NULL, unique = TRUE) {
   }
   
   liste_formations <- liste_formations %>% 
+    dplyr::left_join(apogee::etape_secteur, by = "code_etape") %>% 
     dplyr::arrange(lib_composante, acronyme_type_diplome, annee_etape, code_etape) %>% 
-    dplyr::select(lib_composante, acronyme_type_diplome, annee_etape, code_etape, lib_etape, acronyme_etape, lib_mention, lib_domaine) %>% 
+    dplyr::select(lib_composante, acronyme_type_diplome, annee_etape, code_etape, lib_etape, acronyme_etape, lib_mention, lib_domaine, secteur) %>% 
     dplyr::left_join(apogee::etape %>% dplyr::select(code_etape, option, particularite, ville, lib_etape_apogee),
                      by = "code_etape") %>% 
     dplyr::mutate(lib_etape_apogee = ifelse(lib_etape_apogee, "Apogée", "OVE"))
+  
   return(liste_formations)
 }
 
