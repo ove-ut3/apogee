@@ -9,6 +9,7 @@ individus_bac <- impexp::csv_import_path("Individus - Bac\\.csv", path = "data-r
   tidyr::unnest() %>% 
   patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb")) %>% 
   patchr::transcode(impexp::access_import("_contents", "data-raw/Tables_ref.accdb")) %>% 
+  dplyr::mutate_at(dplyr::vars(code_departement_bac, code_etab_bac, code_mention_bac), caractr::str_empty_to_na) %>% 
   dplyr::arrange(code_etudiant, desc(annee_bac), code_mention_bac, code_type_etab_bac) %>% 
   dplyr::group_by(code_etudiant) %>% 
   dplyr::filter(dplyr::row_number() == 1) %>% 
