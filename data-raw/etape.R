@@ -122,6 +122,14 @@ etape_mention <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_mention", skip
   dplyr::bind_rows(impexp::access_import("etape_mention_diplome", "data-raw/Tables_ref.accdb")) %>% 
   dplyr::arrange(code_etape, code_mention_diplome)
 
+impexp::access_import("etape_mention_diplome", "data-raw/Tables_ref.accdb") %>% 
+  dplyr::filter(is.na(suppression)) %>% 
+  dplyr::semi_join(
+    readxl::read_excel("data-raw/Etape.xlsx", "Etape_mention", skip = 1) %>% 
+      patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb")),
+    by = c("code_etape", "code_mention_diplome")) %>% 
+  dplyr::arrange(code_etape, code_mention_diplome)
+  
 etape_mention <- etape_mention %>% 
   dplyr::filter(is.na(suppression)) %>% 
   dplyr::select(-suppression) %>% 
