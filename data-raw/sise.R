@@ -53,3 +53,9 @@ sise_diplome_lib <- readxl::read_excel("data-raw/Diplome.xlsx", "Diplome_sise_li
   patchr::transcode(impexp::access_import("_contents", "data-raw/Tables_ref.accdb"))
 
 devtools::use_data(sise_diplome_lib, overwrite = TRUE)
+
+#### SISE - Type diplôme ####
+
+sise_diplome_type <- impexp::access_import("sise_diplome_type", "data-raw/Tables_ref.accdb")
+
+devtools::use_data(sise_diplome_type, overwrite = TRUE)
