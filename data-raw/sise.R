@@ -24,7 +24,7 @@ conv_etape_sise <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_sise", skip 
   dplyr::select(code_etape, annee, code_diplome_sise) %>% 
   unique()
 
-devtools::use_data(conv_etape_sise, overwrite = TRUE)
+usethis::use_data(conv_etape_sise, overwrite = TRUE)
 
 #### SISE - diplôme ####
 
@@ -38,13 +38,13 @@ sise_diplome <- readxl::read_excel("data-raw/Diplome.xlsx", "Diplome_sise", skip
 sise_diplome <- sise_diplome %>% 
   dplyr::anti_join(patchr::duplicate(sise_diplome, code_diplome), by = "code_diplome")
 
-devtools::use_data(sise_diplome, overwrite = TRUE)
+usethis::use_data(sise_diplome, overwrite = TRUE)
 
 #### SISE - discipline ####
 
 sise_discipline <- impexp::access_import("sise_discipline", "data-raw/Tables_ref.accdb")
 
-devtools::use_data(sise_discipline, overwrite = TRUE)
+usethis::use_data(sise_discipline, overwrite = TRUE)
 
 #### SISE - libellé diplôme ####
 
@@ -52,10 +52,10 @@ sise_diplome_lib <- readxl::read_excel("data-raw/Diplome.xlsx", "Diplome_sise_li
   patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb")) %>% 
   patchr::transcode(impexp::access_import("_contents", "data-raw/Tables_ref.accdb"))
 
-devtools::use_data(sise_diplome_lib, overwrite = TRUE)
+usethis::use_data(sise_diplome_lib, overwrite = TRUE)
 
 #### SISE - Type diplôme ####
 
 sise_diplome_type <- impexp::access_import("sise_diplome_type", "data-raw/Tables_ref.accdb")
 
-devtools::use_data(sise_diplome_type, overwrite = TRUE)
+usethis::use_data(sise_diplome_type, overwrite = TRUE)

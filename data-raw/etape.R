@@ -66,9 +66,11 @@ etape <- etape %>%
   patchr::recode_formula(impexp::access_import("_recodage", "data-raw/Tables_ref.accdb") %>% 
                            patchr::filter_data_patch(source = "data_etape"))
 
-patchr::duplicate(etape, code_etape)
+if (nrow(patchr::duplicate(etape, code_etape)) >= 1) {
+  stop("Doublons étape", call. = FALSE)
+}
 
-devtools::use_data(etape, overwrite = TRUE)
+usethis::use_data(etape, overwrite = TRUE)
 
 #### Etape - histo ####
 
@@ -98,7 +100,7 @@ etape_histo <- etape_histo %>%
   dplyr::mutate(doublon = ifelse(!is.na(doublon_elp), doublon_elp, doublon)) %>% 
   dplyr::arrange(code_etape, code_elp, code_etape_succ)
 
-devtools::use_data(etape_histo, overwrite = TRUE)
+usethis::use_data(etape_histo, overwrite = TRUE)
 
 #### Etape - composante ####
 
@@ -113,7 +115,7 @@ etape_composante <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_composante"
                    derniere_annee = max(annee)) %>% 
   dplyr::ungroup()
 
-devtools::use_data(etape_composante, overwrite = TRUE)
+usethis::use_data(etape_composante, overwrite = TRUE)
 
 #### Etape - mention ####
 
@@ -144,7 +146,7 @@ etape_mention <- etape_mention %>%
 
 patchr::duplicate(etape_mention, code_etape, code_mention_diplome)
 
-devtools::use_data(etape_mention, overwrite = TRUE)
+usethis::use_data(etape_mention, overwrite = TRUE)
 
 #### Etape - domaine  ####
 
@@ -166,14 +168,14 @@ etape_domaine <- etape_domaine %>%
 
 patchr::duplicate(etape_domaine, code_etape, code_domaine_diplome)
 
-devtools::use_data(etape_domaine, overwrite = TRUE)
+usethis::use_data(etape_domaine, overwrite = TRUE)
 
 #### Etape - cycle ####
 
 etape_cycle <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_cycle") %>% 
   patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb"))
 
-devtools::use_data(etape_cycle, overwrite = TRUE)
+usethis::use_data(etape_cycle, overwrite = TRUE)
 
 #### Etape - spécialité ####
 
@@ -183,7 +185,7 @@ etape_specialite_diplome <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_spe
                      dplyr::mutate(code_specialite_diplome = NA_character_),
                    by = c("code_etape", "code_specialite_diplome"))
 
-devtools::use_data(etape_specialite_diplome, overwrite = TRUE)
+usethis::use_data(etape_specialite_diplome, overwrite = TRUE)
 
 #### Etape - finalité ####
 
@@ -206,13 +208,13 @@ etape_finalite <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_finalite", sk
 
 patchr::duplicate(etape_finalite, code_etape)
 
-devtools::use_data(etape_finalite, overwrite = TRUE)
+usethis::use_data(etape_finalite, overwrite = TRUE)
 
 #### Etape - secteur ####
 
 etape_secteur <- impexp::access_import("etape_secteur", "data-raw/Tables_ref.accdb")
 
-devtools::use_data(etape_secteur, overwrite = TRUE)
+usethis::use_data(etape_secteur, overwrite = TRUE)
 
 #### Etape - discipline SISE ####
 
@@ -228,11 +230,11 @@ etape_sise_discipline <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_discip
   dplyr::filter(is.na(suppression)) %>% 
   dplyr::select(-suppression)
 
-devtools::use_data(etape_sise_discipline, overwrite = TRUE)
+usethis::use_data(etape_sise_discipline, overwrite = TRUE)
 
 #### Cycle ####
 
 cycle <- readxl::read_excel("data-raw/Etape.xlsx", "Cycle") %>% 
   patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb"))
 
-devtools::use_data(cycle, overwrite = TRUE)
+usethis::use_data(cycle, overwrite = TRUE)

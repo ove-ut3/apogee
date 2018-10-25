@@ -31,7 +31,7 @@ individus_departement_naissance <- impexp::csv_import_path("Individus_departemen
 
 individus <- dplyr::left_join(individus, individus_departement_naissance, by = "code_etudiant")
 
-devtools::use_data(individus, overwrite = TRUE)
+usethis::use_data(individus, overwrite = TRUE)
 
 #### Individus - origine ####
 
@@ -41,14 +41,14 @@ individus_diplome_origine <- impexp::csv_import_path("Individus_diplome_origine\
   patchr::transcode(impexp::access_import("_contents", "data-raw/Tables_ref.accdb")) %>% 
   dplyr::arrange(code_etudiant, annee_diplome_obtenu)
   
-devtools::use_data(individus_diplome_origine, overwrite = TRUE)
+usethis::use_data(individus_diplome_origine, overwrite = TRUE)
 
 individus_formation_origine <- impexp::csv_import_path("Individus_formation_origine\\.csv", path = "data-raw", zip = TRUE, skip = 1) %>% 
   tidyr::unnest() %>% 
   patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb")) %>% 
   patchr::transcode(impexp::access_import("_contents", "data-raw/Tables_ref.accdb"))
 
-devtools::use_data(individus_formation_origine, overwrite = TRUE)
+usethis::use_data(individus_formation_origine, overwrite = TRUE)
 
 #### Inscrits ####
 
@@ -99,7 +99,7 @@ inscrits_annules <- dplyr::filter(inscrits, inscription_annulee) %>%
   nest_inscrits(code_composante) %>%
   nest_inscrits(code_version_etape)
 
-devtools::use_data(inscrits_annules, overwrite = TRUE)
+usethis::use_data(inscrits_annules, overwrite = TRUE)
 
 inscrits <- inscrits %>% 
   dplyr::filter(!inscription_annulee) %>% 
@@ -144,7 +144,7 @@ inscrits <- impexp::access_import("inscrits_ajout", "data-raw/Tables_ref_individ
 inscrits_cpge <- inscrits %>% 
   dplyr::filter(code_profil_etudiant %in% "CP" | apogee::hier_etape_filiere(code_etape) %in% "CPGE")
 
-devtools::use_data(inscrits_cpge, overwrite = TRUE)
+usethis::use_data(inscrits_cpge, overwrite = TRUE)
 
 inscrits <- inscrits %>% 
   dplyr::filter(!code_profil_etudiant %in% "CP",
@@ -152,7 +152,7 @@ inscrits <- inscrits %>%
 
 #Sauvegarde finale
 
-devtools::use_data(inscrits, overwrite = TRUE)
+usethis::use_data(inscrits, overwrite = TRUE)
 
 #### Inscrits péda ####
 
@@ -162,7 +162,7 @@ inscrits_peda <- impexp::csv_import_path("Inscrits_peda\\.csv$", path = "data-ra
   tidyr::unnest() %>% 
   doublon_maj_etudiant()
 
-devtools::use_data(inscrits_peda, overwrite = TRUE)
+usethis::use_data(inscrits_peda, overwrite = TRUE)
 
 #### Inscrits ELP ####
 
@@ -173,7 +173,7 @@ inscrits_elp <- impexp::csv_import_path("Inscrits_ELP.*?\\.csv$", path = "data-r
   doublon_maj_etudiant() # %>% 
   # dplyr::semi_join(apogee::inscrits, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
 
-devtools::use_data(inscrits_elp, overwrite = TRUE)
+usethis::use_data(inscrits_elp, overwrite = TRUE)
 
 #### Résultats ELP ####
 
@@ -183,7 +183,7 @@ resultats_elp <- impexp::csv_import_path("^Resultats_ELP.*?\\.csv$", path = "dat
   tidyr::unnest() %>% 
   doublon_maj_etudiant()
 
-devtools::use_data(resultats_elp, overwrite = TRUE)
+usethis::use_data(resultats_elp, overwrite = TRUE)
 
 #### Résultats Etape ####
 
@@ -236,7 +236,7 @@ resultats_etape <- resultats_etape %>%
 
 #Sauvegarde
 
-devtools::use_data(resultats_etape, overwrite = TRUE)
+usethis::use_data(resultats_etape, overwrite = TRUE)
 
 #### Résultats diplôme ####
 
@@ -252,7 +252,7 @@ resultats_diplome <- resultats_diplome %>%
   dplyr::semi_join(dplyr::select(apogee::inscrits, annee, code_etape, code_etudiant, inscription_premiere),
                    by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
 
-devtools::use_data(resultats_diplome, overwrite = TRUE)
+usethis::use_data(resultats_diplome, overwrite = TRUE)
 
 #### Diplômés ####
 
@@ -290,4 +290,4 @@ diplomes <- diplomes %>%
                 apogee::annee_etape(code_etape) == 1) %>% 
   dplyr::anti_join(diplomes, ., by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
 
-devtools::use_data(diplomes, overwrite = TRUE)
+usethis::use_data(diplomes, overwrite = TRUE)

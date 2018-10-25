@@ -3,7 +3,7 @@
 diplome <- readxl::read_excel("data-raw/Diplome.xlsx", skip = 1) %>% 
   patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb"))
 
-devtools::use_data(diplome, overwrite = TRUE)
+usethis::use_data(diplome, overwrite = TRUE)
 
 #### Diplôme - type ####
 
@@ -15,7 +15,7 @@ diplome_type <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_diplome_type") 
   dplyr::arrange(code_type_diplome) %>% 
   dplyr::mutate(acronyme_type_diplome = ifelse(is.na(acronyme_type_diplome), code_type_diplome, acronyme_type_diplome))
 
-devtools::use_data(diplome_type, overwrite = TRUE)
+usethis::use_data(diplome_type, overwrite = TRUE)
 
 #### Diplôme antérieur - type ####
 
@@ -23,4 +23,4 @@ diplome_anterieur_type <- readxl::read_excel("data-raw/Diplome.xlsx", "Diplome_a
   patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb")) %>% 
   dplyr::add_row(code_type_diplome_anterieur = NA_character_, lib_type_diplome_anterieur = "Non-ventilé")
 
-devtools::use_data(diplome_anterieur_type, overwrite = TRUE)
+usethis::use_data(diplome_anterieur_type, overwrite = TRUE)

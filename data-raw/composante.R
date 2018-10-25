@@ -9,7 +9,7 @@ composante <- readxl::read_excel("data-raw/Composante.xlsx", skip = 1) %>%
   dplyr::select(-lib_composante_maj) %>% 
   tidyr::drop_na(code_composante)
 
-devtools::use_data(composante, overwrite = TRUE)
+usethis::use_data(composante, overwrite = TRUE)
 
 #### Composante - type ####
 
@@ -17,10 +17,10 @@ composante_type <- readxl::read_excel("data-raw/Composante.xlsx", "Composante_ty
   patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb")) %>% 
   tidyr::drop_na(code_type_composante)
 
-devtools::use_data(composante_type, overwrite = TRUE)
+usethis::use_data(composante_type, overwrite = TRUE)
 
 #### Composante - histo ####
 
 composante_histo <- impexp::access_import("composante_histo", "data-raw/Tables_ref.accdb")
 
-devtools::use_data(composante_histo, overwrite = TRUE)
+usethis::use_data(composante_histo, overwrite = TRUE)

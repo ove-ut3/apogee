@@ -6,7 +6,7 @@ diplome_version <- readxl::read_excel("data-raw/Diplome_version.xlsx", skip = 1)
   tidyr::nest(code_domaine_diplome, .key = "code_domaine_diplome") %>% 
   dplyr::mutate(code_domaine_diplome = purrr::map(code_domaine_diplome, ~ .[[1]]))
 
-devtools::use_data(diplome_version, overwrite = TRUE)
+usethis::use_data(diplome_version, overwrite = TRUE)
 
 #### Domaine ####
 
@@ -18,7 +18,7 @@ diplome_domaine <- readxl::read_excel("data-raw/Diplome_version.xlsx", "Formatio
   dplyr::mutate(lib_domaine_diplome = ifelse(!is.na(maj_lib_domaine_diplome), maj_lib_domaine_diplome, lib_domaine_diplome)) %>% 
   dplyr::select(-maj_lib_domaine_diplome)
 
-devtools::use_data(diplome_domaine, overwrite = TRUE)
+usethis::use_data(diplome_domaine, overwrite = TRUE)
 
 #### Finalité ####
 
@@ -26,7 +26,7 @@ diplome_finalite <- readxl::read_excel("data-raw/Diplome_version.xlsx", "Finalit
   patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb")) %>% 
   dplyr::bind_rows(impexp::access_import("diplome_finalite_ajout", "data-raw/Tables_ref.accdb"))
 
-devtools::use_data(diplome_finalite, overwrite = TRUE)
+usethis::use_data(diplome_finalite, overwrite = TRUE)
 
 #### Mention ####
 
@@ -38,19 +38,19 @@ diplome_mention <- readxl::read_excel("data-raw/Diplome_version.xlsx", "Mention"
   dplyr::mutate(lib_mention_diplome = ifelse(!is.na(maj_lib_mention_diplome), maj_lib_mention_diplome, lib_mention_diplome)) %>% 
   dplyr::select(-maj_lib_mention_diplome)
 
-devtools::use_data(diplome_mention, overwrite = TRUE)
+usethis::use_data(diplome_mention, overwrite = TRUE)
 
 #### Mention - historique ####
 
 diplome_mention_histo <- impexp::access_import("diplome_mention_histo", "data-raw/Tables_ref.accdb")
 
-devtools::use_data(diplome_mention_histo, overwrite = TRUE)
+usethis::use_data(diplome_mention_histo, overwrite = TRUE)
 
 #### Mention - compatibilité licence et master ####
 
 diplome_mention_lm <- impexp::access_import("diplome_mention_lm", "data-raw/Tables_ref.accdb")
 
-devtools::use_data(diplome_mention_lm, overwrite = TRUE)
+usethis::use_data(diplome_mention_lm, overwrite = TRUE)
 
 #### Spécialité ####
 
@@ -58,4 +58,4 @@ diplome_specialite <- readxl::read_excel("data-raw/Diplome_version.xlsx", "Speci
   patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb")) %>% 
   tidyr::drop_na(code_specialite_diplome)
 
-devtools::use_data(diplome_specialite, overwrite = TRUE)
+usethis::use_data(diplome_specialite, overwrite = TRUE)
