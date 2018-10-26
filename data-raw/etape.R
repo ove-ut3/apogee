@@ -1,5 +1,10 @@
 #### Etape ####
 
+n_inscrits <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge) %>% 
+  dplyr::arrange(annee, code_etape) %>% 
+  dplyr::count(code_etape) %>% 
+  dplyr::rename(n_inscrits = n)
+
 annee_premiere_etape <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge, apogee::inscrits_annules) %>% 
   dplyr::arrange(annee, code_etape) %>% 
   dplyr::select(code_etape, annee_premiere_etape = annee) %>% 
@@ -34,6 +39,7 @@ etape <- readxl::read_excel("data-raw/Etape.xlsx", skip = 1) %>%
                            patchr::filter_data_patch(source = "data_etape")) %>% 
   dplyr::mutate(lib_etape_apogee = ifelse(lib_etape != lib_etape_apogee, FALSE, TRUE)) %>% 
   dplyr::select(-annee_etape_apogee) %>% 
+  dplyr::left_join(n_inscrits, by = "code_etape") %>% 
   dplyr::left_join(annee_premiere_etape, by = "code_etape") %>% 
   dplyr::left_join(annee_derniere_etape, by = "code_etape") %>% 
   dplyr::mutate(actif = dplyr::if_else(annee_derniere_etape >= apogee::annee_en_cours(), TRUE, FALSE, FALSE))
