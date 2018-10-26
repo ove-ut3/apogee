@@ -4,14 +4,11 @@
 \alias{annee_en_cours}
 \title{Renvoie l'annee universitaire en cours}
 \usage{
-annee_en_cours(mois_debut = 9)
-}
-\arguments{
-\item{mois_debut}{Mois de début de l'année, septembre par défaut}
+annee_en_cours()
 }
 \value{
 Une valeur integer contenant l'année en cours
 }
 \description{
-Renvoie l'année universitaire en cours selon le mois de début d'année défini
+Renvoie l'année universitaire en cours selon la dernière année observée dans Apogée.
 }

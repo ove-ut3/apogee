@@ -20,7 +20,7 @@ impexp::access_import("etape", "data-raw/Tables_ref.accdb") %>%
                   apogee::acronyme_type_diplome(),
                 etape_derniere_annee = apogee::etape_derniere_annee(code_etape)) %>%
   tidyr::unnest(code_etape_succ) %>%
-  dplyr::filter((type_diplome %in% c("DUT", "LP", "M2", "M2 enseignement", "Préparation concours") & etape_derniere_annee < apogee::annee_en_cours(mois_debut = 10) - 3) |
+  dplyr::filter((type_diplome %in% c("DUT", "LP", "M2", "M2 enseignement", "Préparation concours") & etape_derniere_annee < apogee::annee_en_cours() - 4) |
                   (!type_diplome %in% c("DUT", "LP", "M2", "M2 enseignement", "Préparation concours") & etape_derniere_annee < apogee::annee_en_cours())) %>% 
   dplyr::group_by(code_etape) %>%
   dplyr::filter(n() == 1) %>% 

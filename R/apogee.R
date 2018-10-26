@@ -224,20 +224,16 @@ formations_liste <- function(annee = NULL, unique = TRUE) {
 
 #' Renvoie l'annee universitaire en cours
 #' 
-#' Renvoie l'année universitaire en cours selon le mois de début d'année défini
-#'
-#' @param mois_debut Mois de début de l'année, septembre par défaut
+#' Renvoie l'année universitaire en cours selon la dernière année observée dans Apogée.
 #'
 #' @return Une valeur integer contenant l'année en cours
 #' 
 #' @export
-annee_en_cours <- function(mois_debut = 9) {
+annee_en_cours <- function() {
   
-  annee_en_cours <- lubridate::year(lubridate::today())
-  
-  if (lubridate::month(lubridate::today()) < mois_debut) {
-    annee_en_cours <- annee_en_cours - 1
-  }
+  annee_en_cours <- apogee::etape %>% 
+    dplyr::pull(annee_derniere_etape) %>% 
+    max(na.rm = TRUE)
   
   return(annee_en_cours)
 }
