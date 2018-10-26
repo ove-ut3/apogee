@@ -121,24 +121,25 @@ temoin_elp_ue <- function(code_elp) {
 #'
 #' @param code_etape Un vecteur de code_etape.
 #' @param annee Année(s) d'activité à vérifier, par défaut l'année en cours.
+#' @param annules Si \code{TRUE}, inclut les formations dont toutes les inscriptions sont annulées.
 #'
 #' @return Un vecteur de booléens TRUE/FALSE.
 #' 
 #' @export
-temoin_etape_actif <- function(code_etape, annee = NULL) {
+temoin_etape_actif <- function(code_etape, annee = NULL, annules = FALSE) {
   
   temoin_etape_actif <- dplyr::tibble(code_etape) %>% 
     dplyr::left_join(apogee::etape, by = "code_etape")
   
-  if (is.null(annee)) {
-    temoin_etape_actif <- dplyr::pull(temoin_etape_actif, actif)
-    
-  } else {
-    temoin_etape_actif <- temoin_etape_actif %>% 
-      dplyr::mutate(actif = purrr::map2_lgl(annee_premiere_etape, annee_derniere_etape, ~ length(intersect(.x:.y, !!annee)) >= 1)) %>% 
-      dplyr::pull(actif)
-    
+  if (!is.null(annee)) {
+    temoin_etape_actif <- dplyr::mutate(temoin_etape_actif, actif = purrr::map2_lgl(annee_premiere_etape, annee_derniere_etape, ~ length(intersect(.x:.y, !!annee)) >= 1))
   }
+  
+  if (annules == FALSE) {
+    temoin_etape_actif <- dplyr::mutate(temoin_etape_actif, actif = ifelse(is.na(n_inscrits), FALSE, actif))
+  }
+  
+  temoin_etape_actif <- dplyr::pull(temoin_etape_actif, actif)
   
   return(temoin_etape_actif)
 }
