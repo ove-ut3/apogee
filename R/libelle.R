@@ -4,7 +4,7 @@
 #'
 #' @param code_etape Un vecteur de code étape.
 #' @param type_diplome \code{TRUE}: type de dplôme intégré dans le libellé d'étape.
-#' @param annee_etape \code{TRUE}: année d'étape intégrée dans le libellé d'étape.
+#' @param annee_diplome \code{TRUE}: année de diplôme intégrée dans le libellé d'étape.
 #' @param ville \code{TRUE}: Ville intégrée dans le libellé d'étape.
 #' @param option \code{TRUE}: option intégrée dans le libellé d'étape.
 #' @param particularite \code{TRUE}: Particularité intégrée dans le libellé d'étape.
@@ -15,7 +15,7 @@
 #' Il est créé à partir de la table "etape" de la base Access "Tables_ref.accdb" (projet Apogée).
 #'
 #' @export
-lib_etape <- function(code_etape, type_diplome = TRUE, annee_etape = TRUE, ville = TRUE, option = TRUE, particularite = TRUE) {
+lib_etape <- function(code_etape, type_diplome = TRUE, annee_diplome = TRUE, ville = TRUE, option = TRUE, particularite = TRUE) {
   
   if (option == TRUE & particularite == TRUE & ville == TRUE) {
     champ_lib_etape <- "lib_etape_ville_option_particularite"
@@ -40,10 +40,10 @@ lib_etape <- function(code_etape, type_diplome = TRUE, annee_etape = TRUE, ville
                     champ_lib_etape = ifelse(lib_etape_apogee == FALSE & !type_diplome %in% c("DAEU", "DE infirmier-e", "Dentaire", "Diplôme d'Etat", "DNO", "HDR", "Médecine", "Pharmacie", "TH FICTIVE", "Vétérinaire"), caractr::str_paste(type_diplome, champ_lib_etape), champ_lib_etape))
   }
   
-  if (annee_etape == TRUE) {
+  if (annee_diplome == TRUE) {
     lib_etape <- lib_etape %>% 
-      dplyr::mutate(champ_lib_etape = ifelse(code_type_diplome %in% c("DUT", "DE Infirm.", "Certif Cap", "DEUST"), 
-                                             paste0(champ_lib_etape, " - ", apogee::annee_etape(code_etape) %>% 
+      dplyr::mutate(champ_lib_etape = ifelse(!is.na(annee_diplome), 
+                                             paste0(champ_lib_etape, " - ", apogee::annee_diplome(code_etape) %>% 
                                                       caractr::str_conv_number_letter(type = "ieme_number", female = TRUE), " année"),
                                              champ_lib_etape))
   }

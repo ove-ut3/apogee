@@ -4,7 +4,7 @@
 \alias{lib_etape}
 \title{Renvoie le libelle a partir du code etape}
 \usage{
-lib_etape(code_etape, type_diplome = TRUE, annee_etape = TRUE,
+lib_etape(code_etape, type_diplome = TRUE, annee_diplome = TRUE,
   ville = TRUE, option = TRUE, particularite = TRUE)
 }
 \arguments{
@@ -12,7 +12,7 @@ lib_etape(code_etape, type_diplome = TRUE, annee_etape = TRUE,
 
 \item{type_diplome}{\code{TRUE}: type de dplôme intégré dans le libellé d'étape.}
 
-\item{annee_etape}{\code{TRUE}: année d'étape intégrée dans le libellé d'étape.}
+\item{annee_diplome}{\code{TRUE}: année de diplôme intégrée dans le libellé d'étape.}
 
 \item{ville}{\code{TRUE}: Ville intégrée dans le libellé d'étape.}
 
