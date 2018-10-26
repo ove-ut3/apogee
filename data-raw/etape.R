@@ -37,7 +37,7 @@ etape <- readxl::read_excel("data-raw/Etape.xlsx", skip = 1) %>%
   dplyr::left_join(etape_diplome_type, by = "code_etape") %>% 
   patchr::recode_formula(impexp::access_import("_recodage", "data-raw/Tables_ref.accdb") %>% 
                            patchr::filter_data_patch(source = "data_etape")) %>% 
-  dplyr::mutate(lib_etape_apogee = ifelse(lib_etape != lib_etape_apogee, FALSE, TRUE)) %>% 
+  dplyr::mutate(temoin_etape_apogee = ifelse(lib_etape != lib_etape_apogee, FALSE, TRUE)) %>% 
   dplyr::select(-annee_etape_apogee) %>% 
   dplyr::left_join(n_inscrits, by = "code_etape") %>% 
   dplyr::left_join(annee_premiere_etape, by = "code_etape") %>% 

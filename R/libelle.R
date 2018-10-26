@@ -37,7 +37,7 @@ lib_etape <- function(code_etape, type_diplome = TRUE, annee_diplome = TRUE, vil
   if (type_diplome == TRUE) {
     lib_etape <- lib_etape %>% 
       dplyr::mutate(type_diplome = apogee::acronyme_type_diplome(code_type_diplome),
-                    champ_lib_etape = ifelse(lib_etape_apogee == FALSE & !type_diplome %in% c("DAEU", "DE infirmier-e", "Dentaire", "Diplôme d'Etat", "DNO", "HDR", "Médecine", "Pharmacie", "TH FICTIVE", "Vétérinaire"), caractr::str_paste(type_diplome, champ_lib_etape), champ_lib_etape))
+                    champ_lib_etape = ifelse(temoin_etape_apogee == FALSE & !type_diplome %in% c("DAEU", "DE infirmier-e", "Dentaire", "Diplôme d'Etat", "DNO", "HDR", "Médecine", "Pharmacie", "TH FICTIVE", "Vétérinaire"), caractr::str_paste(type_diplome, champ_lib_etape), champ_lib_etape))
   }
   
   if (annee_diplome == TRUE) {
