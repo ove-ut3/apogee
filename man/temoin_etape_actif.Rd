@@ -4,10 +4,12 @@
 \alias{temoin_etape_actif}
 \title{Temoin TRUE/FALSE si le code_etape est actif}
 \usage{
-temoin_etape_actif(code_etape)
+temoin_etape_actif(code_etape, annee = NULL)
 }
 \arguments{
 \item{code_etape}{Un vecteur de code_etape.}
+
+\item{annee}{Année(s) d'activité à vérifier, par défaut l'année en cours.}
 }
 \value{
 Un vecteur de booléens TRUE/FALSE.

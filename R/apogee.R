@@ -120,15 +120,25 @@ temoin_elp_ue <- function(code_elp) {
 #' Témoin TRUE/FALSE si le code_etape est actif.
 #'
 #' @param code_etape Un vecteur de code_etape.
+#' @param annee Année(s) d'activité à vérifier, par défaut l'année en cours.
 #'
 #' @return Un vecteur de booléens TRUE/FALSE.
 #' 
 #' @export
-temoin_etape_actif <- function(code_etape) {
+temoin_etape_actif <- function(code_etape, annee = NULL) {
   
   temoin_etape_actif <- dplyr::tibble(code_etape) %>% 
-    dplyr::left_join(apogee::etape, by = "code_etape") %>% 
-    dplyr::pull(actif)
+    dplyr::left_join(apogee::etape, by = "code_etape")
+  
+  if (is.null(annee)) {
+    temoin_etape_actif <- dplyr::pull(temoin_etape_actif, actif)
+    
+  } else {
+    temoin_etape_actif <- temoin_etape_actif %>% 
+      dplyr::mutate(actif = purrr::map2_lgl(annee_premiere_etape, annee_derniere_etape, ~ length(intersect(.x:.y, !!annee)) >= 1)) %>% 
+      dplyr::pull(actif)
+    
+  }
   
   return(temoin_etape_actif)
 }
