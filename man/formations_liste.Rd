@@ -7,7 +7,7 @@
 formations_liste(annee = NULL, unique = TRUE)
 }
 \arguments{
-\item{annee}{Année (par défaut, celle en cours)}
+\item{annee}{Année(s) (par défaut, celle en cours)}
 
 \item{unique}{Si \code{TRUE}, la table est dédoublonnée par code_etape.}
 }

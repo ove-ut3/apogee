@@ -148,7 +148,7 @@ temoin_etape_actif <- function(code_etape, annee = NULL, annules = FALSE) {
 #' 
 #' Liste des formations d'une année universitaire
 #'
-#' @param annee Année (par défaut, celle en cours)
+#' @param annee Année(s) (par défaut, celle en cours)
 #' @param unique Si \code{TRUE}, la table est dédoublonnée par code_etape.
 #'
 #' @return Un tibble des formations
@@ -161,7 +161,9 @@ formations_liste <- function(annee = NULL, unique = TRUE) {
   }
   
   liste_formations <- apogee::etape %>% 
-    dplyr::filter(!!annee >= annee_premiere_etape & !!annee <= annee_derniere_etape) %>% 
+    tidyr::drop_na(annee_premiere_etape, annee_derniere_etape) %>% 
+    dplyr::filter(purrr::map2_lgl(annee_premiere_etape, annee_derniere_etape, ~ length(intersect(.x:.y, !!annee)) >= 1),
+                  !is.na(n_inscrits)) %>% 
     dplyr::left_join(apogee::etape_composante %>% 
                        dplyr::filter(!!annee >= premiere_annee & !!annee <= derniere_annee),
                      by = "code_etape") %>% 
