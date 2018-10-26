@@ -19,6 +19,27 @@ annee_etape <- function(code_etape) {
   return(annee_etape)
 }
 
+#' Renvoie l'annee de diplome a partir du code etape
+#'
+#' Renvoie l'année de diplôme à partir du code étape au sein d'un diplôme.
+#'
+#' @param code_etape Un vecteur de code étape.
+#'
+#' @return Un vecteur contenant les années de diplôme.
+#'
+#' Jeu de données source : \code{apogee::etape}.\cr
+#' Il est créé à partir d'Apogée et de la table "etape" de la base Access "Tables_ref.accdb" (projet Apogée).
+#'
+#' @export
+annee_diplome <- function(code_etape) {
+  
+  annee_diplome <- dplyr::tibble(code_etape) %>%
+    dplyr::left_join(apogee::etape, by = "code_etape") %>%
+    dplyr::pull(annee_diplome)
+  
+  return(annee_diplome)
+}
+
 #' Renvoie la premiere annee d'une etape a partir du code etape
 #'
 #' Renvoie la première annee d'une étape à partir du code étape.
