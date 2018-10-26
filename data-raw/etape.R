@@ -69,6 +69,7 @@ etape <- etape %>%
   dplyr::left_join(dplyr::select(etape_ville2, code_etape, ville_maj = ville), by = "code_etape") %>% 
   dplyr::mutate(ville = ifelse(!is.na(ville_maj), ville_maj, ville)) %>% 
   dplyr::select(-ville_maj) %>% 
+  # Nouvelle passe pour les libellés d'étape
   patchr::recode_formula(impexp::access_import("_recodage", "data-raw/Tables_ref.accdb") %>% 
                            patchr::filter_data_patch(source = "data_etape"))
 
