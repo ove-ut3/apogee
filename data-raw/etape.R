@@ -32,7 +32,8 @@ etape <- readxl::read_excel("data-raw/Etape.xlsx", skip = 1) %>%
   patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb")) %>% 
   patchr::remove_duplicate(temoin_annee1_diplome) %>% 
   dplyr::rename(lib_etape_apogee = lib_etape) %>% 
-  dplyr::left_join(impexp::access_import("etape", "data-raw/Tables_ref.accdb"),
+  dplyr::left_join(impexp::access_import("etape", "data-raw/Tables_ref.accdb") %>% 
+                     dplyr::mutate(temoin_access = TRUE),
                    by = "code_etape") %>% 
   dplyr::left_join(etape_diplome_type, by = "code_etape") %>% 
   patchr::recode_formula(impexp::access_import("_recodage", "data-raw/Tables_ref.accdb") %>% 
