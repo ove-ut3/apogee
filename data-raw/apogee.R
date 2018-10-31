@@ -1,3 +1,14 @@
+#### Méta-données ####
+
+source("data-raw/composante.R")
+source("data-raw/diplome.R")
+source("data-raw/diplome_version.R")
+source("data-raw/elp.R")
+source("data-raw/etape.R")
+source("data-raw/inscription.R", encoding = "UTF-8")
+source("data-raw/resultat.R")
+source("data-raw/sise.R")
+
 #### Individus ####
 
 individus <- impexp::csv_import_path("Individus\\.csv", path = "data-raw", zip = TRUE, skip = 1) %>% 
