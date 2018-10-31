@@ -186,7 +186,7 @@ formations_liste <- function(annee = NULL, unique = TRUE) {
     dplyr::filter(purrr::map2_lgl(annee_premiere_etape, annee_derniere_etape, ~ length(intersect(.x:.y, !!annee)) >= 1),
                   !is.na(n_inscrits)) %>% 
     dplyr::left_join(apogee::etape_composante %>% 
-                       dplyr::filter(!!annee >= premiere_annee & !!annee <= derniere_annee),
+                       dplyr::filter(purrr::map2_lgl(premiere_annee, derniere_annee, ~ length(intersect(.x:.y, !!annee)) >= 1)),
                      by = "code_etape") %>% 
     dplyr::select(code_etape, code_composante) %>% 
     dplyr::mutate(lib_composante = apogee::hier_composante_parent(code_composante) %>%
