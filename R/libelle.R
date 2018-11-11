@@ -3,7 +3,8 @@
 #' Renvoie le libellé à partir du code étape.
 #'
 #' @param code_etape Un vecteur de code étape.
-#' @param type_diplome \code{TRUE}: type de dplôme intégré dans le libellé d'étape.
+#' @param formation \code{TRUE}: type de formation intégré dans le libellé d'étape.
+#' @param diplome \code{TRUE}: type de diplôme intégré dans le libellé d'étape.
 #' @param annee_diplome \code{TRUE}: année de diplôme intégrée dans le libellé d'étape.
 #' @param ville \code{TRUE}: Ville intégrée dans le libellé d'étape.
 #' @param option \code{TRUE}: option intégrée dans le libellé d'étape.
@@ -15,7 +16,7 @@
 #' Il est créé à partir de la table "etape" de la base Access "Tables_ref.accdb" (projet Apogée).
 #'
 #' @export
-lib_etape <- function(code_etape, type_diplome = TRUE, annee_diplome = TRUE, ville = TRUE, option = TRUE, particularite = TRUE) {
+lib_etape <- function(code_etape, formation = TRUE, diplome = FALSE, annee_diplome = TRUE, ville = TRUE, option = TRUE, particularite = TRUE) {
   
   if (option == TRUE & particularite == TRUE & ville == TRUE) {
     champ_lib_etape <- "lib_etape_ville_option_particularite"
@@ -34,10 +35,17 @@ lib_etape <- function(code_etape, type_diplome = TRUE, annee_diplome = TRUE, vil
     dplyr::left_join(apogee::etape, by = "code_etape") %>%
     dplyr::rename(champ_lib_etape = !!champ_lib_etape)
   
-  if (type_diplome == TRUE) {
+  if (formation == TRUE) {
     lib_etape <- lib_etape %>% 
       dplyr::mutate(type_diplome = apogee::acronyme_type_diplome(code_type_diplome),
                     champ_lib_etape = ifelse(temoin_etape_apogee == FALSE & !type_diplome %in% c("DAEU", "DE infirmier-e", "Dentaire", "Diplôme d'Etat", "DNO", "HDR", "Médecine", "Pharmacie", "TH FICTIVE", "Vétérinaire"), caractr::str_paste(type_diplome, champ_lib_etape), champ_lib_etape))
+  }
+  
+  if (diplome == TRUE) {
+    lib_etape <- lib_etape %>% 
+      dplyr::left_join(dplyr::select(apogee::diplome_type, code_type_diplome, lib_diplome), 
+                       by = "code_type_diplome") %>% 
+      dplyr::mutate(champ_lib_etape = ifelse(temoin_etape_apogee == FALSE, caractr::str_paste(lib_diplome, champ_lib_etape), champ_lib_etape))
   }
   
   if (annee_diplome == TRUE) {

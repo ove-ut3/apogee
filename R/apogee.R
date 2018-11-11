@@ -200,7 +200,7 @@ formations_liste <- function(annee = NULL, unique = TRUE) {
       dplyr::group_by(code_etape) %>% 
       dplyr::summarise(lib_composante = paste(lib_composante, collapse = " / ")) %>% 
       dplyr::ungroup() %>% 
-      dplyr::mutate(lib_etape = apogee::lib_etape(code_etape, type_diplome = FALSE, annee = FALSE, option = FALSE, particularite = FALSE, ville = FALSE),
+      dplyr::mutate(lib_etape = apogee::lib_etape(code_etape, formation = FALSE, annee = FALSE, option = FALSE, particularite = FALSE, ville = FALSE),
                     acronyme_etape = apogee::acronyme_etape(code_etape),
                     acronyme_type_diplome = apogee::hier_etape_type_diplome(code_etape) %>% 
                       apogee::acronyme_type_diplome(),
@@ -218,7 +218,7 @@ formations_liste <- function(annee = NULL, unique = TRUE) {
   } else {
     
     liste_formations <- liste_formations %>% 
-      dplyr::mutate(lib_etape = apogee::lib_etape(code_etape, type_diplome = FALSE, annee = FALSE, option = FALSE, particularite = FALSE, ville = FALSE),
+      dplyr::mutate(lib_etape = apogee::lib_etape(code_etape, formation = FALSE, annee = FALSE, option = FALSE, particularite = FALSE, ville = FALSE),
                     acronyme_etape = apogee::acronyme_etape(code_etape),
                     acronyme_type_diplome = apogee::hier_etape_type_diplome(code_etape) %>% 
                       apogee::acronyme_type_diplome(),
