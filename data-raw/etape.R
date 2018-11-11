@@ -21,6 +21,8 @@ annee_derniere_etape <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge
 
 etape_diplome_type <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_diplome_type", skip = 1) %>% 
   patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb")) %>% 
+  patchr::recode_formula(impexp::access_import("_recodage", "data-raw/Tables_ref.accdb") %>% 
+                           patchr::filter_data_patch(source = "data_diplome")) %>% 
   dplyr::select(-annee) %>% 
   dplyr::group_by(code_etape) %>% 
   dplyr::filter(dplyr::row_number() == n()) %>% 
