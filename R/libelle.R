@@ -35,11 +35,11 @@ lib_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville", "o
     dplyr::left_join(apogee::etape, by = "code_etape") %>%
     dplyr::rename(champ_lib_etape = !!champ_lib_etape)
   
-  if (prefixe == "formation") {
+  if (prefixe %in% "formation") {
     lib_etape <- lib_etape %>% 
       dplyr::mutate(type_diplome = apogee::acronyme_type_diplome(code_type_diplome),
                     champ_lib_etape = ifelse(temoin_etape_apogee == FALSE & !type_diplome %in% c("DAEU", "DE infirmier-e", "Dentaire", "Diplôme d'Etat", "DNO", "HDR", "Médecine", "Pharmacie", "TH FICTIVE", "Vétérinaire"), caractr::str_paste(type_diplome, champ_lib_etape), champ_lib_etape))
-  } else if (prefixe == "diplome") {
+  } else if (prefixe %in% "diplome") {
     lib_etape <- lib_etape %>% 
       dplyr::left_join(dplyr::select(apogee::diplome_type, code_type_diplome, lib_diplome), 
                        by = "code_type_diplome") %>% 
