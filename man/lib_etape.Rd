@@ -10,23 +10,15 @@ lib_etape(code_etape, prefixe = "formation", suffixe = c("ville",
 \arguments{
 \item{code_etape}{Un vecteur de code étape.}
 
-\item{formation}{\code{TRUE}: type de formation intégré dans le libellé d'étape.}
+\item{prefixe}{Libellé de type de formation ou de type de diplôme en préfixe du libellé de formation.}
 
-\item{diplome}{\code{TRUE}: type de diplôme intégré dans le libellé d'étape.}
-
-\item{annee_diplome}{\code{TRUE}: année de diplôme intégrée dans le libellé d'étape.}
-
-\item{ville}{\code{TRUE}: Ville intégrée dans le libellé d'étape.}
-
-\item{option}{\code{TRUE}: option intégrée dans le libellé d'étape.}
-
-\item{particularite}{\code{TRUE}: Particularité intégrée dans le libellé d'étape.}
+\item{suffixe}{Libellé de ville, option, particularité ou année dans le diplôme en suffixe du libellé de formation.}
 }
 \value{
 Un vecteur contenant les libellés étape.
 
 Jeu de données source : \code{apogee::etape}.\cr
-Il est créé à partir de la table "etape" de la base Access "Tables_ref.accdb" (projet Apogée).
+Il est créé à partir d'Apogée et enrichi par la table "etape" de la base Access "Tables_ref.accdb".
 }
 \description{
 Renvoie le libellé à partir du code étape.
