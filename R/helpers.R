@@ -329,3 +329,22 @@ compatibilite_mention_diplome_m <- function(code_mention_diplome_m) {
   
   return(compatibilite_mention_diplome_m)
 }
+
+#' Rezippe les archives CSV extraites depuis BO.
+#'
+#' @param fichier_zip Chemin vers le fichier zip.
+#'
+#' @export
+rezip_csv <- function(fichier_zip) {
+  
+  match <- stringr::str_match(fichier_zip, "(.+)(/.+?)$")
+  path <- match[, 2]
+  file <- match[, 3]
+  unzip(zipfile = paste0(path, file), exdir = path)
+  
+  csv_file <- list.files(path, pattern = "csv$", full.names = TRUE)
+  
+  zip(paste0(path, file), csv_file, flags = "-jqr")
+  
+  suppression <- file.remove(csv_file)
+}
