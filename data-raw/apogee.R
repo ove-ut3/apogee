@@ -1,6 +1,9 @@
-source("data-raw/utils.R")
+# Rezip des CSV (gain de place)
+list.files(pattern = "\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
+  purrr::walk(apogee::rezip_csv)
 
 # Données brutes
+source("data-raw/utils.R")
 source("data-raw/apogee-data.R")
 
 developr::package_build()
