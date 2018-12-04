@@ -24,3 +24,12 @@ diplome_anterieur_type <- readxl::read_excel("data-raw/Diplome.xlsx", "Diplome_a
   dplyr::add_row(code_type_diplome_anterieur = NA_character_, lib_type_diplome_anterieur = "Non-ventilé")
 
 usethis::use_data(diplome_anterieur_type, overwrite = TRUE)
+
+
+#### Diplôme externe - type ####
+
+diplome_externe_type <- readxl::read_excel("data-raw/Diplome.xlsx", "Diplome_externe", skip = 1) %>% 
+  patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb")) %>% 
+  dplyr::add_row(code_type_diplome_externe = NA_character_, lib_type_diplome_externe = "Non-ventilé")
+
+usethis::use_data(diplome_externe_type, overwrite = TRUE)

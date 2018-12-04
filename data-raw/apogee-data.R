@@ -43,6 +43,27 @@ individus_diplome_origine <- impexp::csv_import_path("Individus_diplome_origine\
   
 usethis::use_data(individus_diplome_origine, overwrite = TRUE)
 
+individus_diplome_origine_2 <- impexp::csv_import_path("Individus_diplome_origine_2\\.csv", path = "data-raw", zip = TRUE, skip = 1) %>% 
+  tidyr::unnest() %>% 
+  patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb")) %>% 
+  patchr::transcode(impexp::access_import("_contents", "data-raw/Tables_ref.accdb")) %>% 
+  dplyr::arrange(code_etudiant, annee_diplome_externe) %>% 
+  tidyr::drop_na(code_type_diplome_externe)
+
+usethis::use_data(individus_diplome_origine_2, overwrite = TRUE)
+
+test <- apogee::individus_diplome_origine %>% 
+  dplyr::select(code_etudiant, annee = annee_diplome_obtenu, type_diplome_anterieur = code_type_diplome_anterieur) %>%
+  dplyr::filter(!type_diplome_anterieur %in% c("1", "A")) %>% 
+  dplyr::full_join(apogee::individus_diplome_origine_2 %>% 
+                     dplyr::select(code_etudiant, annee = annee_diplome_externe, type_diplome_externe = code_type_diplome_externe),
+                   by = c("code_etudiant", "annee"))
+
+dplyr::filter(test, !is.na(type_diplome_anterieur) & is.na(type_diplome_externe))
+dplyr::filter(test, is.na(type_diplome_anterieur) & !is.na(type_diplome_externe))
+
+test2 <- dplyr::count(test, type_diplome_anterieur, type_diplome_externe)
+
 individus_formation_origine <- impexp::csv_import_path("Individus_formation_origine\\.csv", path = "data-raw", zip = TRUE, skip = 1) %>% 
   tidyr::unnest() %>% 
   patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb")) %>% 

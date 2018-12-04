@@ -575,7 +575,7 @@ lib_periode_elp <- function(code_periode_elp) {
 #'
 #' Renvoie le libellé à partir du code de type diplôme antérieur.
 #'
-#' @param code_type_diplome Un vecteur de code de type diplôme antérieur.
+#' @param code_type_diplome_anterieur Un vecteur de code de type diplôme antérieur.
 #'
 #' @return Un vecteur contenant les libellés de type diplôme antérieur.
 #'
@@ -590,6 +590,27 @@ lib_type_diplome_anterieur <- function(code_type_diplome_anterieur) {
     dplyr::pull(lib_type_diplome_anterieur)
   
   return(lib_type_diplome_anterieur)
+}
+
+#' Renvoie le libelle a partir du code de type diplome externe
+#'
+#' Renvoie le libellé à partir du code de type diplôme externe.
+#'
+#' @param code_type_diplome_externe Un vecteur de code de type diplôme externe.
+#'
+#' @return Un vecteur contenant les libellés de type diplôme externe.
+#'
+#' Jeu de données source : \code{apogee::diplome_externe_type}.\cr
+#' Il est créé à partir de l'objet "Type de diplôme externe" d'Apogée (code et lib).
+#'
+#' @export
+lib_type_diplome_externe <- function(code_type_diplome_externe) {
+  
+  lib_type_diplome_externe <- dplyr::tibble(code_type_diplome_externe) %>%
+    dplyr::left_join(apogee::diplome_externe_type, by = "code_type_diplome_externe") %>%
+    dplyr::pull(lib_type_diplome_externe)
+  
+  return(lib_type_diplome_externe)
 }
 
 #' Renvoie le libelle a partir du code academie

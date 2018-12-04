@@ -7,7 +7,7 @@
 lib_type_diplome_anterieur(code_type_diplome_anterieur)
 }
 \arguments{
-\item{code_type_diplome}{Un vecteur de code de type diplôme antérieur.}
+\item{code_type_diplome_anterieur}{Un vecteur de code de type diplôme antérieur.}
 }
 \value{
 Un vecteur contenant les libellés de type diplôme antérieur.
