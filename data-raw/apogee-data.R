@@ -45,6 +45,7 @@ individus_diplome_externe <- impexp::csv_import_path("Individus_diplome_externe\
   tidyr::unnest() %>% 
   patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb")) %>% 
   patchr::transcode(impexp::access_import("_contents", "data-raw/Tables_ref.accdb")) %>% 
+  dplyr::mutate(code_type_diplome_externe = stringr::str_pad(code_type_diplome_externe, 3, "left", "0")) %>% 
   dplyr::arrange(code_etudiant, annee_diplome_externe) %>% 
   tidyr::drop_na(code_type_diplome_externe)
 
