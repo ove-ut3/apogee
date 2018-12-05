@@ -21,6 +21,8 @@ usethis::use_data(diplome_type, overwrite = TRUE)
 
 diplome_anterieur_type <- readxl::read_excel("data-raw/Diplome.xlsx", "Diplome_anterieur_origine", skip = 1) %>% 
   patchr::rename(impexp::access_import("_rename", "data-raw/Tables_ref.accdb")) %>% 
+  patchr::recode_formula(impexp::access_import("_recodage", "data-raw/Tables_ref.accdb") %>% 
+                           patchr::filter_data_patch("data_diplome_anterieur_type")) %>% 
   dplyr::add_row(code_type_diplome_anterieur = NA_character_, lib_type_diplome_anterieur = "Non-ventilé")
 
 usethis::use_data(diplome_anterieur_type, overwrite = TRUE)
