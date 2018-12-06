@@ -109,8 +109,8 @@ etape_derniere_annee <- function(code_etape) {
 #' @export
 annee_u <- function(annee, fichier = FALSE) {
   
-  sep <- dplyr::case_when(fichier ~ "\U2011", 
-                          !fichier ~ "/")
+  sep <- dplyr::case_when(fichier ~ "-",
+                          !fichier ~ "\U2011")
   
   annee_u <- paste(annee, substr(annee + 1, 3, 4), sep = sep)
   
