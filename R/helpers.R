@@ -97,7 +97,7 @@ etape_derniere_annee <- function(code_etape) {
 #' Transformation de l'année d'inscription en année universitaire.
 #'
 #' @param annee Année d'inscription.
-#' @param fichier Sans le caractère illicite "/".
+#' @param fichier Si \code{TRUE}, utilisation du trait d'union et non du tiret insécable.
 #'
 #' @return Année universitaire.
 #' 

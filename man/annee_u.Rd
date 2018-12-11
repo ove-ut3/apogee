@@ -9,7 +9,7 @@ annee_u(annee, fichier = FALSE)
 \arguments{
 \item{annee}{Année d'inscription.}
 
-\item{fichier}{Sans le caractère illicite "/".}
+\item{fichier}{Si \code{TRUE}, utilisation du trait d'union et non du tiret insécable.}
 }
 \value{
 Année universitaire.
