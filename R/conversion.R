@@ -105,24 +105,3 @@ conv_annee_etape_type_diplome <- function(annee_etape) {
   
   return(conv_annee_etape_type_diplome)
 }
-
-#' Renvoie le secteur (secondaire/tertiaire) a partir du code etape
-#'
-#' Renvoie le secteur (secondaire/tertiaire) à partir du code étape.
-#'
-#' @param code_etape Un vecteur de code étape.
-#'
-#' @return Un vecteur contenant les secteurs (secondaire/tertiaire).
-#'
-#' Jeu de données source : \code{apogee::etape_secteur}.\cr
-#' Il est créé à partir de la table "etape_secteur" de la base Access Tables_ref (projet Apogee).
-#'
-#' @export
-conv_etape_secteur <- function(code_etape) {
-  
-  conv_etape_secteur <- dplyr::tibble(code_etape) %>%
-    dplyr::left_join(apogee::etape_secteur, by = "code_etape") %>%
-    dplyr::pull(secteur)
-  
-  return(conv_etape_secteur)
-}
