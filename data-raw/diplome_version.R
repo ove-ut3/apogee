@@ -38,6 +38,8 @@ diplome_mention <- readxl::read_excel("data-raw/Diplome_version.xlsx", "Mention"
   dplyr::mutate(lib_mention_diplome = ifelse(!is.na(maj_lib_mention_diplome), maj_lib_mention_diplome, lib_mention_diplome)) %>% 
   dplyr::select(-maj_lib_mention_diplome)
 
+patchr::duplicate(diplome_mention, code_mention_diplome)
+
 usethis::use_data(diplome_mention, overwrite = TRUE)
 
 #### Mention - historique ####
