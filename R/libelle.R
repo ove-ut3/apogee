@@ -65,20 +65,35 @@ lib_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville", "o
 #' Renvoie l'acronyme à partir du code étape.
 #'
 #' @param code_etape Un vecteur de code étape.
+#' @param suffixe Libellé de ville, option, particularité ou année dans le diplôme en suffixe de l'acronyme de formation.
 #'
-#' @return Un vecteur contenant les sigle étape.
+#' @return Un vecteur contenant les acronymes d'étape.
 #'
 #' Jeu de données source : \code{apogee::etape}.\cr
-#' Il est créé à partir de la table "etape" de la base Access "Tables_ref.accdb" (projet Apogée).
+#' Il est créé à partir de la table "etape" de la base Access "Tables_ref.accdb".
 #'
 #' @export
-acronyme_etape <- function(code_etape) {
+acronyme_etape <- function(code_etape, suffixe = c("ville", "option", "particularite", "annee")) {
   
-  sigle_etape <- dplyr::tibble(code_etape) %>%
+  champ_acronyme_etape <- purrr::map_lgl(c("ville", "option", "particularite"), ~ . %in% suffixe) %>% 
+    paste(collapse = " ") %>% 
+    dplyr::recode(
+      "TRUE TRUE TRUE" = "acronyme_etape_ville_option_particularite",
+      "TRUE TRUE FALSE" = "acronyme_etape_ville_option",
+      "TRUE FALSE TRUE" = "acronyme_etape_ville_particularite",
+      "TRUE FALSE FALSE" = "acronyme_etape_ville",
+      "FALSE TRUE TRUE" = "acronyme_etape_option_particularite",
+      "FALSE TRUE FALSE" = "acronyme_etape_option",
+      "FALSE FALSE TRUE" = "acronyme_etape_particularite",
+      "FALSE FALSE FALSE" = "acronyme_etape"
+    )
+  
+  acronyme_etape <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape, by = "code_etape") %>%
-    dplyr::pull(acronyme_etape)
+    dplyr::rename(champ_acronyme_etape = !!champ_acronyme_etape) %>%
+    dplyr::pull(champ_acronyme_etape)
   
-  return(sigle_etape)
+  return(acronyme_etape)
 }
 
 #' Renvoie le libelle a partir du code cursus d'une etape
@@ -762,3 +777,4 @@ acronyme_mention_diplome <- function(code_mention_diplome) {
   
   return(acronyme_mention_diplome)
 }
+
