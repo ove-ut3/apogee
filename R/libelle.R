@@ -741,3 +741,24 @@ lib_sise_type_diplome <- function(code_sise_type_diplome) {
   
   return(lib_sise_type_diplome)
 }
+
+#' Renvoie l'acronyme a partir du code de mention de diplome
+#'
+#' Renvoie l'acronyme à partir du code de mention de diplôme.
+#'
+#' @param code_etape Un vecteur de code de mention de diplôme.
+#'
+#' @return Un vecteur contenant les acronymes de mention de diplôme.
+#'
+#' Jeu de données source : \code{apogee::diplome_mention}.\cr
+#' Il est créé à partir de la table "diplome_mention" de la base Access "Tables_ref.accdb".
+#'
+#' @export
+acronyme_mention_diplome <- function(code_mention_diplome) {
+  
+  acronyme_mention_diplome <- dplyr::tibble(code_mention_diplome) %>%
+    dplyr::left_join(apogee::diplome_mention, by = "code_mention_diplome") %>%
+    dplyr::pull(acronyme_mention_diplome)
+  
+  return(acronyme_mention_diplome)
+}
