@@ -340,11 +340,11 @@ rezip_csv <- function(fichier_zip) {
   match <- stringr::str_match(fichier_zip, "(.+)(/.+?)$")
   path <- match[, 2]
   file <- match[, 3]
-  unzip(zipfile = paste0(path, file), exdir = path)
+  unzip(zipfile = glue::glue("{path}{file}"), exdir = path)
   
   csv_file <- list.files(path, pattern = "csv$", full.names = TRUE)
   
-  zip(paste0(path, file), csv_file, flags = "-jqr")
+  zip(glue::glue("{path}{file}"), csv_file, flags = "-jqr")
   
   suppression <- file.remove(csv_file)
 }

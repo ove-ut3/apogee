@@ -23,7 +23,7 @@ nest_inscrits <- function(table, champ_nest, cle = c("annee", "code_etape", "cod
     dplyr::mutate(!!nom_champ_nest := purrr::map(!!quo_champ_nest, ~ .[[1]]))
   
   nest2 <- table %>%
-    dplyr::select(!!!rlang::parse_quosure(paste0("-", nom_champ_nest))) %>%
+    dplyr::select(!!!rlang::parse_quosure(glue::glue("-{nom_champ_nest}"))) %>%
     unique() %>%
     dplyr::full_join(nest2, by = cle)
   

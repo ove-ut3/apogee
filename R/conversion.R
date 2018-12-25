@@ -17,7 +17,7 @@ conv_etape_sise_diplome <- function(code_etape, annee) {
     dplyr::left_join(apogee::conv_etape_sise, by = c("code_etape", "annee")) %>% 
     split(x = .$code_diplome_sise, f = .$.id)
   
-  names(conv_etape_sise_diplome) <- paste(code_etape, annee, sep = "-")
+  names(conv_etape_sise_diplome) <- glue::glue("{code_etape} - {annee}")
   
   return(conv_etape_sise_diplome)
 }
