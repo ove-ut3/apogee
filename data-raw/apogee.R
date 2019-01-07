@@ -6,7 +6,7 @@ list.files(pattern = "\\.zip$", recursive = TRUE, full.names = TRUE) %>%
 source("data-raw/utils.R")
 source("data-raw/apogee-data.R")
 
-developr::package_build()
+developr::package_build(force = TRUE, upgrade = "never")
 
 # Méta-données
 source("data-raw/composante.R")
@@ -18,4 +18,4 @@ source("data-raw/inscription.R", encoding = "UTF-8")
 source("data-raw/resultat.R")
 source("data-raw/sise.R")
 
-developr::package_build()
+developr::package_build(force = TRUE, upgrade = "never")
