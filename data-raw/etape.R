@@ -48,10 +48,12 @@ etape <- readxl::read_excel("data-raw/Etape.xlsx", skip = 1) %>%
   dplyr::mutate(actif = dplyr::if_else(annee_derniere_etape >= apogee::annee_en_cours(), TRUE, FALSE, FALSE))
 
 etape_ville <- etape %>% 
-  dplyr::filter(actif,
-                is.na(ville),
+  dplyr::filter(is.na(ville),
                 code_type_diplome %in% c("DUT", "Licence pr")) %>% 
-  dplyr::left_join(dplyr::filter(apogee::etape_composante, derniere_annee >= apogee::annee_en_cours()),
+  dplyr::left_join(apogee::etape_composante %>% 
+                     dplyr::arrange(code_etape, derniere_annee) %>% 
+                     dplyr::group_by(code_etape) %>% 
+                     dplyr::filter(dplyr::row_number() == n()),
                    by = "code_etape") %>% 
   dplyr::left_join(dplyr::rename(apogee::composante, ville_composante = ville), 
                    by = "code_composante") %>% 
