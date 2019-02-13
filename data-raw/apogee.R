@@ -1,12 +1,21 @@
 # Rezip des CSV (gain de place)
-list.files(pattern = "\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
-  purrr::walk(apogee::rezip_csv)
+rezip <- list.files(pattern = "\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
+  pbapply::pblapply(apogee::rezip_csv)
+
+# Tables import
+tables <- impexp::access_tables("data-raw/Tables_ref.accdb") %>% 
+  stringr::str_subset("^_")
+
+developr::access_rda(access_path = "data-raw/Tables_ref.accdb",
+                     data_path = "data/",
+                     tables,
+                     tables_rda = stringr::str_remove(tables, "^_"))
+
+remotes::install_local(upgrade = "never", force = TRUE)
 
 # Données brutes
-source("data-raw/utils.R")
 source("data-raw/apogee-data.R")
-
-developr::package_build(force = TRUE, upgrade = "never")
+remotes::install_local(upgrade = "never", force = TRUE)
 
 # Méta-données
 source("data-raw/composante.R")
@@ -17,5 +26,4 @@ source("data-raw/etape.R")
 source("data-raw/inscription.R", encoding = "UTF-8")
 source("data-raw/resultat.R")
 source("data-raw/sise.R")
-
-developr::package_build(force = TRUE, upgrade = "never")
+remotes::install_local(upgrade = "never", force = TRUE)

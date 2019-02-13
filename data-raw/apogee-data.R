@@ -1,13 +1,4 @@
-#### Underscore ####
-
-tables <- impexp::access_tables("data-raw/Tables_ref.accdb") %>% 
-  stringr::str_subset("^_")
-
-developr::access_rda(access_path = "data-raw/Tables_ref.accdb",
-                     data_path = "data/",
-                     tables,
-                     tables_rda = stringr::str_remove(tables, "^_"))
-
+source("data-raw/utils.R")
 
 #### Individus ####
 
