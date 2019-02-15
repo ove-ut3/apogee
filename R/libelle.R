@@ -65,6 +65,7 @@ lib_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville", "o
 #' Renvoie l'acronyme à partir du code étape.
 #'
 #' @param code_etape Un vecteur de code étape.
+#' @param prefixe Libellé de type de formation ou de type de diplôme en préfixe du libellé de formation.
 #' @param suffixe Libellé de ville, option, particularité ou année dans le diplôme en suffixe de l'acronyme de formation.
 #'
 #' @return Un vecteur contenant les acronymes d'étape.
@@ -73,7 +74,7 @@ lib_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville", "o
 #' Il est créé à partir de la table "etape" de la base Access "Tables_ref.accdb".
 #'
 #' @export
-acronyme_etape <- function(code_etape, suffixe = c("ville", "option", "particularite", "annee")) {
+acronyme_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville", "option", "particularite", "annee")) {
   
   champ_acronyme_etape <- purrr::map_lgl(c("ville", "option", "particularite"), ~ . %in% suffixe) %>% 
     paste(collapse = " ") %>% 
@@ -90,7 +91,20 @@ acronyme_etape <- function(code_etape, suffixe = c("ville", "option", "particula
   
   acronyme_etape <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape, by = "code_etape") %>%
-    dplyr::rename(champ_acronyme_etape = !!champ_acronyme_etape) %>%
+    dplyr::rename(champ_acronyme_etape = !!champ_acronyme_etape)
+  
+  if (prefixe %in% "formation") {
+    acronyme_etape <- acronyme_etape %>% 
+      dplyr::mutate(type_diplome = apogee::acronyme_type_diplome(code_type_diplome),
+                    champ_acronyme_etape = ifelse(temoin_etape_apogee == FALSE & !type_diplome %in% c("DAEU", "DE infirmier-e", "Dentaire", "Diplôme d'Etat", "DNO", "HDR", "Médecine", "Pharmacie", "TH FICTIVE", "Vétérinaire"), caractr::str_paste(type_diplome, champ_acronyme_etape), champ_acronyme_etape))
+  } else if (prefixe %in% "diplome") {
+    acronyme_etape <- acronyme_etape %>% 
+      dplyr::left_join(dplyr::select(apogee::diplome_type, code_type_diplome, lib_diplome), 
+                       by = "code_type_diplome") %>% 
+      dplyr::mutate(champ_acronyme_etape = ifelse(temoin_etape_apogee == FALSE, caractr::str_paste(lib_diplome, champ_acronyme_etape), champ_acronyme_etape))
+  }
+  
+  acronyme_etape <- acronyme_etape %>%
     dplyr::pull(champ_acronyme_etape)
   
   return(acronyme_etape)

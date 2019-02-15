@@ -4,11 +4,13 @@
 \alias{acronyme_etape}
 \title{Renvoie l'acronyme a partir du code etape}
 \usage{
-acronyme_etape(code_etape, suffixe = c("ville", "option",
-  "particularite", "annee"))
+acronyme_etape(code_etape, prefixe = "formation", suffixe = c("ville",
+  "option", "particularite", "annee"))
 }
 \arguments{
 \item{code_etape}{Un vecteur de code étape.}
+
+\item{prefixe}{Libellé de type de formation ou de type de diplôme en préfixe du libellé de formation.}
 
 \item{suffixe}{Libellé de ville, option, particularité ou année dans le diplôme en suffixe de l'acronyme de formation.}
 }
