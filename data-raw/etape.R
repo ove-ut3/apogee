@@ -16,7 +16,7 @@ annee_derniere_etape <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge
   dplyr::arrange(annee, code_etape) %>% 
   dplyr::select(code_etape, annee_derniere_etape = annee) %>% 
   dplyr::group_by(code_etape) %>% 
-  dplyr::filter(dplyr::row_number() == n()) %>% 
+  dplyr::filter(dplyr::row_number() == dplyr::n()) %>% 
   dplyr::ungroup()
 
 etape_diplome_type <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_diplome_type", skip = 1) %>% 
@@ -25,7 +25,7 @@ etape_diplome_type <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_diplome_t
                            patchr::filter_data_patch(source = "data_diplome")) %>% 
   dplyr::select(-annee) %>% 
   dplyr::group_by(code_etape) %>% 
-  dplyr::filter(dplyr::row_number() == n()) %>% 
+  dplyr::filter(dplyr::row_number() == dplyr::n()) %>% 
   dplyr::ungroup() %>% 
   patchr::anti_join_bind(impexp::access_import("etape_diplome_type_ajout", "data-raw/Tables_ref.accdb") %>% 
                            dplyr::select(-date_maj), ., by = "code_etape")
@@ -53,7 +53,7 @@ etape_ville <- etape %>%
   dplyr::left_join(apogee::etape_composante %>% 
                      dplyr::arrange(code_etape, derniere_annee) %>% 
                      dplyr::group_by(code_etape) %>% 
-                     dplyr::filter(dplyr::row_number() == n()),
+                     dplyr::filter(dplyr::row_number() == dplyr::n()),
                    by = "code_etape") %>% 
   dplyr::left_join(dplyr::rename(apogee::composante, ville_composante = ville), 
                    by = "code_composante") %>% 
@@ -66,7 +66,7 @@ etape_ville2 <- etape_ville %>%
   dplyr::select(lib_etape_lower, ville, code_type_diplome, annee_etape) %>% 
   unique() %>% 
   dplyr::group_by(lib_etape_lower, code_type_diplome, annee_etape) %>% 
-  dplyr::filter(n() >= 2) %>% 
+  dplyr::filter(dplyr::n() >= 2) %>% 
   dplyr::ungroup() %>% 
   dplyr::left_join(jointure, by = c("lib_etape_lower", "code_type_diplome", "annee_etape", "ville"))
 

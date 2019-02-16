@@ -23,7 +23,7 @@ impexp::access_import("etape", "data-raw/Tables_ref.accdb") %>%
   dplyr::filter((type_diplome %in% c("DUT", "LP", "M2", "M2 enseignement", "Préparation concours") & etape_derniere_annee < apogee::annee_en_cours() - 4) |
                   (!type_diplome %in% c("DUT", "LP", "M2", "M2 enseignement", "Préparation concours") & etape_derniere_annee < apogee::annee_en_cours())) %>% 
   dplyr::group_by(code_etape) %>%
-  dplyr::filter(n() == 1) %>% 
+  dplyr::filter(dplyr::n() == 1) %>% 
   dplyr::pull(code_etape) %>%
   paste0("DELETE FROM etape WHERE CODE_ETAPE = '", .,"';") %>%
   impexp::access_execute_sql("data-raw/Tables_ref.accdb")
