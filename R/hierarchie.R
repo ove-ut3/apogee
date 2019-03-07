@@ -73,7 +73,7 @@ hier_discipline_sise_parent <- function(code_discipline_sise, parent_final = FAL
     dplyr::pull(code_discipline_sise_parent)
   
   if (garder_na == FALSE) {
-    hier_discipline_sise_parent <- ifelse(is.na(hier_discipline_sise_parent), code_discipline_sise, hier_discipline_sise_parent)
+    hier_discipline_sise_parent <- dplyr::if_else(is.na(hier_discipline_sise_parent), code_discipline_sise, hier_discipline_sise_parent)
   }
   
   if (parent_final == TRUE) {
@@ -106,7 +106,7 @@ hier_bac_parent <- function(code_bac, parent_final = FALSE, garder_na = FALSE) {
     dplyr::pull(code_bac_parent)
   
   if (garder_na == FALSE) {
-    hier_bac_parent <- ifelse(is.na(hier_bac_parent), code_bac, hier_bac_parent)
+    hier_bac_parent <- dplyr::if_else(is.na(hier_bac_parent), code_bac, hier_bac_parent)
   }
   
   if (parent_final == TRUE) {
@@ -139,7 +139,7 @@ hier_pcs_parent <- function(code_pcs, parent_final = FALSE, garder_na = FALSE) {
     dplyr::pull(code_pcs_parent)
   
   if (garder_na == FALSE) {
-    hier_pcs_parent <- ifelse(is.na(hier_pcs_parent), code_pcs, hier_pcs_parent)
+    hier_pcs_parent <- dplyr::if_else(is.na(hier_pcs_parent), code_pcs, hier_pcs_parent)
   }
   
   if (parent_final == TRUE) {
@@ -214,7 +214,7 @@ hier_composante_parent <- function(code_composante, parent_final = FALSE, garder
     dplyr::pull(code_composante_parent)
   
   if (garder_na == FALSE) {
-    hier_composante_parent <- ifelse(is.na(hier_composante_parent), code_composante, hier_composante_parent)
+    hier_composante_parent <- dplyr::if_else(is.na(hier_composante_parent), code_composante, hier_composante_parent)
   }
   
   if (parent_final == TRUE) {
@@ -307,7 +307,7 @@ hier_mention_parent <- function(code_mention_diplome, parent_final = FALSE, gard
     dplyr::pull(code_mention_diplome_parent)
   
   if (garder_na == FALSE) {
-    hier_mention_parent <- ifelse(is.na(hier_mention_parent), code_mention_diplome, hier_mention_parent)
+    hier_mention_parent <- dplyr::if_else(is.na(hier_mention_parent), code_mention_diplome, hier_mention_parent)
   }
   
   if (parent_final == TRUE) {

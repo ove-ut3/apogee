@@ -35,7 +35,7 @@ histo_etape_succ <- function(code_etape, code_elp = NULL, successeur_final = TRU
   }
   
   if (garder_na == FALSE) {
-    histo_etape_succ <- ifelse(is.na(histo_etape_succ), code_etape, histo_etape_succ)
+    histo_etape_succ <- dplyr::if_else(is.na(histo_etape_succ), code_etape, histo_etape_succ)
   }
   
   if (successeur_final == TRUE) {
@@ -69,7 +69,7 @@ histo_etape_succ_2 <- function(code_etape, successeur_final = TRUE, garder_na = 
   
   if (garder_na == FALSE) {
     histo_etape_succ_2 <- histo_etape_succ_2 %>% 
-      dplyr::mutate(code_etape_succ = ifelse(is.na(code_etape_succ), code_etape, code_etape_succ))
+      dplyr::mutate(code_etape_succ = dplyr::if_else(is.na(code_etape_succ), code_etape, code_etape_succ))
   }
   
   if (successeur_final == TRUE) {
@@ -82,7 +82,7 @@ histo_etape_succ_2 <- function(code_etape, successeur_final = TRUE, garder_na = 
       
       if (garder_na == FALSE) {
         histo_etape_succ_2 <- histo_etape_succ_2 %>% 
-          dplyr::mutate(code_etape_succ = ifelse(is.na(code_etape_succ), code_etape, code_etape_succ))
+          dplyr::mutate(code_etape_succ = dplyr::if_else(is.na(code_etape_succ), code_etape, code_etape_succ))
       }
       
       histo_etape_succ_2 <- histo_etape_succ_2 %>% 
@@ -95,7 +95,7 @@ histo_etape_succ_2 <- function(code_etape, successeur_final = TRUE, garder_na = 
   
   if (garder_na == FALSE) {
     histo_etape_succ_2 <- histo_etape_succ_2 %>% 
-      dplyr::mutate(code_etape_succ = ifelse(is.na(code_etape_succ), code_etape, code_etape_succ))
+      dplyr::mutate(code_etape_succ = dplyr::if_else(is.na(code_etape_succ), code_etape, code_etape_succ))
   }
   
   histo_etape_succ_2 <- histo_etape_succ_2 %>% 
@@ -139,7 +139,7 @@ histo_etape_pred <- function(code_etape, annee = NULL, predecesseur_final = FALS
   
   if (garder_na == FALSE) {
     histo_etape_pred <- histo_etape_pred %>% 
-      dplyr::mutate(code_etape_pred = ifelse(is.na(code_etape_pred), code_etape, code_etape_pred))
+      dplyr::mutate(code_etape_pred = dplyr::if_else(is.na(code_etape_pred), code_etape, code_etape_pred))
   }
   
   if (predecesseur_final == TRUE) {
@@ -152,7 +152,7 @@ histo_etape_pred <- function(code_etape, annee = NULL, predecesseur_final = FALS
       
       if (garder_na == FALSE) {
         histo_etape_pred <- histo_etape_pred %>% 
-          dplyr::mutate(code_etape_pred = ifelse(is.na(code_etape_pred), code_etape, code_etape_pred))
+          dplyr::mutate(code_etape_pred = dplyr::if_else(is.na(code_etape_pred), code_etape, code_etape_pred))
       }
       
       histo_etape_pred <- histo_etape_pred %>% 
@@ -165,7 +165,7 @@ histo_etape_pred <- function(code_etape, annee = NULL, predecesseur_final = FALS
   
   if (garder_na == FALSE) {
     histo_etape_pred <- histo_etape_pred %>% 
-      dplyr::mutate(code_etape_pred = ifelse(is.na(code_etape_pred), code_etape, code_etape_pred))
+      dplyr::mutate(code_etape_pred = dplyr::if_else(is.na(code_etape_pred), code_etape, code_etape_pred))
   }
   
   histo_etape_pred <- histo_etape_pred %>% 
@@ -197,7 +197,7 @@ histo_elp_succ <- function(code_elp, successeur_final = TRUE, garder_na = FALSE)
     dplyr::pull(code_elp_succ)
   
   if (garder_na == FALSE) {
-    histo_elp_succ <- ifelse(is.na(histo_elp_succ), code_elp, histo_elp_succ)
+    histo_elp_succ <- dplyr::if_else(is.na(histo_elp_succ), code_elp, histo_elp_succ)
   }
   
   if (successeur_final == TRUE) {
@@ -230,7 +230,7 @@ histo_mention_diplome_succ <- function(code_mention_diplome, successeur_final = 
     dplyr::pull(code_mention_diplome_succ)
   
   if (garder_na == FALSE) {
-    histo_mention_diplome_succ <- ifelse(is.na(histo_mention_diplome_succ), code_mention_diplome, histo_mention_diplome_succ)
+    histo_mention_diplome_succ <- dplyr::if_else(is.na(histo_mention_diplome_succ), code_mention_diplome, histo_mention_diplome_succ)
   }
   
   if (successeur_final == TRUE) {
@@ -263,7 +263,7 @@ histo_composante_succ <- function(code_composante, successeur_final = TRUE, gard
     dplyr::pull(code_composante_succ)
   
   if (garder_na == FALSE) {
-    histo_composante_succ <- ifelse(is.na(histo_composante_succ), code_composante, histo_composante_succ)
+    histo_composante_succ <- dplyr::if_else(is.na(histo_composante_succ), code_composante, histo_composante_succ)
   }
   
   if (successeur_final == TRUE) {
