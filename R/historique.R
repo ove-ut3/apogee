@@ -65,7 +65,9 @@ histo_etape_succ_2 <- function(code_etape, successeur_final = TRUE, garder_na = 
   
   histo_etape_succ_2 <- dplyr::tibble(code_etape) %>% 
     dplyr::mutate(.id = dplyr::row_number()) %>% 
-    dplyr::left_join(apogee::etape_histo, by = "code_etape")
+    dplyr::left_join(
+      dplyr::filter(apogee::etape_histo, is.na(code_elp)),
+      by = "code_etape")
   
   if (garder_na == FALSE) {
     histo_etape_succ_2 <- histo_etape_succ_2 %>% 
@@ -76,7 +78,9 @@ histo_etape_succ_2 <- function(code_etape, successeur_final = TRUE, garder_na = 
     
     histo_etape_succ_2 <- histo_etape_succ_2 %>% 
       dplyr::select(.id, code_etape = code_etape_succ) %>% 
-      dplyr::left_join(apogee::etape_histo, by = "code_etape")
+      dplyr::left_join(
+        dplyr::filter(apogee::etape_histo, is.na(code_elp)),
+        by = "code_etape")
     
     while (any(!is.na(histo_etape_succ_2$code_etape_succ))) {
       
@@ -87,7 +91,9 @@ histo_etape_succ_2 <- function(code_etape, successeur_final = TRUE, garder_na = 
       
       histo_etape_succ_2 <- histo_etape_succ_2 %>% 
         dplyr::select(.id, code_etape = code_etape_succ) %>% 
-        dplyr::left_join(apogee::etape_histo, by = "code_etape")
+        dplyr::left_join(
+          dplyr::filter(apogee::etape_histo, is.na(code_elp)),
+          by = "code_etape")
 
     }
     

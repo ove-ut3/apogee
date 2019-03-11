@@ -83,12 +83,16 @@ inscrits <- inscrits %>%
   nest_inscrits(code_version_etape)
 
 # Ajout ELP parcours
-
 elp_parcours <- apogee::inscrits_elp %>% 
-  dplyr::filter(code_elp %in% apogee::etape_histo$code_elp) %>% 
+  dplyr::inner_join(apogee::etape_histo %>% 
+                      tidyr::drop_na(code_elp) %>% 
+                      dplyr::mutate(elp_parcours = code_elp) %>% 
+                      tidyr::separate_rows(code_elp, sep = ";"),
+                    by = c("code_etape", "code_elp")) %>% 
+  dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, elp_parcours) %>% 
+  unique() %>% 
   dplyr::anti_join(patchr::duplicate(., annee, code_etape, code_etudiant, inscription_premiere),
-                   by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
-  dplyr::rename(elp_parcours = code_elp)
+                   by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
 
 # Vérifier la présence de double parcours
 doublons <- patchr::duplicate(elp_parcours, annee, code_etape, code_etudiant, inscription_premiere)
