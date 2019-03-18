@@ -14,16 +14,16 @@ developr::access_rda(access_path = "data-raw/Tables_ref.accdb",
 remotes::install_local(upgrade = "never", force = TRUE)
 
 # Données brutes
-source("data-raw/apogee-data.R")
+source("data-raw/apogee-data.R", encoding = "UTF-8")
 remotes::install_local(upgrade = "never", force = TRUE)
 
 # Méta-données
-source("data-raw/composante.R")
-source("data-raw/diplome.R")
-source("data-raw/diplome_version.R")
-source("data-raw/elp.R")
-source("data-raw/etape.R")
+source("data-raw/composante.R", encoding = "UTF-8")
+source("data-raw/diplome.R", encoding = "UTF-8")
+source("data-raw/diplome_version.R", encoding = "UTF-8")
+source("data-raw/elp.R", encoding = "UTF-8")
+source("data-raw/etape.R", encoding = "UTF-8")
 source("data-raw/inscription.R", encoding = "UTF-8")
-source("data-raw/resultat.R")
-source("data-raw/sise.R")
+source("data-raw/resultat.R", encoding = "UTF-8")
+source("data-raw/sise.R", encoding = "UTF-8")
 remotes::install_local(upgrade = "never", force = TRUE)
