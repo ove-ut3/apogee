@@ -104,6 +104,14 @@ acronyme_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville
       dplyr::mutate(champ_acronyme_etape = dplyr::if_else(temoin_etape_apogee == FALSE, caractr::str_paste(lib_diplome, champ_acronyme_etape), champ_acronyme_etape))
   }
   
+  if ("annee" %in% suffixe) {
+    acronyme_etape <- acronyme_etape %>% 
+      dplyr::mutate(champ_acronyme_etape = dplyr::if_else(!is.na(annee_diplome), 
+                                                     paste0(champ_acronyme_etape, " - ", apogee::annee_diplome(code_etape) %>% 
+                                                              caractr::str_conv_number_letter(type = "ieme_number", female = TRUE), " année"),
+                                                     champ_acronyme_etape))
+  }
+  
   acronyme_etape <- acronyme_etape %>%
     dplyr::pull(champ_acronyme_etape)
   
