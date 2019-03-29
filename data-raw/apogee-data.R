@@ -11,7 +11,6 @@ individus_bac <- impexp::csv_import_path("Individus - Bac\\.csv", path = "data-r
   tidyr::unnest() %>% 
   patchr::rename(apogee::rename) %>% 
   patchr::transcode(apogee::contents) %>% 
-  patchr::replace_empty_to_na() %>% 
   dplyr::arrange(code_etudiant, desc(annee_bac), code_mention_bac, code_type_etab_bac) %>% 
   dplyr::group_by(code_etudiant) %>% 
   dplyr::filter(dplyr::row_number() == 1) %>% 
