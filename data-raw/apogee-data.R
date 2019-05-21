@@ -56,6 +56,13 @@ individus_diplome_origine <- individus_diplome_origine %>%
 
 usethis::use_data(individus_diplome_origine, overwrite = TRUE)
 
+individus_situation_annee_precedente <- impexp::csv_import_path("Individus_situation_annee_precedente\\.csv", path = "data-raw", zip = TRUE, skip = 1) %>% 
+  tidyr::unnest() %>% 
+  patchr::rename(apogee::rename) %>% 
+  patchr::transcode(apogee::contents)
+
+usethis::use_data(individus_situation_annee_precedente, overwrite = TRUE)
+
 #### Inscrits ####
 
 inscrits <- impexp::csv_import_path("Inscrits\\.csv$", path = "data-raw", skip = 1, zip = TRUE) %>% 
