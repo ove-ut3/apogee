@@ -800,3 +800,22 @@ acronyme_mention_diplome <- function(code_mention_diplome) {
   return(acronyme_mention_diplome)
 }
 
+#' Renvoie le libelle a partir du code de la situation l'annee precedente
+#'
+#' Renvoie le libellé à partir du code de la situation l'année précédente.
+#'
+#' @param code_situation_annee_precedente Un vecteur de code de la situation l'année précédente.
+#'
+#' @return Un vecteur contenant les libellé de la situation l'année précédente.
+#'
+#' Jeu de données source : \code{apogee::situation_annee_precedente}.\cr
+#'
+#' @export
+lib_situation_annee_precedente <- function(code_situation_annee_precedente) {
+  
+  lib_situation_annee_precedente <- dplyr::tibble(code_situation_annee_precedente) %>%
+    dplyr::left_join(apogee::situation_annee_precedente, by = "code_situation_annee_precedente") %>%
+    dplyr::pull(lib_situation_annee_precedente)
+  
+  return(lib_situation_annee_precedente)
+}
