@@ -136,18 +136,24 @@ etape_mention <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_mention", skip
   dplyr::bind_rows(impexp::access_import("etape_mention_diplome", "data-raw/Tables_ref.accdb")) %>% 
   dplyr::arrange(code_etape, code_mention_diplome)
 
-impexp::access_import("etape_mention_diplome", "data-raw/Tables_ref.accdb") %>% 
+ajout_apogee <- impexp::access_import("etape_mention_diplome", "data-raw/Tables_ref.accdb") %>% 
   dplyr::filter(is.na(suppression)) %>% 
   dplyr::semi_join(
     readxl::read_excel("data-raw/Etape.xlsx", "Etape_mention", skip = 1) %>% 
       patchr::rename(apogee::rename),
     by = c("code_etape", "code_mention_diplome")) %>% 
   dplyr::arrange(code_etape, code_mention_diplome)
-  
+
+if (nrow(ajout_apogee)) {
+  stop("Liens étape-mention dans la base Access déjà présent dans Apogée", call. = FALSE)
+}
+
 etape_mention <- etape_mention %>% 
   dplyr::filter(is.na(suppression)) %>% 
   dplyr::select(-suppression) %>% 
-  dplyr::left_join(dplyr::filter(etape_mention, !is.na(suppression)), by = c("code_etape", "code_mention_diplome")) %>% 
+  dplyr::left_join(dplyr::filter(etape_mention, !is.na(suppression)) %>% 
+                     dplyr::select(-date_maj), 
+                   by = c("code_etape", "code_mention_diplome")) %>% 
   dplyr::mutate(code_mention_diplome = ifelse(!is.na(suppression), NA_character_, code_mention_diplome)) %>% 
   dplyr::select(-suppression) %>% 
   dplyr::arrange(code_etape, code_mention_diplome) %>% 
@@ -156,7 +162,9 @@ etape_mention <- etape_mention %>%
   dplyr::ungroup() %>% 
   unique()
 
-patchr::duplicate(etape_mention, code_etape, code_mention_diplome)
+if (nrow(patchr::duplicate(etape_mention, code_etape, code_mention_diplome))) {
+  stop("Doublons dans etape_mention", call. = FALSE)
+}
 
 usethis::use_data(etape_mention, overwrite = TRUE)
 
