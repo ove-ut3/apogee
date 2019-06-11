@@ -318,3 +318,31 @@ hier_mention_parent <- function(code_mention_diplome, parent_final = FALSE, gard
   
   return(hier_mention_parent)
 }
+
+#' Renvoie le type de diplome parent
+#'
+#' Renvoie le type de diplôme parent.
+#'
+#' @param code_mention_diplome Un vecteur de codes de type de diplôme.
+#'
+#' @return Un vecteur contenant les types de diplôme parent.
+#'
+#' @export
+hier_type_diplome_parent <- function(code_type_diplome, parent_final = FALSE, garder_na = FALSE) {
+  
+  hier_type_parent <- dplyr::tibble(code_type_diplome) %>%
+    dplyr::left_join(apogee::diplome_type, by = "code_type_diplome") %>%
+    dplyr::pull(code_type_diplome_parent)
+  
+  if (garder_na == FALSE) {
+    hier_type_parent <- dplyr::if_else(is.na(hier_type_parent), code_type_diplome, hier_type_parent)
+  }
+  
+  if (parent_final == TRUE) {
+    if (any(!is.na(apogee::hier_type_parent(hier_type_parent, parent_final = FALSE, garder_na = TRUE)))) {
+      hier_type_parent <- Recall(hier_type_parent, parent_final = parent_final, garder_na = garder_na)
+    }
+  }
+  
+  return(hier_type_parent)
+}
