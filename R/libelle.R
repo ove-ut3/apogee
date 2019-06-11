@@ -37,9 +37,9 @@ lib_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville", "o
                     champ_lib_etape = dplyr::if_else(temoin_etape_apogee == FALSE & !type_diplome %in% c("DAEU", "DE infirmier-e", "Dentaire", "Diplôme d'Etat", "DNO", "HDR", "Médecine", "Pharmacie", "TH FICTIVE", "Vétérinaire"), caractr::str_paste(type_diplome, champ_lib_etape), champ_lib_etape))
   } else if (prefixe %in% "diplome") {
     lib_etape <- lib_etape %>% 
-      dplyr::left_join(dplyr::select(apogee::diplome_type, code_type_diplome, lib_diplome), 
-                       by = "code_type_diplome") %>% 
-      dplyr::mutate(champ_lib_etape = dplyr::if_else(temoin_etape_apogee == FALSE, caractr::str_paste(lib_diplome, champ_lib_etape), champ_lib_etape))
+      dplyr::mutate_at("code_type_diplome", apogee::hier_type_diplome_parent) %>% 
+      dplyr::mutate(lib_type_diplome = apogee::acronyme_type_diplome(code_type_diplome)) %>% 
+      dplyr::mutate(champ_lib_etape = dplyr::if_else(temoin_etape_apogee == FALSE, caractr::str_paste(lib_type_diplome, champ_lib_etape), champ_lib_etape))
   }
   
   if ("annee" %in% suffixe) {
@@ -99,9 +99,9 @@ acronyme_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville
                     champ_acronyme_etape = dplyr::if_else(temoin_etape_apogee == FALSE & !type_diplome %in% c("DAEU", "DE infirmier-e", "Dentaire", "Diplôme d'Etat", "DNO", "HDR", "Médecine", "Pharmacie", "TH FICTIVE", "Vétérinaire"), caractr::str_paste(type_diplome, champ_acronyme_etape), champ_acronyme_etape))
   } else if (prefixe %in% "diplome") {
     acronyme_etape <- acronyme_etape %>% 
-      dplyr::left_join(dplyr::select(apogee::diplome_type, code_type_diplome, lib_diplome), 
-                       by = "code_type_diplome") %>% 
-      dplyr::mutate(champ_acronyme_etape = dplyr::if_else(temoin_etape_apogee == FALSE, caractr::str_paste(lib_diplome, champ_acronyme_etape), champ_acronyme_etape))
+      dplyr::mutate_at("code_type_diplome", apogee::hier_type_diplome_parent) %>% 
+      dplyr::mutate(lib_type_diplome = apogee::acronyme_type_diplome(code_type_diplome)) %>% 
+      dplyr::mutate(champ_acronyme_etape = dplyr::if_else(temoin_etape_apogee == FALSE, caractr::str_paste(lib_type_diplome, champ_acronyme_etape), champ_acronyme_etape))
   }
   
   if ("annee" %in% suffixe) {
