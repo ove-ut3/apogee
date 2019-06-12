@@ -170,7 +170,7 @@ usethis::use_data(etape_mention, overwrite = TRUE)
 
 #### Etape - domaine  ####
 
-etape_domaine <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_domaine", skip = 1) %>% 
+etape_domaine <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_domaine") %>% 
   patchr::rename(apogee::rename) %>% 
   dplyr::bind_rows(impexp::access_import("etape_domaine_diplome", "data-raw/Tables_ref.accdb")) %>% 
   dplyr::arrange(code_etape, code_domaine_diplome)
