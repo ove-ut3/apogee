@@ -166,7 +166,15 @@ resultats_elp <- impexp::csv_import_path("^Resultats_ELP.*?\\.csv$", path = "dat
   dplyr::transmute(import = purrr::map(import, patchr::rename, apogee::rename),
                    import = purrr::map(import, patchr::transcode, apogee::contents)) %>% 
   tidyr::unnest() %>% 
-  doublon_maj_etudiant()
+  doublon_maj_etudiant() %>% 
+  dplyr::mutate(temoin_presence_elp = dplyr::case_when(
+    code_resultat_elp == "DEM" ~ "N",
+    code_resultat_elp == "DEF" & note_elp > 0 ~ "O",
+    code_resultat_elp == "DEF" ~ "N",
+    apogee::lib_resultat(code_resultat_elp) == "Admis" | code_resultat_elp == "ADJ" ~ "O",
+    is.na(note_elp) | note_elp == 0 ~ "N",
+    TRUE ~ "O"
+  ))
 
 usethis::use_data(resultats_elp, overwrite = TRUE)
 
@@ -184,8 +192,7 @@ resultats_paces <- impexp::csv_import_path("Resultats_etape_paces\\.csv$", path 
                    import = purrr::map(import, patchr::transcode, apogee::contents)) %>% 
   tidyr::unnest() %>% 
   doublon_maj_etudiant() %>% 
-  dplyr::rename(note_etape = note_elp, code_resultat = code_resultat_elp) %>% 
-  dplyr::filter(apogee::lib_resultat(code_resultat) == "Admis")
+  dplyr::rename(note_etape = note_elp, code_resultat = code_resultat_elp)
 
 resultats_etape <- resultats_etape %>% 
   dplyr::anti_join(resultats_paces, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
