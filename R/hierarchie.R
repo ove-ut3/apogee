@@ -346,3 +346,20 @@ hier_type_diplome_parent <- function(code_type_diplome, parent_final = FALSE, ga
   
   return(hier_type_parent)
 }
+
+#' Renvoie le resultat parent
+#'
+#' Renvoie le résultat parent.
+#'
+#' @param code_mention_diplome Un vecteur de résultats.
+#'
+#' @return Un vecteur contenant les résultats parent.
+#'
+#' @export
+hier_resultat_parent <- function(code_resultat) {
+  
+  hier_resultat_parent <- dplyr::tibble(code_resultat) %>%
+    dplyr::left_join(apogee::resultat, by = "code_resultat") %>%
+    dplyr::pull(code_resultat_parent)
+  
+}
