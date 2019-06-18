@@ -45,7 +45,7 @@ etape <- readxl::read_excel("data-raw/Etape.xlsx", skip = 1) %>%
   dplyr::left_join(n_inscrits, by = "code_etape") %>% 
   dplyr::left_join(annee_premiere_etape, by = "code_etape") %>% 
   dplyr::left_join(annee_derniere_etape, by = "code_etape") %>% 
-  dplyr::mutate(actif = dplyr::if_else(annee_derniere_etape >= apogee::annee_en_cours(), TRUE, FALSE, FALSE))
+  dplyr::mutate(actif = dplyr::if_else(annee_derniere_etape >= apogee::annee_en_cours() | !is.na(actif), TRUE, FALSE, FALSE))
 
 etape_ville <- etape %>% 
   dplyr::filter(is.na(ville),
