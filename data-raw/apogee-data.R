@@ -36,7 +36,7 @@ usethis::use_data(individus, overwrite = TRUE)
 
 #### Individus - origine ####
 
-individus_diplome_origine <- impexp::csv_import_path("Individus_diplome_origine\\.csv", path = "data-raw", zip = TRUE, skip = 1) %>% 
+individus_diplome_anterieur <- impexp::csv_import_path("Individus_diplome_origine\\.csv", path = "data-raw", zip = TRUE, skip = 1) %>% 
   tidyr::unnest() %>% 
   patchr::rename(apogee::rename) %>% 
   patchr::transcode(apogee::contents) %>% 
@@ -50,9 +50,30 @@ individus_diplome_externe <- impexp::csv_import_path("Individus_diplome_externe\
   dplyr::arrange(code_etudiant, annee_diplome_externe) %>% 
   tidyr::drop_na(code_type_diplome_externe)
 
-individus_diplome_origine <- individus_diplome_origine %>% 
-  dplyr::left_join(individus_diplome_externe, 
-                   by = c("code_etudiant", c("annee_diplome_obtenu" = "annee_diplome_externe")))
+individus_diplome_origine <- individus_diplome_anterieur %>% 
+  dplyr::full_join(individus_diplome_externe, 
+                   by = c("code_etudiant", c("annee_diplome_obtenu" = "annee_diplome_externe"))) %>% 
+  dplyr::left_join(impexp::access_import("diplome_externe_anterieur", "data-raw/Tables_ref.accdb") %>% 
+                     dplyr::rename(code_type_diplome_anterieur_maj = code_type_diplome_anterieur),
+                   by = "code_type_diplome_externe") %>% 
+  dplyr::mutate(
+    code_type_diplome_anterieur = dplyr::case_when(
+      code_type_diplome_anterieur %in% c(NA_character_, "N", "U", "X") ~ code_type_diplome_anterieur_maj,
+      code_type_diplome_anterieur == "N" & !is.na(code_type_diplome_externe) ~ "LI",
+    TRUE ~ code_type_diplome_anterieur)
+    ) %>% 
+  tidyr::drop_na(code_type_diplome_anterieur) %>% 
+  dplyr::mutate(ordre = dplyr::case_when(
+    code_type_diplome_anterieur == code_type_diplome_anterieur_maj ~ 2,
+    code_type_diplome_anterieur %in% c("I", "Q", "N", "U", "X") ~ 3,
+    code_type_diplome_anterieur %in% c("Y", "Z") ~ 4,
+    TRUE ~ 1
+  )) %>% 
+  dplyr::arrange(code_etudiant, annee_diplome_obtenu, ordre) %>% 
+  dplyr::group_by(code_etudiant, annee_diplome_obtenu) %>% 
+  dplyr::filter(dplyr::row_number() == 1) %>% 
+  dplyr::ungroup() %>% 
+  dplyr::select(code_etudiant, annee_diplome_obtenu, code_type_diplome_origine = code_type_diplome_anterieur, code_etab_diplome_obtenu, code_departement_pays_dernier_diplome)
 
 usethis::use_data(individus_diplome_origine, overwrite = TRUE)
 
