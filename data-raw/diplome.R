@@ -17,21 +17,15 @@ diplome_type <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_diplome_type") 
 
 usethis::use_data(diplome_type, overwrite = TRUE)
 
-#### Diplôme antérieur - type ####
+#### Diplôme origine - type ####
 
-diplome_anterieur_type <- readxl::read_excel("data-raw/Diplome.xlsx", "Diplome_anterieur_origine", skip = 1) %>% 
+diplome_origine_type <- readxl::read_excel("data-raw/Diplome.xlsx", "Diplome_anterieur_origine", skip = 1) %>% 
   patchr::rename(apogee::rename) %>% 
-  patchr::recode_formula(apogee::recodage %>% 
-                           patchr::filter_data_patch("data_diplome_anterieur_type")) %>% 
-  dplyr::add_row(code_type_diplome_anterieur = NA_character_, lib_type_diplome_anterieur = "Non-ventilé")
+  dplyr::rename(code_type_diplome_origine = code_type_diplome_anterieur) %>% 
+  dplyr::full_join(impexp::access_import("diplome_origine_type", "data-raw/Tables_ref.accdb"),
+                   by = "code_type_diplome_origine") %>% 
+  dplyr::mutate(lib_type_diplome_origine = dplyr::if_else(is.na(lib_type_diplome_origine), lib_type_diplome_anterieur, lib_type_diplome_origine)) %>% 
+  dplyr::select(-lib_type_diplome_anterieur) %>% 
+  dplyr::add_row(code_type_diplome_origine = NA_character_, lib_type_diplome_origine = "Non-ventilé")
 
-usethis::use_data(diplome_anterieur_type, overwrite = TRUE)
-
-
-#### Diplôme externe - type ####
-
-diplome_externe_type <- readxl::read_excel("data-raw/Diplome.xlsx", "Diplome_externe", skip = 1) %>% 
-  patchr::rename(apogee::rename) %>% 
-  dplyr::add_row(code_type_diplome_externe = NA_character_, lib_type_diplome_externe = "Non-ventilé")
-
-usethis::use_data(diplome_externe_type, overwrite = TRUE)
+usethis::use_data(diplome_origine_type, overwrite = TRUE)

@@ -608,46 +608,24 @@ lib_periode_elp <- function(code_periode_elp) {
   return(lib_periode_elp)
 }
 
-#' Renvoie le libelle a partir du code de type diplome anterieur
+#' Renvoie le libelle a partir du code de type diplome d'origine
 #'
-#' Renvoie le libellé à partir du code de type diplôme antérieur.
+#' Renvoie le libellé à partir du code de type diplôme d'origine
 #'
-#' @param code_type_diplome_anterieur Un vecteur de code de type diplôme antérieur.
+#' @param code_type_diplome_origine Un vecteur de code de type diplôme d'origine
 #'
-#' @return Un vecteur contenant les libellés de type diplôme antérieur.
+#' @return Un vecteur contenant les libellés de type diplôme d'origine
 #'
-#' Jeu de données source : \code{apogee::diplome_anterieur_type}.\cr
-#' Il est créé à partir de l'objet "Type dernier diplôme obtenu" d'Apogée (code et lib).
-#'
-#' @export
-lib_type_diplome_anterieur <- function(code_type_diplome_anterieur) {
-  
-  lib_type_diplome_anterieur <- dplyr::tibble(code_type_diplome_anterieur) %>%
-    dplyr::left_join(apogee::diplome_anterieur_type, by = "code_type_diplome_anterieur") %>%
-    dplyr::pull(lib_type_diplome_anterieur)
-  
-  return(lib_type_diplome_anterieur)
-}
-
-#' Renvoie le libelle a partir du code de type diplome externe
-#'
-#' Renvoie le libellé à partir du code de type diplôme externe.
-#'
-#' @param code_type_diplome_externe Un vecteur de code de type diplôme externe.
-#'
-#' @return Un vecteur contenant les libellés de type diplôme externe.
-#'
-#' Jeu de données source : \code{apogee::diplome_externe_type}.\cr
-#' Il est créé à partir de l'objet "Type de diplôme externe" d'Apogée (code et lib).
+#' Jeu de données source : \code{apogee::diplome_origine_type}.\cr
 #'
 #' @export
-lib_type_diplome_externe <- function(code_type_diplome_externe) {
+lib_type_diplome_origine <- function(code_type_diplome_origine) {
   
-  lib_type_diplome_externe <- dplyr::tibble(code_type_diplome_externe) %>%
-    dplyr::left_join(apogee::diplome_externe_type, by = "code_type_diplome_externe") %>%
-    dplyr::pull(lib_type_diplome_externe)
+  lib_type_diplome_origine <- dplyr::tibble(code_type_diplome_origine) %>%
+    dplyr::left_join(apogee::diplome_origine_type, by = "code_type_diplome_origine") %>%
+    dplyr::pull(lib_type_diplome_origine)
   
-  return(lib_type_diplome_externe)
+  return(lib_type_diplome_origine)
 }
 
 #' Renvoie le libelle a partir du code academie
