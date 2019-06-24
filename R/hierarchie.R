@@ -356,14 +356,27 @@ hier_type_diplome_parent <- function(code_type_diplome, parent_final = FALSE, ga
 #' Renvoie le résultat parent.
 #'
 #' @param code_mention_diplome Un vecteur de résultats.
+#' @param parent_final \code{TRUE}, renvoit le parent le plus haut dans la hiérarchie; \code{FALSE}, renvoie le premier parent.
+#' @param garder_na \code{TRUE}, les codes sans parent passent à \code{NA}; \code{FALSE}, les codes sans parent sont gardés tels quels.
 #'
 #' @return Un vecteur contenant les résultats parent.
 #'
 #' @export
-hier_resultat_parent <- function(code_resultat) {
+hier_resultat_parent <- function(code_resultat, parent_final = TRUE, garder_na = FALSE) {
   
   hier_resultat_parent <- dplyr::tibble(code_resultat) %>%
     dplyr::left_join(apogee::resultat, by = "code_resultat") %>%
     dplyr::pull(code_resultat_parent)
   
+  if (garder_na == FALSE) {
+    hier_resultat_parent <- dplyr::if_else(is.na(hier_resultat_parent), code_resultat, hier_resultat_parent)
+  }
+  
+  if (parent_final == TRUE) {
+    if (any(!is.na(apogee::hier_resultat_parent(hier_resultat_parent, parent_final = FALSE, garder_na = TRUE)))) {
+      hier_resultat_parent <- Recall(hier_resultat_parent, parent_final = parent_final, garder_na = garder_na)
+    }
+  }
+  
+  return(hier_resultat_parent)
 }
