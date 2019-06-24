@@ -10,11 +10,8 @@ developr::access_rda(access_path = "data-raw/Tables_ref.accdb",
                      tables = tables,
                      tables_rda = stringr::str_remove(tables, "^_"))
 
-remotes::install_local(upgrade = "never", force = TRUE)
-
 # Données brutes
 source("data-raw/apogee-data.R", encoding = "UTF-8")
-remotes::install_local(upgrade = "never", force = TRUE)
 
 # Méta-données
 source("data-raw/composante.R", encoding = "UTF-8")
@@ -25,4 +22,3 @@ source("data-raw/etape.R", encoding = "UTF-8")
 source("data-raw/inscription.R", encoding = "UTF-8")
 source("data-raw/resultat.R", encoding = "UTF-8")
 source("data-raw/sise.R", encoding = "UTF-8")
-remotes::install_local(upgrade = "never", force = TRUE)
