@@ -126,7 +126,14 @@ etape_composante <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_composante"
   dplyr::group_by(code_etape, code_composante) %>% 
   dplyr::summarise(premiere_annee = min(annee),
                    derniere_annee = max(annee)) %>% 
-  dplyr::ungroup()
+  dplyr::ungroup() %>% 
+  dplyr::left_join(apogee::etape %>% 
+                     dplyr::select(code_etape, annee_derniere_etape),
+                   by = "code_etape") %>% 
+  # Ajout de la dernière année d'activité (si actif différent de vide)
+  dplyr::mutate_at(c("premiere_annee", "derniere_annee"), as.integer) %>% 
+  dplyr::mutate(derniere_annee = dplyr::if_else(derniere_annee != annee_derniere_etape, annee_derniere_etape, derniere_annee, derniere_annee)) %>% 
+  dplyr::select(-annee_derniere_etape)
 
 usethis::use_data(etape_composante, overwrite = TRUE)
 
