@@ -9,6 +9,10 @@ hier_mention_parent(code_mention_diplome, parent_final = FALSE,
 }
 \arguments{
 \item{code_mention_diplome}{Un vecteur de code de mention de diplôme.}
+
+\item{parent_final}{\code{TRUE}, renvoit le parent le plus haut dans la hiérarchie; \code{FALSE}, renvoie le premier parent.}
+
+\item{garder_na}{\code{TRUE}, les codes sans parent passent à \code{NA}; \code{FALSE}, les codes sans parent sont gardés tels quels.}
 }
 \value{
 Un vecteur contenant les mentions de diplôme parent.

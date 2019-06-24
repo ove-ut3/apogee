@@ -296,6 +296,8 @@ hier_etape_secteur <- function(code_etape) {
 #' Renvoie la mention de diplôme parent.
 #'
 #' @param code_mention_diplome Un vecteur de code de mention de diplôme.
+#' @param parent_final \code{TRUE}, renvoit le parent le plus haut dans la hiérarchie; \code{FALSE}, renvoie le premier parent.
+#' @param garder_na \code{TRUE}, les codes sans parent passent à \code{NA}; \code{FALSE}, les codes sans parent sont gardés tels quels.
 #'
 #' @return Un vecteur contenant les mentions de diplôme parent.
 #'
@@ -324,6 +326,8 @@ hier_mention_parent <- function(code_mention_diplome, parent_final = FALSE, gard
 #' Renvoie le type de diplôme parent.
 #'
 #' @param code_mention_diplome Un vecteur de codes de type de diplôme.
+#' @param parent_final \code{TRUE}, renvoit le parent le plus haut dans la hiérarchie; \code{FALSE}, renvoie le premier parent.
+#' @param garder_na \code{TRUE}, les codes sans parent passent à \code{NA}; \code{FALSE}, les codes sans parent sont gardés tels quels.
 #'
 #' @return Un vecteur contenant les types de diplôme parent.
 #'
