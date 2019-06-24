@@ -188,12 +188,12 @@ resultats_elp <- impexp::csv_import_path("^Resultats_ELP.*?\\.csv$", path = "dat
                    import = purrr::map(import, patchr::transcode, apogee::contents)) %>% 
   tidyr::unnest() %>% 
   doublon_maj_etudiant() %>% 
-  dplyr::mutate(temoin_presence_elp = dplyr::case_when(
-    code_resultat_elp == "DEM" ~ "N",
-    code_resultat_elp == "DEF" & note_elp > 0 ~ "O",
-    code_resultat_elp == "DEF" ~ "N",
-    apogee::lib_resultat(code_resultat_elp) == "Admis" | code_resultat_elp == "ADJ" ~ "O",
-    is.na(note_elp) | note_elp == 0 ~ "N",
+  dplyr::mutate(presence_examen = dplyr::case_when(
+    code_resultat == "DEM" ~ "N",
+    code_resultat == "DEF" & note > 0 ~ "O",
+    code_resultat == "DEF" ~ "N",
+    apogee::hier_resultat_parent(code_resultat) == "Admis" | code_resultat == "ADJ" ~ "O",
+    is.na(note) | note == 0 ~ "N",
     TRUE ~ "O"
   ))
 
@@ -212,8 +212,7 @@ resultats_paces <- impexp::csv_import_path("Resultats_etape_paces\\.csv$", path 
   dplyr::transmute(import = purrr::map(import, patchr::rename, apogee::rename),
                    import = purrr::map(import, patchr::transcode, apogee::contents)) %>% 
   tidyr::unnest() %>% 
-  doublon_maj_etudiant() %>% 
-  dplyr::rename(note_etape = note_elp, code_resultat = code_resultat_elp)
+  doublon_maj_etudiant()
 
 resultats_etape <- resultats_etape %>% 
   dplyr::anti_join(resultats_paces, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
@@ -241,7 +240,7 @@ suppression_session2 <- apogee::resultats_etape %>%
   dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, lib_session, code_resultat) %>% 
   tidyr::spread(lib_session, code_resultat) %>% 
   patchr::normalise_colnames() %>% 
-  dplyr::filter(apogee::lib_resultat(session_1) == "Admis" & !apogee::lib_resultat(session_2) %in% c(NA_character_, "Admis")) %>% 
+  dplyr::filter(apogee::hier_resultat_parent(session_1) == "Admis" & !apogee::hier_resultat_parent(session_2) %in% c(NA_character_, "Admis")) %>% 
   dplyr::mutate(lib_session = "Session 2")
 
 resultats_etape <- resultats_etape %>% 
@@ -282,7 +281,7 @@ ajout_diplomes <- impexp::access_import("diplomes_ajout", "data-raw/Tables_ref_i
 
 ajout_diplomes %>%
   dplyr::semi_join(dplyr::filter(diplomes,
-                                 code_resultat_diplome == "ADM"),
+                                 apogee::hier_resultat_parent(code_resultat) == "Admis"),
                    by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
 
 diplomes <- diplomes %>% 
