@@ -3,7 +3,10 @@
 elp <- readxl::read_excel("data-raw/ELP.xlsx", skip = 1) %>% 
   patchr::rename(apogee::rename) %>% 
   dplyr::bind_rows(impexp::access_import("elp_ajout", "data-raw/Tables_ref.accdb")) %>% 
-  dplyr::arrange(code_elp)
+  dplyr::arrange(code_elp, ects) %>% 
+  dplyr::group_by(code_elp) %>% 
+  dplyr::filter(dplyr::row_number() == 1) %>% 
+  dplyr::ungroup()
 
 patchr::duplicate(elp, code_elp)
 
