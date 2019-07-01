@@ -52,7 +52,7 @@ etape_ville <- etape %>%
   dplyr::filter(is.na(ville),
                 code_type_diplome %in% c("DUT", "Licence pr")) %>% 
   dplyr::left_join(apogee::etape_composante %>% 
-                     dplyr::arrange(code_etape, derniere_annee) %>% 
+                     dplyr::arrange(code_etape, premiere_annee, derniere_annee) %>% 
                      dplyr::group_by(code_etape) %>% 
                      dplyr::filter(dplyr::row_number() == dplyr::n()),
                    by = "code_etape") %>% 
