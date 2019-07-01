@@ -1,7 +1,3 @@
-# Rezip des CSV (gain de place)
-rezip <- list.files(pattern = "\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
-  pbapply::pblapply(apogee::rezip_csv)
-
 # Tables import
 tables <- impexp::access_tables("data-raw/Tables_ref.accdb") %>% 
   stringr::str_subset("^_")
@@ -11,6 +7,9 @@ developr::access_rda(access_path = "data-raw/Tables_ref.accdb",
                      tables_rda = stringr::str_remove(tables, "^_"))
 
 # Données brutes
+rezip <- list.files(pattern = "\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
+  pbapply::pblapply(apogee::rezip_csv)
+
 source("data-raw/apogee-data.R", encoding = "UTF-8")
 
 # Méta-données
