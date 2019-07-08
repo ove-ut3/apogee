@@ -246,6 +246,10 @@ suppression_session2 <- apogee::resultats_etape %>%
 resultats_etape <- resultats_etape %>% 
   dplyr::anti_join(suppression_session2, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere", "lib_session"))
 
+# Supprimer les résultats étape non-existants chez les inscrits
+resultats_etape <- resultats_etape %>% 
+  dplyr::semi_join(apogee::inscrits, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
+
 #Sauvegarde
 
 usethis::use_data(resultats_etape, overwrite = TRUE)
