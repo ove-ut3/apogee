@@ -1,8 +1,8 @@
 #### SISE - Etape ####
 
 conv_etape_sise <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_sise", skip = 1) %>% 
-  patchr::rename(apogee::rename) %>% 
-  patchr::transcode(apogee::contents) %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
   dplyr::filter(annee >= 2007) %>% 
   dplyr::mutate(code_diplome_sise = as.character(code_diplome_sise)) %>% 
   dplyr::left_join(impexp::access_import("diplome_sise", "data-raw/Tables_ref.accdb") %>% 
@@ -29,8 +29,8 @@ usethis::use_data(conv_etape_sise, overwrite = TRUE)
 #### SISE - diplôme ####
 
 sise_diplome <- readxl::read_excel("data-raw/Diplome.xlsx", "Diplome_sise", skip = 1) %>% 
-  patchr::rename(apogee::rename) %>% 
-  patchr::transcode(apogee::contents) %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
   dplyr::filter(annee >= 2007) %>% 
   dplyr::select(-annee) %>% 
   unique()
@@ -49,8 +49,8 @@ usethis::use_data(sise_discipline, overwrite = TRUE)
 #### SISE - libellé diplôme ####
 
 sise_diplome_lib <- readxl::read_excel("data-raw/Diplome.xlsx", "Diplome_sise_lib", skip = 1) %>% 
-  patchr::rename(apogee::rename) %>% 
-  patchr::transcode(apogee::contents)
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path))
 
 usethis::use_data(sise_diplome_lib, overwrite = TRUE)
 

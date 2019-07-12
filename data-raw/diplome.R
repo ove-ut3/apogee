@@ -1,14 +1,14 @@
 #### Diplôme ####
 
 diplome <- readxl::read_excel("data-raw/Diplome.xlsx", skip = 1) %>% 
-  patchr::rename(apogee::rename)
+  patchr::rename(impexp::access_import("_rename", access_base_path))
 
 usethis::use_data(diplome, overwrite = TRUE)
 
 #### Diplôme - type ####
 
 diplome_type <- readxl::read_excel("data-raw/Etape.xlsx", "Etape_diplome_type") %>% 
-  patchr::rename(apogee::rename) %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   dplyr::select(code_type_diplome) %>% 
   unique() %>% 
   dplyr::full_join(impexp::access_import("diplome_type", "data-raw/Tables_ref.accdb"), by = "code_type_diplome") %>% 
@@ -20,7 +20,7 @@ usethis::use_data(diplome_type, overwrite = TRUE)
 #### Diplôme origine - type ####
 
 diplome_origine_type <- readxl::read_excel("data-raw/Diplome.xlsx", "Diplome_anterieur_origine", skip = 1) %>% 
-  patchr::rename(apogee::rename) %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   dplyr::rename(code_type_diplome_origine = code_type_diplome_anterieur) %>% 
   dplyr::full_join(impexp::access_import("diplome_origine_type", "data-raw/Tables_ref.accdb"),
                    by = "code_type_diplome_origine") %>% 

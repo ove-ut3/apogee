@@ -1,7 +1,7 @@
 #### Composante ####
 
 composante <- readxl::read_excel("data-raw/Composante.xlsx", skip = 1) %>% 
-  patchr::rename(apogee::rename) %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   dplyr::full_join(impexp::access_import("composante", "data-raw/Tables_ref.accdb") %>% 
                      dplyr::rename(lib_composante_maj = lib_composante),
                    by = "code_composante") %>% 
@@ -14,7 +14,7 @@ usethis::use_data(composante, overwrite = TRUE)
 #### Composante - type ####
 
 composante_type <- readxl::read_excel("data-raw/Composante.xlsx", "Composante_type", skip = 1) %>% 
-  patchr::rename(apogee::rename) %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   tidyr::drop_na(code_type_composante)
 
 usethis::use_data(composante_type, overwrite = TRUE)

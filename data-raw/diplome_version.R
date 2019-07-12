@@ -1,8 +1,8 @@
 #### Diplôme version ####
 
 diplome_version <- readxl::read_excel("data-raw/Diplome_version.xlsx", skip = 1) %>% 
-  patchr::rename(apogee::rename) %>% 
-  patchr::transcode(apogee::contents) %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
   tidyr::nest(code_domaine_diplome, .key = "code_domaine_diplome") %>% 
   dplyr::mutate(code_domaine_diplome = purrr::map(code_domaine_diplome, ~ .[[1]]))
 
@@ -11,7 +11,7 @@ usethis::use_data(diplome_version, overwrite = TRUE)
 #### Domaine ####
 
 diplome_domaine <- readxl::read_excel("data-raw/Diplome_version.xlsx", "Formation_domaine", skip = 1) %>% 
-  patchr::rename(apogee::rename) %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   dplyr::full_join(impexp::access_import("diplome_domaine", "data-raw/Tables_ref.accdb") %>% 
                      dplyr::rename(maj_lib_domaine_diplome = lib_domaine_diplome),
                    by = "code_domaine_diplome") %>% 
@@ -23,7 +23,7 @@ usethis::use_data(diplome_domaine, overwrite = TRUE)
 #### Finalité ####
 
 diplome_finalite <- readxl::read_excel("data-raw/Diplome_version.xlsx", "Finalite", skip = 1) %>% 
-  patchr::rename(apogee::rename) %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   dplyr::bind_rows(impexp::access_import("diplome_finalite_ajout", "data-raw/Tables_ref.accdb"))
 
 usethis::use_data(diplome_finalite, overwrite = TRUE)
@@ -31,7 +31,7 @@ usethis::use_data(diplome_finalite, overwrite = TRUE)
 #### Mention ####
 
 diplome_mention <- readxl::read_excel("data-raw/Diplome_version.xlsx", "Mention", skip = 1) %>% 
-  patchr::rename(apogee::rename) %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   dplyr::full_join(impexp::access_import("diplome_mention", "data-raw/Tables_ref.accdb") %>% 
                      dplyr::rename(maj_lib_mention_diplome = lib_mention_diplome),
                    by = "code_mention_diplome") %>% 
@@ -57,7 +57,7 @@ usethis::use_data(diplome_mention_lm, overwrite = TRUE)
 #### Spécialité ####
 
 diplome_specialite <- readxl::read_excel("data-raw/Diplome_version.xlsx", "Specialite") %>% 
-  patchr::rename(apogee::rename) %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   tidyr::drop_na(code_specialite_diplome)
 
 usethis::use_data(diplome_specialite, overwrite = TRUE)
