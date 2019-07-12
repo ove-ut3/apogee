@@ -1,5 +1,5 @@
 # Tables import
-tables <- impexp::access_tables("data-raw/Tables_ref.accdb") %>% 
+tables <- impexp::access_list_tables("data-raw/Tables_ref.accdb") %>% 
   stringr::str_subset("^_")
 
 developr::access_rda(access_path = "data-raw/Tables_ref.accdb",
