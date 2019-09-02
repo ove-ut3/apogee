@@ -1,92 +1,8 @@
-source("data-raw/utils.R")
-
-#### Individus ####
-
-individus <- impexp::csv_import_path("Individus\\.csv", path = "data-raw", zip = TRUE, skip = 1) %>% 
-  tidyr::unnest() %>% 
-  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
-  patchr::transcode(impexp::access_import("_contents", access_base_path))
-
-individus_bac <- impexp::csv_import_path("Individus - Bac\\.csv", path = "data-raw", zip = TRUE, skip = 1) %>% 
-  tidyr::unnest() %>% 
-  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
-  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
-  dplyr::arrange(code_etudiant, desc(annee_bac), code_mention_bac, code_type_etab_bac) %>% 
-  dplyr::group_by(code_etudiant) %>% 
-  dplyr::filter(dplyr::row_number() == 1) %>% 
-  dplyr::ungroup()
-
-individus <- dplyr::left_join(individus, individus_bac, by = "code_etudiant")
-
-individus_mail_ups <- impexp::csv_import_path("Individus - Mail UPS\\.csv", path = "data-raw", zip = TRUE, skip = 1) %>% 
-  tidyr::unnest() %>% 
-  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
-  patchr::transcode(impexp::access_import("_contents", access_base_path))
-
-individus <- dplyr::left_join(individus, individus_mail_ups, by = "code_etudiant")
-
-individus_departement_naissance <- impexp::csv_import_path("Individus_departement_naissance\\.csv", path = "data-raw", zip = TRUE, skip = 1) %>% 
-  tidyr::unnest() %>% 
-  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
-  patchr::transcode(impexp::access_import("_contents", access_base_path))
-
-individus <- dplyr::left_join(individus, individus_departement_naissance, by = "code_etudiant")
-
-usethis::use_data(individus, overwrite = TRUE)
-
-#### Individus - origine ####
-
-individus_diplome_anterieur <- impexp::csv_import_path("Individus_diplome_origine\\.csv", path = "data-raw", zip = TRUE, skip = 1) %>% 
-  tidyr::unnest() %>% 
-  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
-  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
-  dplyr::arrange(code_etudiant, annee_diplome_obtenu)
-
-individus_diplome_externe <- impexp::csv_import_path("Individus_diplome_externe\\.csv", path = "data-raw", zip = TRUE, skip = 1) %>% 
-  tidyr::unnest() %>% 
-  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
-  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
-  dplyr::mutate(code_type_diplome_externe = stringr::str_pad(code_type_diplome_externe, 3, "left", "0")) %>% 
-  dplyr::arrange(code_etudiant, annee_diplome_externe) %>% 
-  tidyr::drop_na(code_type_diplome_externe)
-
-individus_diplome_origine <- individus_diplome_anterieur %>% 
-  dplyr::full_join(individus_diplome_externe, 
-                   by = c("code_etudiant", c("annee_diplome_obtenu" = "annee_diplome_externe"))) %>% 
-  dplyr::left_join(impexp::access_import("diplome_externe_anterieur", "data-raw/Tables_ref.accdb") %>% 
-                     dplyr::rename(code_type_diplome_anterieur_maj = code_type_diplome_anterieur),
-                   by = "code_type_diplome_externe") %>% 
-  dplyr::mutate(
-    code_type_diplome_anterieur = dplyr::case_when(
-      code_type_diplome_anterieur %in% c(NA_character_, "N", "U", "X") ~ code_type_diplome_anterieur_maj,
-      code_type_diplome_anterieur == "N" & !is.na(code_type_diplome_externe) ~ "LI",
-    TRUE ~ code_type_diplome_anterieur)
-    ) %>% 
-  tidyr::drop_na(code_type_diplome_anterieur) %>% 
-  dplyr::mutate(ordre = dplyr::case_when(
-    code_type_diplome_anterieur == code_type_diplome_anterieur_maj ~ 2,
-    code_type_diplome_anterieur %in% c("I", "Q", "N", "U", "X") ~ 3,
-    code_type_diplome_anterieur %in% c("Y", "Z") ~ 4,
-    TRUE ~ 1
-  )) %>% 
-  dplyr::arrange(code_etudiant, annee_diplome_obtenu, ordre) %>% 
-  dplyr::group_by(code_etudiant, annee_diplome_obtenu) %>% 
-  dplyr::filter(dplyr::row_number() == 1) %>% 
-  dplyr::ungroup() %>% 
-  dplyr::select(code_etudiant, annee_diplome_obtenu, code_type_diplome_origine = code_type_diplome_anterieur, code_etab_diplome_obtenu, code_departement_pays_dernier_diplome)
-
-usethis::use_data(individus_diplome_origine, overwrite = TRUE)
-
-individus_situation_annee_precedente <- impexp::csv_import_path("Individus_situation_annee_prece\\.csv", path = "data-raw", zip = TRUE, skip = 1) %>% 
-  tidyr::unnest() %>% 
-  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
-  patchr::transcode(impexp::access_import("_contents", access_base_path))
-
-usethis::use_data(individus_situation_annee_precedente, overwrite = TRUE)
+source("data-raw/scripts/utils.R")
 
 #### Inscrits ####
 
-inscrits <- impexp::csv_import_path("Inscrits\\.csv$", path = "data-raw", skip = 1, zip = TRUE) %>% 
+inscrits <- impexp::csv_import_path("data-raw", pattern = "Inscrits\\.csv$", skip = 1, zip = TRUE, encoding = "UTF-8") %>% 
   dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", access_base_path)),
                    import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", access_base_path))) %>%
   tidyr::unnest() %>% 
@@ -137,7 +53,7 @@ inscrits <- inscrits %>%
 
 # Ajout inscrits Base Access
 
-inscrits <- impexp::access_import("inscrits_ajout", "data-raw/Tables_ref_individus.accdb") %>% 
+inscrits <- impexp::access_import("inscrits_ajout", "data-raw/data/Tables_ref_individus.accdb") %>% 
   dplyr::select(-commentaire, -date_maj) %>% 
   dplyr::anti_join(inscrits, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
   nest_inscrits(code_composante) %>% 
@@ -148,13 +64,16 @@ inscrits <- impexp::access_import("inscrits_ajout", "data-raw/Tables_ref_individ
 # CPGE
 
 inscrits_cpge <- inscrits %>% 
-  dplyr::filter(code_profil_etudiant %in% "CP" | apogee::hier_etape_filiere(code_etape) %in% "CPGE")
+  dplyr::left_join(apogee::etape %>% 
+                     dplyr::select(code_etape, particularite),
+                   by = "code_etape") %>% 
+  dplyr::filter(code_profil_etudiant == "CP" | particularite == "CPGE") %>% 
+  dplyr::select(-particularite)
 
 usethis::use_data(inscrits_cpge, overwrite = TRUE)
 
 inscrits <- inscrits %>% 
-  dplyr::filter(!code_profil_etudiant %in% "CP",
-                !apogee::hier_etape_filiere(code_etape) %in% "CPGE")
+  dplyr::anti_join(inscrits_cpge, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
 
 #Sauvegarde finale
 
@@ -162,7 +81,7 @@ usethis::use_data(inscrits, overwrite = TRUE)
 
 #### Inscrits péda ####
 
-inscrits_peda <- impexp::csv_import_path("Inscrits_peda\\.csv$", path = "data-raw", skip = 1, zip = TRUE) %>% 
+inscrits_peda <- impexp::csv_import_path("data-raw", pattern = "Inscrits_peda\\.csv$", skip = 1, zip = TRUE, encoding = "UTF-8") %>% 
   dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", access_base_path)),
                    import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", access_base_path))) %>% 
   tidyr::unnest() %>% 
@@ -172,7 +91,7 @@ usethis::use_data(inscrits_peda, overwrite = TRUE)
 
 #### Inscrits ELP ####
 
-inscrits_elp <- impexp::csv_import_path("Inscrits_ELP.*?\\.csv$", path = "data-raw", zip = TRUE, skip = 1) %>% 
+inscrits_elp <- impexp::csv_import_path("data-raw", pattern = "Inscrits_ELP.*?\\.csv$", zip = TRUE, skip = 1, encoding = "UTF-8") %>% 
   dplyr::transmute(import = lapply(import, patchr::rename, impexp::access_import("_rename", access_base_path)),
                    import = lapply(import, patchr::transcode, impexp::access_import("_contents", access_base_path))) %>% 
   tidyr::unnest() %>% 
@@ -183,7 +102,7 @@ usethis::use_data(inscrits_elp, overwrite = TRUE)
 
 #### Résultats ELP ####
 
-resultats_elp <- impexp::csv_import_path("^Resultats_ELP.*?\\.csv$", path = "data-raw", zip = TRUE, skip = 1) %>% 
+resultats_elp <- impexp::csv_import_path("data-raw", pattern = "^Resultats_ELP.*?\\.csv$", zip = TRUE, skip = 1, encoding = "UTF-8") %>% 
   dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", access_base_path)),
                    import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", access_base_path))) %>% 
   tidyr::unnest() %>% 
@@ -201,14 +120,14 @@ usethis::use_data(resultats_elp, overwrite = TRUE)
 
 #### Résultats Etape ####
 
-resultats_etape <- impexp::csv_import_path("Resultats_etape\\.csv$", path = "data-raw", zip = TRUE, skip = 1) %>% 
+resultats_etape <- impexp::csv_import_path("data-raw", pattern = "Resultats_etape\\.csv$", zip = TRUE, skip = 1, encoding = "UTF-8") %>% 
   dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", access_base_path)),
                    import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", access_base_path))) %>% 
   tidyr::unnest() %>% 
   doublon_maj_etudiant()
 
 # PACES
-resultats_paces <- impexp::csv_import_path("Resultats_etape_paces\\.csv$", path = "data-raw", zip = TRUE, skip = 1) %>% 
+resultats_paces <- impexp::csv_import_path("data-raw", pattern = "Resultats_etape_paces\\.csv$", zip = TRUE, skip = 1, encoding = "UTF-8") %>% 
   dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", access_base_path)),
                    import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", access_base_path))) %>% 
   tidyr::unnest() %>% 
@@ -256,7 +175,7 @@ usethis::use_data(resultats_etape, overwrite = TRUE)
 
 #### Résultats diplôme ####
 
-resultats_diplome <- impexp::csv_import_path("Resultats_diplome\\.csv$", path = "data-raw", zip = TRUE, skip = 1) %>% 
+resultats_diplome <- impexp::csv_import_path("data-raw", pattern = "Resultats_diplome\\.csv$", zip = TRUE, skip = 1, encoding = "UTF-8") %>% 
   dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", access_base_path)),
                    import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", access_base_path))) %>% 
   tidyr::unnest() %>% 
@@ -272,7 +191,7 @@ usethis::use_data(resultats_diplome, overwrite = TRUE)
 
 #### Diplômés ####
 
-diplomes <- impexp::csv_import_path("Diplomes\\.csv$", path = "data-raw", zip = TRUE, skip = 1) %>% 
+diplomes <- impexp::csv_import_path("data-raw", pattern = "Diplomes\\.csv$", zip = TRUE, skip = 1, encoding = "UTF-8") %>% 
   dplyr::transmute(import = purrr::map(import, patchr::rename, impexp::access_import("_rename", access_base_path)),
                    import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", access_base_path))) %>% 
   tidyr::unnest() %>% 
@@ -280,7 +199,7 @@ diplomes <- impexp::csv_import_path("Diplomes\\.csv$", path = "data-raw", zip = 
 
 # Ajout diplômés Base Access
 
-ajout_diplomes <- impexp::access_import("diplomes_ajout", "data-raw/Tables_ref_individus.accdb") %>% 
+ajout_diplomes <- impexp::access_import("diplomes_ajout", "data-raw/data/Tables_ref_individus.accdb") %>% 
   dplyr::select(-commentaire, -date_maj)
 
 ajout_diplomes %>%
@@ -307,3 +226,94 @@ diplomes <- diplomes %>%
   dplyr::anti_join(diplomes, ., by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
 
 usethis::use_data(diplomes, overwrite = TRUE)
+
+#### Individus ####
+
+individus <- impexp::csv_import_path("data-raw", pattern = "Individus\\.csv", zip = TRUE, skip = 1, encoding = "UTF-8") %>% 
+  tidyr::unnest() %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
+  dplyr::semi_join(dplyr::bind_rows(inscrits, inscrits_annules, inscrits_cpge),
+                   by = "code_etudiant")
+
+individus_bac <- impexp::csv_import_path("data-raw", pattern = "Individus - Bac\\.csv", zip = TRUE, skip = 1, encoding = "UTF-8") %>% 
+  tidyr::unnest() %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
+  dplyr::arrange(code_etudiant, desc(annee_bac), code_mention_bac, code_type_etab_bac) %>% 
+  dplyr::group_by(code_etudiant) %>% 
+  dplyr::filter(dplyr::row_number() == 1) %>% 
+  dplyr::ungroup()
+
+individus <- dplyr::left_join(individus, individus_bac, by = "code_etudiant")
+
+individus_mail_ups <- impexp::csv_import_path("data-raw", pattern = "Individus - Mail UPS\\.csv", zip = TRUE, skip = 1, encoding = "UTF-8") %>% 
+  tidyr::unnest() %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path))
+
+individus <- dplyr::left_join(individus, individus_mail_ups, by = "code_etudiant")
+
+individus_departement_naissance <- impexp::csv_import_path("data-raw", pattern = "Individus_departement_naissance\\.csv", zip = TRUE, skip = 1, encoding = "UTF-8") %>% 
+  tidyr::unnest() %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path))
+
+individus <- dplyr::left_join(individus, individus_departement_naissance, by = "code_etudiant")
+
+usethis::use_data(individus, overwrite = TRUE)
+
+#### Individus - origine ####
+
+individus_diplome_anterieur <- impexp::csv_import_path("data-raw", pattern = "Individus_diplome_origine\\.csv", zip = TRUE, skip = 1, encoding = "UTF-8") %>% 
+  tidyr::unnest() %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
+  dplyr::arrange(code_etudiant, annee_diplome_obtenu)
+
+individus_diplome_externe <- impexp::csv_import_path("data-raw", pattern = "Individus_diplome_externe\\.csv", zip = TRUE, skip = 1, encoding = "UTF-8") %>% 
+  tidyr::unnest() %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
+  dplyr::mutate(code_type_diplome_externe = stringr::str_pad(code_type_diplome_externe, 3, "left", "0")) %>% 
+  dplyr::arrange(code_etudiant, annee_diplome_externe) %>% 
+  tidyr::drop_na(code_type_diplome_externe)
+
+individus_diplome_origine <- individus_diplome_anterieur %>% 
+  dplyr::full_join(individus_diplome_externe, 
+                   by = c("code_etudiant", c("annee_diplome_obtenu" = "annee_diplome_externe"))) %>% 
+  dplyr::left_join(impexp::access_import("diplome_externe_anterieur", access_base_path) %>% 
+                     dplyr::rename(code_type_diplome_anterieur_maj = code_type_diplome_anterieur),
+                   by = "code_type_diplome_externe") %>% 
+  dplyr::mutate(
+    code_type_diplome_anterieur = dplyr::case_when(
+      code_type_diplome_anterieur %in% c(NA_character_, "N", "U", "X") ~ code_type_diplome_anterieur_maj,
+      code_type_diplome_anterieur == "N" & !is.na(code_type_diplome_externe) ~ "LI",
+      TRUE ~ code_type_diplome_anterieur)
+  ) %>% 
+  tidyr::drop_na(code_type_diplome_anterieur) %>% 
+  dplyr::mutate(ordre = dplyr::case_when(
+    code_type_diplome_anterieur == code_type_diplome_anterieur_maj ~ 2,
+    code_type_diplome_anterieur %in% c("I", "Q", "N", "U", "X") ~ 3,
+    code_type_diplome_anterieur %in% c("Y", "Z") ~ 4,
+    TRUE ~ 1
+  )) %>% 
+  dplyr::arrange(code_etudiant, annee_diplome_obtenu, ordre) %>% 
+  dplyr::group_by(code_etudiant, annee_diplome_obtenu) %>% 
+  dplyr::filter(dplyr::row_number() == 1) %>% 
+  dplyr::ungroup() %>% 
+  dplyr::select(code_etudiant, annee_diplome_obtenu, code_type_diplome_origine = code_type_diplome_anterieur, code_etab_diplome_obtenu, code_departement_pays_dernier_diplome) %>% 
+  dplyr::semi_join(dplyr::bind_rows(inscrits, inscrits_annules, inscrits_cpge),
+                   by = "code_etudiant")
+
+usethis::use_data(individus_diplome_origine, overwrite = TRUE)
+
+individus_situation_annee_precedente <- impexp::csv_import_path("data-raw", pattern = "Individus_situation_annee_prece\\.csv", zip = TRUE, skip = 1, encoding = "UTF-8") %>% 
+  tidyr::unnest() %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
+  dplyr::semi_join(dplyr::bind_rows(inscrits, inscrits_annules, inscrits_cpge),
+                   by = "code_etudiant")
+
+usethis::use_data(individus_situation_annee_precedente, overwrite = TRUE)
+
