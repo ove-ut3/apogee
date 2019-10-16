@@ -117,25 +117,6 @@ annee_u <- function(annee, fichier = FALSE) {
   return(annee_u)
 }
 
-#' Temoin TRUE/FALSE si l'ELP est une UE
-#' 
-#' Témoin TRUE/FALSE si l'ELP est une UE
-#'
-#' @param code_elp Un vecteur de code ELP.
-#'
-#' @return Un vecteur de booléens TRUE/FALSE.
-#' 
-#' @export
-temoin_elp_ue <- function(code_elp) {
-  
-  temoin_elp_ue <- dplyr::tibble(code_elp) %>%
-    dplyr::left_join(apogee::elp, by = "code_elp") %>%
-    dplyr::pull(temoin_elp_ue) %>% 
-    dplyr::recode("O" = TRUE, "N" = FALSE)
-  
-  return(temoin_elp_ue)
-}
-
 #' Temoin TRUE/FALSE si le code_etape est actif
 #' 
 #' Témoin TRUE/FALSE si le code_etape est actif.
