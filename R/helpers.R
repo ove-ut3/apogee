@@ -348,3 +348,26 @@ rezip_csv <- function(fichier_zip) {
   
   suppression <- file.remove(csv_file)
 }
+
+#' Temoin TRUE/FALSE si le code_mention_diplome est actif
+#' 
+#' Témoin TRUE/FALSE si le code_mention_diplome est actif.
+#'
+#' @param code_mention_diplome Un vecteur de code_mention_diplome.
+#' @param annee Année(s) d'activité à vérifier, par défaut l'année en cours.
+#'
+#' @return Un vecteur de booléens TRUE/FALSE.
+#' 
+#' @export
+temoin_mention_actif <- function(code_mention_diplome, annee = NULL) {
+  
+  temoin_mention_actif <- dplyr::tibble(code_mention_diplome) %>% 
+    dplyr::left_join(apogee::diplome_mention, by = "code_mention_diplome")
+  
+  if (!is.null(annee)) {
+    temoin_mention_actif <- dplyr::mutate(temoin_mention_actif, actif = purrr::map2_lgl(mention_premiere_annee, mention_derniere_annee, ~ length(intersect(.x:.y, !!annee)) >= 1))
+  }
+  
+  temoin_mention_actif <- dplyr::pull(temoin_mention_actif, actif)
+  
+  return(temoin_mention_actif)
