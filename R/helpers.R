@@ -209,10 +209,10 @@ formations_liste <- function(annee = NULL, unique = TRUE) {
                     annee_etape = apogee::annee_etape(code_etape),
                     lib_mention = apogee::hier_etape_mention(code_etape) %>% 
                       purrr::map(apogee::lib_mention_diplome)) %>% 
-      tidyr::unnest() %>% 
+      tidyr::unnest_legacy() %>% 
       dplyr::mutate(lib_domaine = apogee::hier_etape_domaine(code_etape) %>% 
                       purrr::map(apogee::lib_domaine_diplome)) %>% 
-      tidyr::unnest()
+      tidyr::unnest_legacy()
     
   }
   
@@ -256,7 +256,7 @@ formations_historique <- function(annee_debut) {
     dplyr::anti_join(apogee::etape_histo, by = c("code_etape" = "code_etape_succ")) %>% 
     dplyr::mutate(annee = purrr::map2(apogee::etape_premiere_annee(code_etape), apogee::etape_derniere_annee(code_etape), ~ .x:.y)) %>% 
     dplyr::mutate(id = dplyr::row_number()) %>% 
-    tidyr::unnest(annee) %>% 
+    tidyr::unnest_legacy(annee) %>% 
     dplyr::filter(annee >= !!annee_debut) %>% 
     dplyr::mutate(lib_etape = apogee::lib_etape(code_etape)) %>% 
     dplyr::select(annee, acronyme_type_diplome, id, code_etape, lib_etape) %>% 
@@ -352,3 +352,4 @@ temoin_mention_actif <- function(code_mention_diplome, annee = NULL) {
   temoin_mention_actif <- dplyr::pull(temoin_mention_actif, actif)
   
   return(temoin_mention_actif)
+}

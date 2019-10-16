@@ -19,7 +19,7 @@ nest_inscrits <- function(table, champ_nest, cle = c("annee", "code_etape", "cod
     dplyr::select(cle, !!quo_champ_nest) %>%
     unique() %>%
     dplyr::arrange(!!! rlang::syms(cle), !!quo_champ_nest) %>% 
-    tidyr::nest(!!quo_champ_nest, .key = !!nom_champ_nest) %>%
+    tidyr::nest_legacy(!!quo_champ_nest, .key = !!nom_champ_nest) %>%
     dplyr::mutate(!!nom_champ_nest := purrr::map(!!quo_champ_nest, ~ .[[1]]))
   
   nest2 <- table %>%
