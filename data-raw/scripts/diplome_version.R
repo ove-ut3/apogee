@@ -30,13 +30,32 @@ usethis::use_data(diplome_finalite, overwrite = TRUE)
 
 #### Mention ####
 
+mention_annee <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge, apogee::inscrits_annules) %>% 
+  dplyr::left_join(impexp::r_import("data/etape_mention.rda"), by = "code_etape") %>% 
+  dplyr::arrange(annee, code_mention_diplome)
+
+mention_premiere_annee <- mention_annee %>% 
+  dplyr::select(code_mention_diplome, mention_premiere_annee = annee) %>% 
+  dplyr::group_by(code_mention_diplome) %>% 
+  dplyr::filter(dplyr::row_number() == 1) %>% 
+  dplyr::ungroup()
+
+mention_derniere_annee <- mention_annee %>% 
+  dplyr::select(code_mention_diplome, mention_derniere_annee = annee) %>% 
+  dplyr::group_by(code_mention_diplome) %>% 
+  dplyr::filter(dplyr::row_number() == dplyr::n()) %>% 
+  dplyr::ungroup()
+
 diplome_mention <- readxl::read_excel("data-raw/data/Diplome_version.xlsx", "Mention", skip = 1) %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   dplyr::full_join(impexp::access_import("diplome_mention", "data-raw/data/Tables_ref.accdb") %>% 
                      dplyr::rename(maj_lib_mention_diplome = lib_mention_diplome),
                    by = "code_mention_diplome") %>% 
   dplyr::mutate(lib_mention_diplome = ifelse(!is.na(maj_lib_mention_diplome), maj_lib_mention_diplome, lib_mention_diplome)) %>% 
-  dplyr::select(-maj_lib_mention_diplome)
+  dplyr::select(-maj_lib_mention_diplome) %>% 
+  dplyr::left_join(mention_premiere_annee, by = "code_mention_diplome") %>% 
+  dplyr::left_join(mention_derniere_annee, by = "code_mention_diplome") %>% 
+  dplyr::mutate(actif = dplyr::if_else(mention_derniere_annee >= apogee::annee_en_cours(), TRUE, FALSE, FALSE))
 
 patchr::duplicate(diplome_mention, code_mention_diplome)
 
