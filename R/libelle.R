@@ -216,6 +216,7 @@ lib_type_diplome <- function(code_type_diplome) {
   
   lib_type_diplome <- dplyr::tibble(code_type_diplome) %>%
     dplyr::left_join(apogee::diplome_type, by = "code_type_diplome") %>%
+    dplyr::mutate(lib_type_diplome = dplyr::if_else(is.na(lib_type_diplome), code_type_diplome, lib_type_diplome)) %>% 
     dplyr::pull(lib_type_diplome)
   
   return(lib_type_diplome)
