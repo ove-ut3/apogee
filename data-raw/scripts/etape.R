@@ -28,7 +28,11 @@ etape_diplome_type <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_dipl
   dplyr::filter(dplyr::row_number() == dplyr::n()) %>% 
   dplyr::ungroup() %>% 
   patchr::anti_join_bind(impexp::access_import("etape_diplome_type_ajout", "data-raw/data/Tables_ref.accdb") %>% 
-                           dplyr::select(-date_maj), ., by = "code_etape")
+                           dplyr::filter(is.na(suppression)) %>% 
+                           dplyr::select(-date_maj, -suppression), ., by = "code_etape") %>% 
+  dplyr::anti_join(impexp::access_import("etape_diplome_type_ajout", "data-raw/data/Tables_ref.accdb") %>% 
+                     dplyr::filter(!is.na(suppression)),
+                   by = c("code_etape", "code_type_diplome"))
 
 etape <- readxl::read_excel("data-raw/data/Etape.xlsx", skip = 1) %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
@@ -242,6 +246,16 @@ usethis::use_data(etape_finalite, overwrite = TRUE)
 
 etape_secteur <- impexp::access_import("etape_secteur", "data-raw/data/Tables_ref.accdb")
 
+etape_secteur_histo <- etape_secteur %>% 
+  dplyr::mutate_at("code_etape", apogee::histo_etape_succ_2) %>% 
+  tidyr::unnest_legacy(code_etape) %>% 
+  unique() %>% 
+  dplyr::anti_join(etape_secteur, by = "code_etape")
+
+etape_secteur <- dplyr::bind_rows(etape_secteur, etape_secteur_histo)
+
+stopifnot(nrow(patchr::duplicate(etape_secteur, code_etape)) == 0)
+
 usethis::use_data(etape_secteur, overwrite = TRUE)
 
 #### Etape - SISE ####
@@ -283,3 +297,4 @@ cycle <- readxl::read_excel("data-raw/data/Etape.xlsx", "Cycle") %>%
   patchr::rename(impexp::access_import("_rename", access_base_path))
 
 usethis::use_data(cycle, overwrite = TRUE)
+
