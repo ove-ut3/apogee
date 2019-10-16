@@ -244,21 +244,38 @@ etape_secteur <- impexp::access_import("etape_secteur", "data-raw/data/Tables_re
 
 usethis::use_data(etape_secteur, overwrite = TRUE)
 
-#### Etape - discipline SISE ####
+#### Etape - SISE ####
 
-etape_sise_discipline <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_discipline_sise") %>% 
+etape_sise <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_sise", skip = 1) %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
-  dplyr::mutate(code_discipline_sise = stringr::str_remove(code_discipline_sise, "^00") %>% 
-                  stringr::str_c("SD", .)) %>% 
-  dplyr::bind_rows(impexp::access_import("etape_discipline_sise", "data-raw/data/Tables_ref.accdb") %>% 
-                     dplyr::filter(is.na(suppression)) %>% 
-                     dplyr::select(-suppression)) %>% 
-  dplyr::left_join(impexp::access_import("etape_discipline_sise", "data-raw/data/Tables_ref.accdb"),
-                   by = c("code_etape", "code_discipline_sise")) %>% 
-  dplyr::filter(is.na(suppression)) %>% 
-  dplyr::select(-suppression)
+  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
+  dplyr::filter(annee >= 2007) %>% 
+  dplyr::mutate(code_diplome_sise = as.character(code_diplome_sise)) %>% 
+  dplyr::left_join(impexp::access_import("diplome_sise", "data-raw/data/Tables_ref.accdb") %>% 
+                     tidyr::drop_na(annee),
+                   by = c("annee", "code_diplome_sise" = "code_diplome")) %>% 
+  dplyr::mutate(code_diplome_sise = ifelse(!is.na(code_diplome_maj), code_diplome_maj, code_diplome_sise)) %>% 
+  dplyr::select(code_etape, annee, code_diplome_sise) %>% 
+  dplyr::left_join(impexp::access_import("diplome_sise", "data-raw/data/Tables_ref.accdb") %>% 
+                     dplyr::filter(is.na(annee)) %>% 
+                     dplyr::select(-annee),
+                   by = c("code_diplome_sise" = "code_diplome")) %>% 
+  dplyr::mutate(code_diplome_sise = ifelse(!is.na(code_diplome_maj), code_diplome_maj, code_diplome_sise)) %>% 
+  dplyr::select(code_etape, annee, code_diplome_sise) %>% 
+  dplyr::left_join(impexp::access_import("etape_diplome_sise", "data-raw/data/Tables_ref.accdb") %>% 
+                     dplyr::filter(is.na(annee)) %>% 
+                     dplyr::select(-annee),
+                   by = "code_etape") %>% 
+  dplyr::mutate(code_diplome_sise = ifelse(!is.na(code_diplome_maj), code_diplome_maj, code_diplome_sise)) %>% 
+  dplyr::select(code_etape, annee, code_diplome_sise) %>% 
+  dplyr::left_join(impexp::access_import("etape_diplome_sise", "data-raw/data/Tables_ref.accdb") %>% 
+                     tidyr::drop_na(annee),
+                   by = c("annee", "code_etape")) %>% 
+  dplyr::mutate(code_diplome_sise = ifelse(!is.na(code_diplome_maj), code_diplome_maj, code_diplome_sise)) %>% 
+  dplyr::select(code_etape, annee, code_diplome_sise) %>% 
+  unique()
 
-usethis::use_data(etape_sise_discipline, overwrite = TRUE)
+usethis::use_data(etape_sise, overwrite = TRUE)
 
 #### Cycle ####
 

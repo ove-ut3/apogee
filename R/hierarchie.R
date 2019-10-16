@@ -52,39 +52,6 @@ hier_elp_nature <- function(code_elp) {
   return(hier_elp_nature)
 }
 
-#' Renvoie le code discipline SISE parent
-#'
-#' Renvoie le code discipline SISE parent.
-#'
-#' @param code_discipline_sise Un vecteur de code discipline SISE.
-#' @param parent_final \code{TRUE}, renvoit le parent le plus haut dans la hiérarchie; \code{FALSE}, renvoie le premier parent.
-#' @param garder_na \code{TRUE}, les codes sans parent passent à \code{NA}; \code{FALSE}, les codes sans parent sont gardés tels quels.
-#'
-#' @return Un vecteur de code discipline SISE parent.
-#'
-#' Jeu de données source : \code{apogee::sise_discipline}.\cr
-#' Il est créé à partir de la table "sise_discipline" de la base Access "Tables_ref.accdb" (projet Apogée).
-#'
-#' @export
-hier_discipline_sise_parent <- function(code_discipline_sise, parent_final = FALSE, garder_na = FALSE) {
-  
-  hier_discipline_sise_parent <- dplyr::tibble(code_discipline_sise) %>%
-    dplyr::left_join(apogee::sise_discipline, by = "code_discipline_sise") %>%
-    dplyr::pull(code_discipline_sise_parent)
-  
-  if (garder_na == FALSE) {
-    hier_discipline_sise_parent <- dplyr::if_else(is.na(hier_discipline_sise_parent), code_discipline_sise, hier_discipline_sise_parent)
-  }
-  
-  if (parent_final == TRUE) {
-    if (any(!is.na(apogee::hier_discipline_sise_parent(hier_discipline_sise_parent, parent_final = FALSE, garder_na = TRUE)))) {
-      hier_discipline_sise_parent <- Recall(hier_discipline_sise_parent, parent_final = parent_final, garder_na = garder_na)
-    }
-  }
-  
-  return(hier_discipline_sise_parent)
-}
-
 #' Renvoie le code Bac parent
 #'
 #' Renvoie le code Bac parent.

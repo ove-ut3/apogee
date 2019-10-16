@@ -14,36 +14,12 @@ conv_etape_sise_diplome <- function(code_etape, annee) {
   
   conv_etape_sise_diplome <- dplyr::tibble(code_etape, annee) %>%
     dplyr::mutate(.id = dplyr::row_number()) %>% 
-    dplyr::left_join(apogee::conv_etape_sise, by = c("code_etape", "annee")) %>% 
+    dplyr::left_join(apogee::etape_sise, by = c("code_etape", "annee")) %>% 
     split(x = .$code_diplome_sise, f = .$.id)
   
   names(conv_etape_sise_diplome) <- glue::glue("{code_etape} - {annee}")
   
   return(conv_etape_sise_diplome)
-}
-
-#' Renvoie le code de discipline SISE a partir du code etape
-#'
-#' Renvoie le code de discipline SISE à partir du code étape.
-#'
-#' @param code_etape Un vecteur de code étape.
-#'
-#' @return Un vecteur contenant les codes de discipline SISE.
-#'
-#' Jeu de données source : \code{apogee::etape_sise_discipline}.\cr
-#' Il est créé à partir d'Apogée.
-#'
-#' @export
-conv_etape_discipline_sise <- function(code_etape) {
-  
-  conv_etape_discipline_sise <- dplyr::tibble(code_etape) %>%
-    dplyr::mutate(.id = dplyr::row_number()) %>% 
-    dplyr::left_join(apogee::etape_sise_discipline, by = "code_etape") %>%
-    split(x = .$code_discipline_sise, f = .$.id)
-  
-  names(conv_etape_discipline_sise) <- code_etape
-  
-  return(conv_etape_discipline_sise)
 }
 
 #' Renvoie le code de finalite diplome a partir du code etape
