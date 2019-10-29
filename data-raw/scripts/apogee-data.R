@@ -257,6 +257,7 @@ individus <- impexp::csv_import_path("data-raw", pattern = "Individus\\.csv", zi
   tidyr::unnest_legacy() %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
+  dplyr::mutate_at("date_naissance", patchr::fix_birth_date) %>% 
   dplyr::semi_join(dplyr::bind_rows(inscrits, inscrits_annules, inscrits_cpge),
                    by = "code_etudiant")
 
