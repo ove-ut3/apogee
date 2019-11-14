@@ -37,6 +37,7 @@ elp_parcours <- apogee::inscrits_elp %>%
   dplyr::inner_join(
     apogee::etape_histo %>% 
       tidyr::drop_na(code_elp) %>% 
+      dplyr::bind_rows(impexp::access_import("elp_parcours", access_base_path)) %>% 
       dplyr::mutate(elp_parcours = code_elp) %>% 
       tidyr::separate_rows(code_elp, sep = ";"),
     by = c("code_etape", "code_elp")
