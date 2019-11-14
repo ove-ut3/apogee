@@ -15,7 +15,7 @@ diplome_domaine <- readxl::read_excel("data-raw/data/Diplome_version.xlsx", "For
   dplyr::full_join(impexp::access_import("diplome_domaine", "data-raw/data/Tables_ref.accdb") %>% 
                      dplyr::rename(maj_lib_domaine_diplome = lib_domaine_diplome),
                    by = "code_domaine_diplome") %>% 
-  dplyr::mutate(lib_domaine_diplome = ifelse(!is.na(maj_lib_domaine_diplome), maj_lib_domaine_diplome, lib_domaine_diplome)) %>% 
+  dplyr::mutate(lib_domaine_diplome = dplyr::if_else(!is.na(maj_lib_domaine_diplome), maj_lib_domaine_diplome, lib_domaine_diplome)) %>% 
   dplyr::select(-maj_lib_domaine_diplome)
 
 usethis::use_data(diplome_domaine, overwrite = TRUE)
@@ -51,7 +51,7 @@ diplome_mention <- readxl::read_excel("data-raw/data/Diplome_version.xlsx", "Men
   dplyr::full_join(impexp::access_import("diplome_mention", "data-raw/data/Tables_ref.accdb") %>% 
                      dplyr::rename(maj_lib_mention_diplome = lib_mention_diplome),
                    by = "code_mention_diplome") %>% 
-  dplyr::mutate(lib_mention_diplome = ifelse(!is.na(maj_lib_mention_diplome), maj_lib_mention_diplome, lib_mention_diplome)) %>% 
+  dplyr::mutate(lib_mention_diplome = dplyr::if_else(!is.na(maj_lib_mention_diplome), maj_lib_mention_diplome, lib_mention_diplome)) %>% 
   dplyr::select(-maj_lib_mention_diplome) %>% 
   dplyr::left_join(mention_premiere_annee, by = "code_mention_diplome") %>% 
   dplyr::left_join(mention_derniere_annee, by = "code_mention_diplome") %>% 

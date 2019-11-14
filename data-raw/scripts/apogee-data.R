@@ -15,7 +15,7 @@ inscrits <- impexp::csv_import_path("data-raw", pattern = "Inscrits\\.csv$", ski
   ) %>% 
   dplyr::mutate(
     inscription_annulee = !inscription_en_cours | !is.na(date_annulation) | inscription_resiliee | !is.na(date_resiliation),
-    inscription_annulee = ifelse(is.na(inscription_annulee), FALSE, inscription_annulee)
+    inscription_annulee = dplyr::if_else(is.na(inscription_annulee), FALSE, inscription_annulee)
   )
 
 inscrits_annules <- inscrits %>% 

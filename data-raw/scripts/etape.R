@@ -44,7 +44,7 @@ etape <- readxl::read_excel("data-raw/data/Etape.xlsx", skip = 1) %>%
   dplyr::left_join(etape_diplome_type, by = "code_etape") %>% 
   patchr::recode_formula(impexp::access_import("_recodage", access_base_path) %>% 
                            patchr::filter_data_patch(source = "data_etape")) %>% 
-  dplyr::mutate(temoin_etape_apogee = ifelse(lib_etape != lib_etape_apogee, FALSE, TRUE)) %>% 
+  dplyr::mutate(temoin_etape_apogee = dplyr::if_else(lib_etape != lib_etape_apogee, FALSE, TRUE)) %>% 
   dplyr::select(-annee_etape_apogee) %>% 
   dplyr::left_join(n_inscrits, by = "code_etape") %>% 
   dplyr::left_join(annee_premiere_etape, by = "code_etape") %>% 
@@ -62,7 +62,7 @@ etape_ville <- etape %>%
                    by = "code_etape") %>% 
   dplyr::left_join(dplyr::rename(apogee::composante, ville_composante = ville), 
                    by = "code_composante") %>% 
-  dplyr::mutate(ville = ifelse(!is.na(ville_composante), ville_composante, ville),
+  dplyr::mutate(ville = dplyr::if_else(!is.na(ville_composante), ville_composante, ville),
                 lib_etape_lower = tolower(lib_etape))
 
 jointure <- dplyr::select(etape_ville, code_etape, code_type_diplome, ville, annee_etape, lib_etape_lower)
@@ -77,7 +77,7 @@ etape_ville2 <- etape_ville %>%
 
 etape <- etape %>% 
   dplyr::left_join(dplyr::select(etape_ville2, code_etape, ville_maj = ville), by = "code_etape") %>% 
-  dplyr::mutate(ville = ifelse(!is.na(ville_maj), ville_maj, ville)) %>% 
+  dplyr::mutate(ville = dplyr::if_else(!is.na(ville_maj), ville_maj, ville)) %>% 
   dplyr::select(-ville_maj) %>% 
   # Nouvelle passe pour les libellés d'étape
   patchr::recode_formula(impexp::access_import("_recodage", access_base_path) %>% 
@@ -114,7 +114,7 @@ etape_histo <- etape_histo %>%
   dplyr::bind_rows(eclatement) %>% 
   dplyr::anti_join(eclatement_elp, by = c("code_etape", "code_elp", "code_etape_succ")) %>% 
   dplyr::bind_rows(eclatement_elp) %>% 
-  dplyr::mutate(doublon = ifelse(!is.na(doublon_elp), doublon_elp, doublon)) %>% 
+  dplyr::mutate(doublon = dplyr::if_else(!is.na(doublon_elp), doublon_elp, doublon)) %>% 
   dplyr::arrange(code_etape, code_elp, code_etape_succ)
 
 usethis::use_data(etape_histo, overwrite = TRUE)
@@ -166,7 +166,7 @@ etape_mention <- etape_mention %>%
   dplyr::left_join(dplyr::filter(etape_mention, !is.na(suppression)) %>% 
                      dplyr::select(-date_maj), 
                    by = c("code_etape", "code_mention_diplome")) %>% 
-  dplyr::mutate(code_mention_diplome = ifelse(!is.na(suppression), NA_character_, code_mention_diplome)) %>% 
+  dplyr::mutate(code_mention_diplome = dplyr::if_else(!is.na(suppression), NA_character_, code_mention_diplome)) %>% 
   dplyr::select(-suppression) %>% 
   dplyr::arrange(code_etape, code_mention_diplome) %>% 
   dplyr::group_by(code_etape) %>% 
@@ -191,7 +191,7 @@ etape_domaine <- etape_domaine %>%
   dplyr::filter(is.na(suppression)) %>% 
   dplyr::select(-suppression) %>% 
   dplyr::left_join(dplyr::filter(etape_domaine, !is.na(suppression)), by = c("code_etape", "code_domaine_diplome")) %>% 
-  dplyr::mutate(code_domaine_diplome = ifelse(!is.na(suppression), NA_character_, code_domaine_diplome)) %>% 
+  dplyr::mutate(code_domaine_diplome = dplyr::if_else(!is.na(suppression), NA_character_, code_domaine_diplome)) %>% 
   dplyr::select(-suppression) %>% 
   dplyr::arrange(code_etape, code_domaine_diplome) %>% 
   dplyr::group_by(code_etape) %>% 
@@ -229,7 +229,7 @@ etape_finalite <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_finalite
   dplyr::group_by(code_etape) %>% 
   dplyr::filter(!is.na(code_finalite_diplome) | dplyr::row_number() == 1) %>% 
   dplyr::ungroup() %>% 
-  dplyr::mutate(code_finalite_diplome = ifelse(is.na(code_finalite_diplome),
+  dplyr::mutate(code_finalite_diplome = dplyr::if_else(is.na(code_finalite_diplome),
                                                dplyr::recode(substr(code_etape, 2, 2),
                                                              "F" = "005",
                                                              "I" = "004",
@@ -268,24 +268,24 @@ etape_sise <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_sise", skip 
   dplyr::left_join(impexp::access_import("diplome_sise", "data-raw/data/Tables_ref.accdb") %>% 
                      tidyr::drop_na(annee),
                    by = c("annee", "code_diplome_sise" = "code_diplome")) %>% 
-  dplyr::mutate(code_diplome_sise = ifelse(!is.na(code_diplome_maj), code_diplome_maj, code_diplome_sise)) %>% 
+  dplyr::mutate(code_diplome_sise = dplyr::if_else(!is.na(code_diplome_maj), code_diplome_maj, code_diplome_sise)) %>% 
   dplyr::select(code_etape, annee, code_diplome_sise) %>% 
   dplyr::left_join(impexp::access_import("diplome_sise", "data-raw/data/Tables_ref.accdb") %>% 
                      dplyr::filter(is.na(annee)) %>% 
                      dplyr::select(-annee),
                    by = c("code_diplome_sise" = "code_diplome")) %>% 
-  dplyr::mutate(code_diplome_sise = ifelse(!is.na(code_diplome_maj), code_diplome_maj, code_diplome_sise)) %>% 
+  dplyr::mutate(code_diplome_sise = dplyr::if_else(!is.na(code_diplome_maj), code_diplome_maj, code_diplome_sise)) %>% 
   dplyr::select(code_etape, annee, code_diplome_sise) %>% 
   dplyr::left_join(impexp::access_import("etape_diplome_sise", "data-raw/data/Tables_ref.accdb") %>% 
                      dplyr::filter(is.na(annee)) %>% 
                      dplyr::select(-annee),
                    by = "code_etape") %>% 
-  dplyr::mutate(code_diplome_sise = ifelse(!is.na(code_diplome_maj), code_diplome_maj, code_diplome_sise)) %>% 
+  dplyr::mutate(code_diplome_sise = dplyr::if_else(!is.na(code_diplome_maj), code_diplome_maj, code_diplome_sise)) %>% 
   dplyr::select(code_etape, annee, code_diplome_sise) %>% 
   dplyr::left_join(impexp::access_import("etape_diplome_sise", "data-raw/data/Tables_ref.accdb") %>% 
                      tidyr::drop_na(annee),
                    by = c("annee", "code_etape")) %>% 
-  dplyr::mutate(code_diplome_sise = ifelse(!is.na(code_diplome_maj), code_diplome_maj, code_diplome_sise)) %>% 
+  dplyr::mutate(code_diplome_sise = dplyr::if_else(!is.na(code_diplome_maj), code_diplome_maj, code_diplome_sise)) %>% 
   dplyr::select(code_etape, annee, code_diplome_sise) %>% 
   unique()
 

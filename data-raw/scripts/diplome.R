@@ -13,7 +13,7 @@ diplome_type <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_diplome_ty
   unique() %>% 
   dplyr::full_join(impexp::access_import("diplome_type", "data-raw/data/Tables_ref.accdb"), by = "code_type_diplome") %>% 
   dplyr::arrange(code_type_diplome) %>% 
-  dplyr::mutate(acronyme_type_diplome = ifelse(is.na(acronyme_type_diplome), code_type_diplome, acronyme_type_diplome))
+  dplyr::mutate(acronyme_type_diplome = dplyr::if_else(is.na(acronyme_type_diplome), code_type_diplome, acronyme_type_diplome))
 
 usethis::use_data(diplome_type, overwrite = TRUE)
 

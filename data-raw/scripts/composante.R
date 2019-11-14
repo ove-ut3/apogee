@@ -5,7 +5,7 @@ composante <- readxl::read_excel("data-raw/data/Composante.xlsx", skip = 1) %>%
   dplyr::full_join(impexp::access_import("composante", "data-raw/data/Tables_ref.accdb") %>% 
                      dplyr::rename(lib_composante_maj = lib_composante),
                    by = "code_composante") %>% 
-  dplyr::mutate(lib_composante = ifelse(!is.na(lib_composante_maj), lib_composante_maj, lib_composante)) %>% 
+  dplyr::mutate(lib_composante = dplyr::if_else(!is.na(lib_composante_maj), lib_composante_maj, lib_composante)) %>% 
   dplyr::select(-lib_composante_maj) %>% 
   tidyr::drop_na(code_composante)
 
