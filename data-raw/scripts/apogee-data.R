@@ -42,7 +42,7 @@ elp_parcours <- apogee::inscrits_elp %>%
       tidyr::separate_rows(code_elp, sep = ";"),
     by = c("code_etape", "code_elp")
   ) %>% 
-  dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, elp_parcours) %>% 
+  dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, elp_parcours, ville) %>% 
   unique() %>% 
   dplyr::anti_join(
     patchr::duplicate(., annee, code_etape, code_etudiant, inscription_premiere),
