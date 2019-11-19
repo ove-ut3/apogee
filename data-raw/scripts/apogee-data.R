@@ -21,16 +21,16 @@ inscrits <- impexp::csv_import_path("data-raw", pattern = "Inscrits\\.csv$", ski
 inscrits_annules <- inscrits %>% 
   dplyr::filter(inscription_annulee) %>% 
   dplyr::select(-inscription_annulee) %>% 
-  nest_inscrits(code_composante) %>%
-  nest_inscrits(code_version_etape)
+  tidyr::nest(code_composante = code_composante, code_version_etape = code_version_etape) %>% 
+  dplyr::mutate_at(c("code_composante", "code_version_etape"), purrr::map, 1)
 
 usethis::use_data(inscrits_annules, overwrite = TRUE)
 
 inscrits <- inscrits %>% 
   dplyr::filter(!inscription_annulee) %>% 
   dplyr::select(-inscription_annulee) %>% 
-  nest_inscrits(code_composante) %>%
-  nest_inscrits(code_version_etape)
+  tidyr::nest(code_composante = code_composante, code_version_etape = code_version_etape) %>% 
+  dplyr::mutate_at(c("code_composante", "code_version_etape"), purrr::map, 1)
 
 # Ajout ELP parcours
 elp_parcours <- apogee::inscrits_elp %>% 
@@ -68,8 +68,8 @@ inscrits <- inscrits %>%
 inscrits <- impexp::access_import("inscrits_ajout", "data-raw/data/Tables_ref_individus.accdb") %>% 
   dplyr::select(-commentaire, -date_maj) %>% 
   dplyr::anti_join(inscrits, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>% 
-  nest_inscrits(code_composante) %>% 
-  nest_inscrits(code_version_etape) %>% 
+  tidyr::nest(code_composante = code_composante, code_version_etape = code_version_etape) %>% 
+  dplyr::mutate_at(c("code_composante", "code_version_etape"), purrr::map, 1) %>% 
   dplyr::bind_rows(inscrits) %>% 
   dplyr::arrange(annee, code_etape, code_etudiant, inscription_premiere)
 
