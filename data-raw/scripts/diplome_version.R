@@ -3,8 +3,8 @@
 diplome_version <- readxl::read_excel("data-raw/data/Diplome_version.xlsx", skip = 1) %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
-  tidyr::nest_legacy(code_domaine_diplome, .key = "code_domaine_diplome") %>% 
-  dplyr::mutate(code_domaine_diplome = purrr::map(code_domaine_diplome, ~ .[[1]]))
+  tidyr::nest(code_domaine_diplome = code_domaine_diplome) %>% 
+  dplyr::mutate_at("code_domaine_diplome", purrr::map, 1)
 
 usethis::use_data(diplome_version, overwrite = TRUE)
 
