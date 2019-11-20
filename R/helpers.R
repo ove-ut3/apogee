@@ -199,16 +199,18 @@ formations_liste <- function(annee = NULL, unique = TRUE) {
   } else {
     
     liste_formations <- liste_formations %>% 
-      dplyr::mutate(lib_etape = apogee::lib_etape(code_etape, prefixe = NA_character_, suffixe = NA_character_),
-                    acronyme_etape = apogee::acronyme_etape(code_etape),
-                    acronyme_type_diplome = apogee::hier_etape_type_diplome(code_etape) %>% 
-                      apogee::acronyme_type_diplome(),
-                    acronyme_type_diplome = dplyr::if_else(is.na(acronyme_type_diplome), 
-                                                           apogee::hier_etape_type_diplome(code_etape), 
-                                                           acronyme_type_diplome),
-                    annee_etape = apogee::annee_etape(code_etape),
-                    lib_mention = apogee::hier_etape_mention(code_etape) %>% 
-                      purrr::map(apogee::lib_mention_diplome)) %>% 
+      dplyr::mutate(
+        lib_etape = apogee::lib_etape(code_etape, prefixe = NA_character_, suffixe = NA_character_),
+        acronyme_etape = apogee::acronyme_etape(code_etape),
+        acronyme_type_diplome = apogee::hier_etape_type_diplome(code_etape) %>% 
+          apogee::acronyme_type_diplome(),
+        acronyme_type_diplome = dplyr::if_else(is.na(acronyme_type_diplome), 
+                                               apogee::hier_etape_type_diplome(code_etape), 
+                                               acronyme_type_diplome),
+        annee_etape = apogee::annee_etape(code_etape),
+        lib_mention = apogee::hier_etape_mention(code_etape) %>% 
+          purrr::map(apogee::lib_mention_diplome)
+      ) %>% 
       tidyr::unnest_legacy() %>% 
       dplyr::mutate(lib_domaine = apogee::hier_etape_domaine(code_etape) %>% 
                       purrr::map(apogee::lib_domaine_diplome)) %>% 
