@@ -252,7 +252,7 @@ annee_en_cours <- function() {
 #' @export
 formations_historique <- function(annee_debut) {
   
-  formations_historique <- apogee::formations_liste() %>% 
+  formations_historique <- apogee::formations_liste(annee_debut:apogee::annee_en_cours()) %>% 
     dplyr::anti_join(apogee::etape_histo, by = c("code_etape" = "code_etape_succ")) %>% 
     dplyr::mutate(annee = purrr::map2(apogee::etape_premiere_annee(code_etape), apogee::etape_derniere_annee(code_etape), ~ .x:.y)) %>% 
     dplyr::mutate(id = dplyr::row_number()) %>% 
