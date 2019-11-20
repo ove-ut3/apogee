@@ -273,6 +273,44 @@ individus_bac <- impexp::csv_import_path("data-raw", pattern = "Individus - Bac\
 
 individus <- dplyr::left_join(individus, individus_bac, by = "code_etudiant")
 
+# Ajout des DAEU B pour l'année du bac
+annee_bac_daeu <- individus %>% 
+  dplyr::filter(is.na(annee_bac)) %>% 
+  dplyr::select(code_etudiant) %>% 
+  dplyr::inner_join(
+    apogee::diplomes %>% 
+      dplyr::filter(apogee::hier_etape_type_diplome(code_etape) == "DAEU") %>% 
+      dplyr::mutate(
+        code_bac = "DAEB",
+        code_type_etab_bac = "00",
+        code_etab_bac = "0311384L",
+        code_departement_bac = "031"
+      ) %>% 
+      dplyr::select(code_etudiant, annee_bac = annee, code_bac, code_type_etab_bac, code_etab_bac, code_departement_bac),
+    by = "code_etudiant"
+  )
+
+individus <- patchr::df_update(individus, annee_bac_daeu, by = "code_etudiant")
+
+# Ajout des diplômes d'accès à l'enseignement supérieur étrangers pour l'année du bac
+annee_bac_etr <- individus %>% 
+  dplyr::filter(is.na(annee_bac)) %>% 
+  dplyr::select(code_etudiant) %>% 
+  dplyr::inner_join(
+    apogee::individus_diplome_origine %>% 
+      dplyr::filter(
+        code_type_diplome_origine == "1",
+        annee_diplome_obtenu >= 2000,
+        as.integer(substr(code_etudiant, 2, 3)) > as.integer(substr(annee_diplome_obtenu, 2, 3)),
+        stringr::str_detect(code_departement_pays_dernier_diplome, "^[1-9]") | code_departement_pays_dernier_diplome %in% c(NA_character_, "099")
+      ) %>% 
+      dplyr::mutate(code_bac = "0031") %>% 
+      dplyr::select(code_etudiant, annee_bac = annee_diplome_obtenu, code_bac, code_etab_bac = code_etab_diplome_obtenu),
+    by = "code_etudiant"
+  )
+
+individus <- patchr::df_update(individus, annee_bac_etr, by = "code_etudiant")
+
 individus_mail_ups <- impexp::csv_import_path("data-raw", pattern = "Individus - Mail UPS\\.csv", zip = TRUE, skip = 1, encoding = "UTF-8") %>% 
   tidyr::unnest_legacy() %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
