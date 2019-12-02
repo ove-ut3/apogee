@@ -4,8 +4,11 @@
 \alias{lib_etape}
 \title{Renvoie le libelle a partir du code etape}
 \usage{
-lib_etape(code_etape, prefixe = "formation", suffixe = c("ville",
-  "option", "particularite", "annee"))
+lib_etape(
+  code_etape,
+  prefixe = "formation",
+  suffixe = c("ville", "option", "particularite", "annee")
+)
 }
 \arguments{
 \item{code_etape}{Un vecteur de code étape.}

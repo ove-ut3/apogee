@@ -4,8 +4,11 @@
 \alias{histo_mention_diplome_succ}
 \title{Renvoie le code de mention de diplome successeur}
 \usage{
-histo_mention_diplome_succ(code_mention_diplome, successeur_final = TRUE,
-  garder_na = FALSE)
+histo_mention_diplome_succ(
+  code_mention_diplome,
+  successeur_final = TRUE,
+  garder_na = FALSE
+)
 }
 \arguments{
 \item{successeur_final}{\code{TRUE}, renvoit le successeur le plus récent dans l'historique; \code{FALSE}, renvoie le premier successeur.}

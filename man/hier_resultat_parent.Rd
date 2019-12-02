@@ -4,8 +4,7 @@
 \alias{hier_resultat_parent}
 \title{Renvoie le resultat parent}
 \usage{
-hier_resultat_parent(code_resultat, parent_final = TRUE,
-  garder_na = FALSE)
+hier_resultat_parent(code_resultat, parent_final = TRUE, garder_na = FALSE)
 }
 \arguments{
 \item{parent_final}{\code{TRUE}, renvoit le parent le plus haut dans la hiérarchie; \code{FALSE}, renvoie le premier parent.}

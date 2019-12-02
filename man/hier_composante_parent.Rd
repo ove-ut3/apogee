@@ -4,8 +4,11 @@
 \alias{hier_composante_parent}
 \title{Renvoie le code composante parent}
 \usage{
-hier_composante_parent(code_composante, parent_final = FALSE,
-  garder_na = FALSE)
+hier_composante_parent(
+  code_composante,
+  parent_final = FALSE,
+  garder_na = FALSE
+)
 }
 \arguments{
 \item{code_composante}{Un vecteur de code composante.}

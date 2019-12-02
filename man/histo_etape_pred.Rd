@@ -4,8 +4,12 @@
 \alias{histo_etape_pred}
 \title{Renvoie les codes etape predecesseurs}
 \usage{
-histo_etape_pred(code_etape, annee = NULL, predecesseur_final = FALSE,
-  garder_na = FALSE)
+histo_etape_pred(
+  code_etape,
+  annee = NULL,
+  predecesseur_final = FALSE,
+  garder_na = FALSE
+)
 }
 \arguments{
 \item{code_etape}{Un vecteur de code étape.}

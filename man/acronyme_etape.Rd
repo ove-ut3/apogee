@@ -4,8 +4,11 @@
 \alias{acronyme_etape}
 \title{Renvoie l'acronyme a partir du code etape}
 \usage{
-acronyme_etape(code_etape, prefixe = "formation", suffixe = c("ville",
-  "option", "particularite", "annee"))
+acronyme_etape(
+  code_etape,
+  prefixe = "formation",
+  suffixe = c("ville", "option", "particularite", "annee")
+)
 }
 \arguments{
 \item{code_etape}{Un vecteur de code étape.}

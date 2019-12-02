@@ -4,8 +4,11 @@
 \alias{hier_type_diplome_parent}
 \title{Renvoie le type de diplome parent}
 \usage{
-hier_type_diplome_parent(code_type_diplome, parent_final = FALSE,
-  garder_na = FALSE)
+hier_type_diplome_parent(
+  code_type_diplome,
+  parent_final = FALSE,
+  garder_na = FALSE
+)
 }
 \arguments{
 \item{parent_final}{\code{TRUE}, renvoit le parent le plus haut dans la hiérarchie; \code{FALSE}, renvoie le premier parent.}

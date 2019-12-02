@@ -4,8 +4,11 @@
 \alias{histo_composante_succ}
 \title{Renvoie le code de composante successeur}
 \usage{
-histo_composante_succ(code_composante, successeur_final = TRUE,
-  garder_na = FALSE)
+histo_composante_succ(
+  code_composante,
+  successeur_final = TRUE,
+  garder_na = FALSE
+)
 }
 \arguments{
 \item{successeur_final}{\code{TRUE}, renvoit le successeur le plus récent dans l'historique; \code{FALSE}, renvoie le premier successeur.}

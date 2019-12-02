@@ -4,8 +4,11 @@
 \alias{hier_mention_parent}
 \title{Renvoie la mention de diplome parent}
 \usage{
-hier_mention_parent(code_mention_diplome, parent_final = FALSE,
-  garder_na = FALSE)
+hier_mention_parent(
+  code_mention_diplome,
+  parent_final = FALSE,
+  garder_na = FALSE
+)
 }
 \arguments{
 \item{code_mention_diplome}{Un vecteur de code de mention de diplôme.}
