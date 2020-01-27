@@ -5,14 +5,14 @@ n_inscrits <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge) %>%
   dplyr::count(code_etape) %>% 
   dplyr::rename(n_inscrits = n)
 
-annee_premiere_etape <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge, apogee::inscrits_annules) %>% 
+annee_premiere_etape <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge) %>% 
   dplyr::arrange(annee, code_etape) %>% 
   dplyr::select(code_etape, annee_premiere_etape = annee) %>% 
   dplyr::group_by(code_etape) %>% 
   dplyr::filter(dplyr::row_number() == 1) %>% 
   dplyr::ungroup()
 
-annee_derniere_etape <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge, apogee::inscrits_annules) %>% 
+annee_derniere_etape <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge) %>% 
   dplyr::arrange(annee, code_etape) %>% 
   dplyr::select(code_etape, annee_derniere_etape = annee) %>% 
   dplyr::group_by(code_etape) %>% 
