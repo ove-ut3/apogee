@@ -10,20 +10,9 @@ Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.0.1
 Imports:
-    caractr,
-    developr,
     dplyr,
-    impexp,
-    lubridate,
-    patchr,
+    glue,
     purrr,
-    readr,
-    readxl,
+    scales,
     stringr,
-    tidyr,
-    usethis
-Remotes:
-    stephLH/caractr,
-    stephLH/developr,
-    stephLH/impexp,
-    stephLH/patchr
+    tidyr
