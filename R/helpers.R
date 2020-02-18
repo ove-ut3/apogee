@@ -194,11 +194,11 @@ formations_liste <- function(annee = NULL, unique = TRUE) {
         annee_etape = apogee::annee_etape(code_etape),
         lib_mention = apogee::hier_etape_mention(code_etape) %>% 
           purrr::map(apogee::lib_mention_diplome) %>% 
-          purrr::map(stringr::str_replace_na, "") %>% 
+          purrr::map(na.omit) %>% 
           purrr::map_chr(paste, collapse = " ; "),
         lib_domaine = apogee::hier_etape_domaine(code_etape) %>% 
           purrr::map(apogee::lib_domaine_diplome) %>% 
-          purrr::map(stringr::str_replace_na, "") %>% 
+          purrr::map(na.omit) %>% 
           purrr::map_chr(paste, collapse = " ; ")
       )
     
