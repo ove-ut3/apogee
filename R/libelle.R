@@ -65,8 +65,13 @@ lib_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville", "o
       dplyr::mutate(
         champ_lib_etape = dplyr::if_else(
           !is.na(annee_diplome), 
-          paste0(champ_lib_etape, " - ", apogee::annee_diplome(code_etape) %>% 
-                   caractr::str_conv_number_letter(type = "ieme_number", female = TRUE), " année"),
+          paste0(
+            champ_lib_etape, 
+            " - ", 
+            apogee::annee_diplome(code_etape) %>% 
+              scales::ordinal(rules = scales::ordinal_french(gender = "feminin")),
+            " année"
+          ),
           champ_lib_etape
         )
       )
@@ -149,8 +154,12 @@ acronyme_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville
       dplyr::mutate(
         champ_acronyme_etape = dplyr::if_else(
           !is.na(annee_diplome), 
-          paste0(champ_acronyme_etape, " - ", apogee::annee_diplome(code_etape) %>% 
-                   caractr::str_conv_number_letter(type = "ieme_number", female = TRUE), " année"),
+          paste0(
+            champ_acronyme_etape, 
+            " - ", 
+            apogee::annee_diplome(code_etape) %>% 
+              scales::ordinal(rules = scales::ordinal_french(gender = "feminin")), " année"
+          ),
           champ_acronyme_etape)
       )
   }
