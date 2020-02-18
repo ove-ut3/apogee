@@ -37,7 +37,10 @@ lib_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville", "o
         type_diplome = apogee::acronyme_type_diplome(code_type_diplome),
         champ_lib_etape = dplyr::if_else(
           temoin_etape_apogee == FALSE & !type_diplome %in% c("DAEU", "DE infirmier-e", "Dentaire", "Diplôme d'Etat", "DNO", "HDR", "Médecine", "Pharmacie", "TH FICTIVE", "Vétérinaire"),
-          caractr::str_paste(type_diplome, champ_lib_etape),
+          paste(
+            stringr::str_replace_na(type_diplome, ""),
+            champ_lib_etape
+          ),
           champ_lib_etape
         )
       )
@@ -48,7 +51,10 @@ lib_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville", "o
         lib_type_diplome = apogee::acronyme_type_diplome(code_type_diplome),
         champ_lib_etape = dplyr::if_else(
           temoin_etape_apogee == FALSE,
-          caractr::str_paste(lib_type_diplome, champ_lib_etape),
+          paste(
+            stringr::str_replace_na(lib_type_diplome, ""),
+            champ_lib_etape
+          ),
           champ_lib_etape
         )
       )
@@ -115,7 +121,10 @@ acronyme_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville
         type_diplome = apogee::acronyme_type_diplome(code_type_diplome),
         champ_acronyme_etape = dplyr::if_else(
           temoin_etape_apogee == FALSE & !type_diplome %in% c("DAEU", "DE infirmier-e", "Dentaire", "Diplôme d'Etat", "DNO", "HDR", "Médecine", "Pharmacie", "TH FICTIVE", "Vétérinaire"),
-          caractr::str_paste(type_diplome, champ_acronyme_etape),
+          paste(
+            stringr::str_replace_na(type_diplome, ""),
+            champ_lib_etape
+          ),
           champ_acronyme_etape
         )
       )
@@ -126,7 +135,10 @@ acronyme_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville
         lib_type_diplome = apogee::acronyme_type_diplome(code_type_diplome),
         champ_acronyme_etape = dplyr::if_else(
           temoin_etape_apogee == FALSE, 
-          caractr::str_paste(lib_type_diplome, champ_acronyme_etape),
+          paste(
+            stringr::str_replace_na(lib_type_diplome, ""),
+            champ_lib_etape
+          ),
           champ_acronyme_etape
         )
       )
