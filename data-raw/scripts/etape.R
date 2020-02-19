@@ -22,7 +22,7 @@ annee_derniere_etape <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge
 etape_diplome_type <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_diplome_type", skip = 1) %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   patchr::recode_formula(impexp::access_import("_recodage", access_base_path) %>% 
-                           patchr::filter_data_patch(source = "data_diplome")) %>% 
+                           dplyr::filter(source == "data_diplome")) %>% 
   dplyr::select(-annee) %>% 
   dplyr::group_by(code_etape) %>% 
   dplyr::filter(dplyr::row_number() == dplyr::n()) %>% 
@@ -43,7 +43,7 @@ etape <- readxl::read_excel("data-raw/data/Etape.xlsx", skip = 1) %>%
                    by = "code_etape") %>% 
   dplyr::left_join(etape_diplome_type, by = "code_etape") %>% 
   patchr::recode_formula(impexp::access_import("_recodage", access_base_path) %>% 
-                           patchr::filter_data_patch(source = "data_etape")) %>% 
+                           dplyr::filter(source == "data_etape")) %>% 
   dplyr::mutate(temoin_etape_apogee = dplyr::if_else(lib_etape != lib_etape_apogee, FALSE, TRUE)) %>% 
   dplyr::select(-annee_etape_apogee) %>% 
   dplyr::left_join(n_inscrits, by = "code_etape") %>% 
@@ -81,7 +81,7 @@ etape <- etape %>%
   dplyr::select(-ville_maj) %>% 
   # Nouvelle passe pour les libellés d'étape
   patchr::recode_formula(impexp::access_import("_recodage", access_base_path) %>% 
-                           patchr::filter_data_patch(source = "data_etape"))
+                           dplyr::filter(source == "data_etape"))
 
 if (nrow(patchr::duplicate(etape, code_etape)) >= 1) {
   stop("Doublons étape", call. = FALSE)
@@ -224,7 +224,7 @@ usethis::use_data(etape_specialite_diplome, overwrite = TRUE)
 etape_finalite <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_finalite", skip = 1) %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   patchr::recode_formula(impexp::access_import("_recodage", access_base_path) %>% 
-                           patchr::filter_data_patch(source = "data_etape_finalite")) %>% 
+                           dplyr::filter(source == "data_etape_finalite")) %>% 
   dplyr::arrange(code_etape, code_finalite_diplome) %>% 
   dplyr::group_by(code_etape) %>% 
   dplyr::filter(!is.na(code_finalite_diplome) | dplyr::row_number() == 1) %>% 

@@ -11,7 +11,7 @@ inscrits <- impexp::csv_import_path("data-raw", pattern = "Inscrits\\.csv$", ski
   doublon_maj_etudiant() %>% 
   patchr::recode_formula(
     impexp::access_import("_recodage", access_base_path) %>% 
-      patchr::filter_data_patch(source = "data_inscrits")
+      dplyr::filter(source == "data_inscrits")
   ) %>% 
   dplyr::mutate(
     inscription_annulee = !inscription_en_cours | !is.na(date_annulation) | inscription_resiliee | !is.na(date_resiliation),
