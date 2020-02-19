@@ -128,7 +128,7 @@ acronyme_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville
           temoin_etape_apogee == FALSE & !type_diplome %in% c("DAEU", "DE infirmier-e", "Dentaire", "Diplôme d'Etat", "DNO", "HDR", "Médecine", "Pharmacie", "TH FICTIVE", "Vétérinaire"),
           paste(
             stringr::str_replace_na(type_diplome, ""),
-            champ_lib_etape
+            champ_acronyme_etape
           ),
           champ_acronyme_etape
         )
@@ -142,7 +142,7 @@ acronyme_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville
           temoin_etape_apogee == FALSE, 
           paste(
             stringr::str_replace_na(lib_type_diplome, ""),
-            champ_lib_etape
+            champ_acronyme_etape
           ),
           champ_acronyme_etape
         )
