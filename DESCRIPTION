@@ -16,3 +16,5 @@ Imports:
     scales,
     stringr,
     tidyr
+Remotes:
+    stephLH/scales@ordinal_french
