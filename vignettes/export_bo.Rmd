@@ -1,0 +1,138 @@
+---
+title: "Extraction BO"
+author: "Observatoire de la vie étudiante"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Extraction BO}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+Rythme d'actualisation tous les mois
+
+## Export BO
+
+- URL BO : https://papeete.univ-tlse3.fr/BOE/BI
+- login intranet : gxs6479a
+- mot de passe : 
+
+Chemin versles requêtes :
+
+- Onglet "Documents"
+- Sous-menu en bas à gauche: "Dossiers"
+- Chemin : "Dossiers publics/ZDEVE_DEP/DEVE_DEP/OVE - IMPORT R/"
+
+### Dossier BO "Apogee_data/"
+
+#### Procédure générique d'extraction
+
+- Double-cliquer sur la requête
+- Bouton "Actuliser"
+- Bouton "Enregistrer"
+- Bouton "Exporter"
+  - Type de fichier : "Archive CSV"
+  - Dossier de sauvegarde selon le type de requête (voir ci-dessous)
+  - Ecraser l'ancienne version
+
+#### Requêtes Individus
+
+Requêtes sans spécification d'année :
+
+- Individus
+- Individus_bac
+- Individus_departement_naissance
+- Individus_diplome_externe
+- Individus_diplome_origine
+- Individus_mail_ups
+- Individus_situation_annee_precedente
+
+Sauvegarde dans : `data-raw/data/Toutes annees/`
+
+#### Requêtes inscrits, résultats et diplômés
+
+Requêtes avec spécification d'année :
+
+- Diplomes
+- Inscrits
+- Inscrits_ELP_FSI
+- Inscrits_ELP_hors_FSI
+- Inscrits_peda
+- Resultats_diplome
+- Resultats_ELP_FSI
+- Resultats_ELP_hors_FSI
+- Resultats_etape
+- Resultats_etape_paces
+
+Pour changer l'année : 
+
+- Menu "Conception"
+- Menu "Modifier le fournisseur de données"
+- Changement d'année dans le volet "Filtres de la requête"
+
+##### Pour les requêtes suivantes (plus légères en nombre d'individus) : 
+
+- Diplomes
+- Inscrits_peda
+- Resultats_diplome
+- Resultats_etape
+- Resultats_etape_paces
+
+Sauvegarde par tranche de 5 ans dans le dossier d'accréditation en cours, par exemple `data-raw/data/2016-17 - 2021-22`
+
+##### Pour les requêtes suivantes (plus lourdes en nombre d'individus) : 
+
+- Inscrits
+- Inscrits_ELP_FSI
+- Inscrits_ELP_hors_FSI
+- Resultats_ELP_FSI
+- Resultats_ELP_hors_FSI
+
+Sauvegarder dans le dossier annuel correspondant à l'année spécifiée, par exemple `data-raw/data/2019-20`
+
+Pour les requêtes préfixées "Inscrits", uniquement l'année en cours
+Pour les requêtes préfixées "Résultats", penser à actualiser l'année antérieure (jusqu'à novembre par exemple)
+
+### Dossier BO "Apogee_meta/"
+
+#### Procédure générique d'extraction
+
+- Double-cliquer sur la requête
+- Bouton "Actuliser"
+- Bouton "Enregistrer"
+- Bouton "Exporter"
+  - Type de fichier : "Excel .xlsx"
+  - Dossier de sauvegarde : `data-raw/data/`
+  - Ecraser l'ancienne version
+
+#### Requêtes à extraire
+
+Requête BO correspondant à l'offre de formation uniquement :
+
+- Composante
+- Diplome
+- Diplome_version
+- ELP
+- Etape
+- Individu
+- Inscription
+- Resultat
+
+## Génération des tables rda du package `apogee`
+
+- Ouverture du script `data-raw/main.R`
+- Rezip éventuel car l'export BO génère des zips volumineux
+- Exécution du script `data-raw/scripts/apogee-data.R` relatif aux données "Apogee_data"
+- Penser à builder apogée car certaines méta-données (par exemple etape) dépendent des inscrits (année d'ouverture et fermeture de formation).
+- Exécution des scripts des méta-données
+- Penser à builder apogée une seconde fois
+
+Les données du package `apogee.stats` peuvent alors être mises à jour également (voir vignette dans package `apogee.stats`).
+

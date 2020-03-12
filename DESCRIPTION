@@ -18,3 +18,7 @@ Imports:
     tidyr
 Remotes:
     stephLH/scales@ordinal_french
+Suggests: 
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr
