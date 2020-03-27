@@ -225,14 +225,14 @@ histo_elp_succ <- function(code_elp, successeur_final = TRUE, garder_na = FALSE)
 #'
 #' @return Un vecteur de code de mention de diplôme successeur.
 #'
-#' Jeu de données source : \code{apogee::diplome_mention_histo}.\cr
-#' Il est créé à partir d'Apogée et de la table "diplome_mention_histo" de la base Access Tables_ref (projet Apogee).
+#' Jeu de données source : \code{apogee::mention_diplome_histo}.\cr
+#' Il est créé à partir d'Apogée et de la table "mention_diplome_histo" de la base Access Tables_ref (projet Apogee).
 #'
 #' @export
 histo_mention_diplome_succ <- function(code_mention_diplome, successeur_final = TRUE, garder_na = FALSE) {
   
   histo_mention_diplome_succ <- dplyr::tibble(code_mention_diplome) %>%
-    dplyr::left_join(apogee::diplome_mention_histo, by = "code_mention_diplome") %>%
+    dplyr::left_join(apogee::mention_diplome_histo, by = "code_mention_diplome") %>%
     dplyr::pull(code_mention_diplome_succ)
   
   if (garder_na == FALSE) {

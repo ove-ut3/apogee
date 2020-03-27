@@ -211,26 +211,6 @@ lib_composante <- function(code_composante) {
   return(lib_composante)
 }
 
-#' Renvoie le libelle a partir du code de specialite diplome
-#'
-#' Renvoie le libellé à partir du code de spécialité diplôme.
-#'
-#' @param code_etape Un vecteur de code de spécialité diplôme.
-#'
-#' @return Un vecteur contenant les libellés de spécialité diplôme.
-#'
-#' Jeu de données source : \code{apogee::diplome_specialite}.\cr
-#'
-#' @export
-lib_specialite_diplome <- function(code_specialite_diplome) {
-  
-  lib_specialite_diplome <- dplyr::tibble(code_specialite_diplome) %>%
-    dplyr::left_join(apogee::diplome_specialite, by = "code_specialite_diplome") %>%
-    dplyr::pull(lib_specialite_diplome)
-  
-  return(lib_specialite_diplome)
-}
-
 #' Renvoie le libelle a partir du code de regime d'inscription
 #'
 #' Renvoie le libellé à partir du code de régime d'inscription.
@@ -282,13 +262,13 @@ lib_type_diplome <- function(code_type_diplome) {
 #'
 #' @return Un vecteur contenant les libellés de type diplôme.
 #'
-#' Jeu de données source : \code{apogee::diplome_finalite}.\cr
+#' Jeu de données source : \code{apogee::finalite_diplome}.\cr
 #'
 #' @export
 lib_finalite_diplome <- function(code_finalite_diplome) {
   
   lib_finalite_diplome <- dplyr::tibble(code_finalite_diplome) %>%
-    dplyr::left_join(apogee::diplome_finalite, by = "code_finalite_diplome") %>%
+    dplyr::left_join(apogee::finalite_diplome, by = "code_finalite_diplome") %>%
     dplyr::pull(lib_finalite_diplome)
   
   return(lib_finalite_diplome)
@@ -548,13 +528,13 @@ lib_statut_etudiant <- function(code_statut_etudiant) {
 #'
 #' @return Un vecteur contenant les libellés de mention de diplôme.
 #'
-#' Jeu de données source : \code{apogee::diplome_mention}.\cr
+#' Jeu de données source : \code{apogee::mention_diplome}.\cr
 #'
 #' @export
 lib_mention_diplome <- function(code_mention_diplome) {
   
   lib_mention_diplome <- dplyr::tibble(code_mention_diplome) %>%
-    dplyr::left_join(apogee::diplome_mention, by = "code_mention_diplome") %>%
+    dplyr::left_join(apogee::mention_diplome, by = "code_mention_diplome") %>%
     dplyr::pull(lib_mention_diplome)
   
   return(lib_mention_diplome)
@@ -568,13 +548,13 @@ lib_mention_diplome <- function(code_mention_diplome) {
 #'
 #' @return Un vecteur contenant les libellés de domaine de diplôme.
 #'
-#' Jeu de données source : \code{apogee::diplome_domaine}.\cr
+#' Jeu de données source : \code{apogee::domaine_diplome}.\cr
 #'
 #' @export
 lib_domaine_diplome <- function(code_domaine_diplome) {
   
   lib_domaine_diplome <- dplyr::tibble(code_domaine_diplome) %>%
-    dplyr::left_join(apogee::diplome_domaine, by = "code_domaine_diplome") %>%
+    dplyr::left_join(apogee::domaine_diplome, by = "code_domaine_diplome") %>%
     dplyr::pull(lib_domaine_diplome)
   
   return(lib_domaine_diplome)
@@ -684,29 +664,6 @@ lib_academie <- function(code_academie) {
   return(lib_academie)
 }
 
-#' Renvoie le libelle a partir du code cycle de formation
-#'
-#' Renvoie le libellé à partir du code cycle de formation.
-#'
-#' @param code_cycle Un vecteur de code cycle.
-#'
-#' @return Un vecteur contenant les libellés de cycle.
-#'
-#' Jeu de données source : \code{apogee::cycle}.\cr
-#'
-#' @examples
-#' apogee::lib_cycle(c("1", "3"))
-#'
-#' @export
-lib_cycle <- function(code_cycle) {
-  
-  lib_cycle <- dplyr::tibble(code_cycle) %>%
-    dplyr::left_join(apogee::cycle, by = "code_cycle") %>%
-    dplyr::pull(lib_cycle)
-  
-  return(lib_cycle)
-}
-
 #' Renvoie l'acronyme a partir du code de domaine de diplome
 #'
 #' Renvoie l'acronyme à partir du code de domaine de diplôme.
@@ -715,14 +672,14 @@ lib_cycle <- function(code_cycle) {
 #'
 #' @return Un vecteur contenant les acronymes de domaine de diplôme.
 #'
-#' Jeu de données source : \code{apogee::diplome_domaine}.\cr
-#' Il est créé à partir de la table "diplome_domaine" de la base Access "Tables_ref.accdb".
+#' Jeu de données source : \code{apogee::domaine_diplome}.\cr
+#' Il est créé à partir de la table "apogee::domaine_diplome" de la base Access "Tables_ref.accdb".
 #'
 #' @export
 acronyme_domaine_diplome <- function(code_domaine_diplome) {
   
   acronyme_domaine_diplome <- dplyr::tibble(code_domaine_diplome) %>%
-    dplyr::left_join(apogee::diplome_domaine, by = "code_domaine_diplome") %>%
+    dplyr::left_join(apogee::domaine_diplome, by = "code_domaine_diplome") %>%
     dplyr::pull(acronyme_domaine_diplome)
   
   return(acronyme_domaine_diplome)
@@ -736,14 +693,14 @@ acronyme_domaine_diplome <- function(code_domaine_diplome) {
 #'
 #' @return Un vecteur contenant les acronymes de mention de diplôme.
 #'
-#' Jeu de données source : \code{apogee::diplome_mention}.\cr
-#' Il est créé à partir de la table "diplome_mention" de la base Access "Tables_ref.accdb".
+#' Jeu de données source : \code{apogee::mention_diplome}.\cr
+#' Il est créé à partir de la table "mention_diplome" de la base Access "Tables_ref.accdb".
 #'
 #' @export
 acronyme_mention_diplome <- function(code_mention_diplome) {
   
   acronyme_mention_diplome <- dplyr::tibble(code_mention_diplome) %>%
-    dplyr::left_join(apogee::diplome_mention, by = "code_mention_diplome") %>%
+    dplyr::left_join(apogee::mention_diplome, by = "code_mention_diplome") %>%
     dplyr::pull(acronyme_mention_diplome)
   
   return(acronyme_mention_diplome)

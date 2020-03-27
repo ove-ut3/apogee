@@ -12,7 +12,7 @@ lib_finalite_diplome(code_finalite_diplome)
 \value{
 Un vecteur contenant les libellés de type diplôme.
 
-Jeu de données source : \code{apogee::diplome_finalite}.\cr
+Jeu de données source : \code{apogee::finalite_diplome}.\cr
 }
 \description{
 Renvoie le libellé à partir du code de finalité de diplôme.

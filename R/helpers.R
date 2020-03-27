@@ -296,7 +296,7 @@ compatibilite_mention_diplome_l <- function(code_mention_diplome_l) {
   
   compatibilite_mention_diplome_l <- dplyr::tibble(code_mention_diplome_l) %>%
     dplyr::mutate(.id = dplyr::row_number()) %>% 
-    dplyr::left_join(apogee::diplome_mention_lm, by = "code_mention_diplome_l") %>%
+    dplyr::left_join(apogee::mention_diplome_lm, by = "code_mention_diplome_l") %>%
     split(x = .$code_mention_diplome_m, f = .$.id)
   
   names(compatibilite_mention_diplome_l) <- code_mention_diplome_l
@@ -317,7 +317,7 @@ compatibilite_mention_diplome_m <- function(code_mention_diplome_m) {
   
   compatibilite_mention_diplome_m <- dplyr::tibble(code_mention_diplome_m) %>%
     dplyr::mutate(.id = dplyr::row_number()) %>% 
-    dplyr::left_join(apogee::diplome_mention_lm, by = "code_mention_diplome_m") %>%
+    dplyr::left_join(apogee::mention_diplome_lm, by = "code_mention_diplome_m") %>%
     split(x = .$code_mention_diplome_l, f = .$.id)
   
   names(compatibilite_mention_diplome_m) <- code_mention_diplome_m
@@ -357,7 +357,7 @@ rezip_csv <- function(fichier_zip) {
 temoin_mention_actif <- function(code_mention_diplome, annee = NULL) {
   
   temoin_mention_actif <- dplyr::tibble(code_mention_diplome) %>% 
-    dplyr::left_join(apogee::diplome_mention, by = "code_mention_diplome")
+    dplyr::left_join(apogee::mention_diplome, by = "code_mention_diplome")
   
   if (!is.null(annee)) {
     temoin_mention_actif <- dplyr::mutate(temoin_mention_actif, actif = purrr::map2_lgl(mention_premiere_annee, mention_derniere_annee, ~ length(intersect(.x:.y, !!annee)) >= 1))

@@ -12,8 +12,8 @@ acronyme_domaine_diplome(code_domaine_diplome)
 \value{
 Un vecteur contenant les acronymes de domaine de diplôme.
 
-Jeu de données source : \code{apogee::diplome_domaine}.\cr
-Il est créé à partir de la table "diplome_domaine" de la base Access "Tables_ref.accdb".
+Jeu de données source : \code{apogee::domaine_diplome}.\cr
+Il est créé à partir de la table "apogee::domaine_diplome" de la base Access "Tables_ref.accdb".
 }
 \description{
 Renvoie l'acronyme à partir du code de domaine de diplôme.

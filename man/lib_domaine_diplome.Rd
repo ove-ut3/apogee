@@ -12,7 +12,7 @@ lib_domaine_diplome(code_domaine_diplome)
 \value{
 Un vecteur contenant les libellés de domaine de diplôme.
 
-Jeu de données source : \code{apogee::diplome_domaine}.\cr
+Jeu de données source : \code{apogee::domaine_diplome}.\cr
 }
 \description{
 Renvoie le libellé à partir du code domaine de diplôme.

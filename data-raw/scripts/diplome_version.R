@@ -1,32 +1,22 @@
-#### Diplôme version ####
-
-diplome_version <- readxl::read_excel("data-raw/data/Diplome_version.xlsx", skip = 1) %>% 
-  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
-  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
-  tidyr::nest(code_domaine_diplome = code_domaine_diplome) %>% 
-  dplyr::mutate_at("code_domaine_diplome", purrr::map, 1)
-
-usethis::use_data(diplome_version, overwrite = TRUE)
-
 #### Domaine ####
 
-diplome_domaine <- readxl::read_excel("data-raw/data/Diplome_version.xlsx", "Formation_domaine", skip = 1) %>% 
+domaine_diplome <- readxl::read_excel("data-raw/data/Diplome_version.xlsx", "Formation_domaine", skip = 1) %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
-  dplyr::full_join(impexp::access_import("diplome_domaine", "data-raw/data/Tables_ref.accdb") %>% 
+  dplyr::full_join(impexp::access_import("domaine_diplome", "data-raw/data/Tables_ref.accdb") %>% 
                      dplyr::rename(maj_lib_domaine_diplome = lib_domaine_diplome),
                    by = "code_domaine_diplome") %>% 
   dplyr::mutate(lib_domaine_diplome = dplyr::if_else(!is.na(maj_lib_domaine_diplome), maj_lib_domaine_diplome, lib_domaine_diplome)) %>% 
   dplyr::select(-maj_lib_domaine_diplome)
 
-usethis::use_data(diplome_domaine, overwrite = TRUE)
+usethis::use_data(domaine_diplome, overwrite = TRUE)
 
 #### Finalité ####
 
-diplome_finalite <- readxl::read_excel("data-raw/data/Diplome_version.xlsx", "Finalite", skip = 1) %>% 
+finalite_diplome <- readxl::read_excel("data-raw/data/Diplome_version.xlsx", "Finalite", skip = 1) %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
-  dplyr::bind_rows(impexp::access_import("diplome_finalite_ajout", "data-raw/data/Tables_ref.accdb"))
+  dplyr::bind_rows(impexp::access_import("finalite_diplome_ajout", "data-raw/data/Tables_ref.accdb"))
 
-usethis::use_data(diplome_finalite, overwrite = TRUE)
+usethis::use_data(finalite_diplome, overwrite = TRUE)
 
 #### Mention ####
 
@@ -46,37 +36,37 @@ mention_derniere_annee <- mention_annee %>%
   dplyr::filter(dplyr::row_number() == dplyr::n()) %>% 
   dplyr::ungroup()
 
-diplome_mention <- readxl::read_excel("data-raw/data/Diplome_version.xlsx", "Mention", skip = 1) %>% 
+mention_diplome <- readxl::read_excel("data-raw/data/Diplome_version.xlsx", "Mention", skip = 1) %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
-  dplyr::full_join(impexp::access_import("diplome_mention", "data-raw/data/Tables_ref.accdb") %>% 
-                     dplyr::rename(maj_lib_mention_diplome = lib_mention_diplome),
-                   by = "code_mention_diplome") %>% 
-  dplyr::mutate(lib_mention_diplome = dplyr::if_else(!is.na(maj_lib_mention_diplome), maj_lib_mention_diplome, lib_mention_diplome)) %>% 
+  dplyr::full_join(
+    impexp::access_import("mention_diplome", "data-raw/data/Tables_ref.accdb") %>% 
+      dplyr::rename(maj_lib_mention_diplome = lib_mention_diplome),
+    by = "code_mention_diplome"
+  ) %>% 
+  dplyr::mutate(
+    lib_mention_diplome = dplyr::if_else(
+      !is.na(maj_lib_mention_diplome),
+      maj_lib_mention_diplome,
+      lib_mention_diplome
+    )
+  ) %>% 
   dplyr::select(-maj_lib_mention_diplome) %>% 
   dplyr::left_join(mention_premiere_annee, by = "code_mention_diplome") %>% 
   dplyr::left_join(mention_derniere_annee, by = "code_mention_diplome") %>% 
   dplyr::mutate(actif = dplyr::if_else(mention_derniere_annee >= apogee::annee_en_cours(), TRUE, FALSE, FALSE))
 
-patchr::duplicate(diplome_mention, code_mention_diplome)
+patchr::duplicate(mention_diplome, code_mention_diplome)
 
-usethis::use_data(diplome_mention, overwrite = TRUE)
+usethis::use_data(mention_diplome, overwrite = TRUE)
 
 #### Mention - historique ####
 
-diplome_mention_histo <- impexp::access_import("diplome_mention_histo", "data-raw/data/Tables_ref.accdb")
+mention_diplome_histo <- impexp::access_import("mention_diplome_histo", "data-raw/data/Tables_ref.accdb")
 
-usethis::use_data(diplome_mention_histo, overwrite = TRUE)
+usethis::use_data(mention_diplome_histo, overwrite = TRUE)
 
 #### Mention - compatibilité licence et master ####
 
-diplome_mention_lm <- impexp::access_import("diplome_mention_lm", "data-raw/data/Tables_ref.accdb")
+mention_diplome_lm <- impexp::access_import("mention_diplome_lm", "data-raw/data/Tables_ref.accdb")
 
-usethis::use_data(diplome_mention_lm, overwrite = TRUE)
-
-#### Spécialité ####
-
-diplome_specialite <- readxl::read_excel("data-raw/data/Diplome_version.xlsx", "Specialite") %>% 
-  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
-  tidyr::drop_na(code_specialite_diplome)
-
-usethis::use_data(diplome_specialite, overwrite = TRUE)
+usethis::use_data(mention_diplome_lm, overwrite = TRUE)

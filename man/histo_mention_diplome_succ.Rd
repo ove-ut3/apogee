@@ -20,8 +20,8 @@ histo_mention_diplome_succ(
 \value{
 Un vecteur de code de mention de diplôme successeur.
 
-Jeu de données source : \code{apogee::diplome_mention_histo}.\cr
-Il est créé à partir d'Apogée et de la table "diplome_mention_histo" de la base Access Tables_ref (projet Apogee).
+Jeu de données source : \code{apogee::mention_diplome_histo}.\cr
+Il est créé à partir d'Apogée et de la table "mention_diplome_histo" de la base Access Tables_ref (projet Apogee).
 }
 \description{
 Renvoie le code de mention de diplôme successeur.

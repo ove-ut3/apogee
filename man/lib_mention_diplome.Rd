@@ -12,7 +12,7 @@ lib_mention_diplome(code_mention_diplome)
 \value{
 Un vecteur contenant les libellés de mention de diplôme.
 
-Jeu de données source : \code{apogee::diplome_mention}.\cr
+Jeu de données source : \code{apogee::mention_diplome}.\cr
 }
 \description{
 Renvoie le libellé à partir du code mention de diplôme.

@@ -202,23 +202,6 @@ patchr::duplicate(etape_domaine, code_etape, code_domaine_diplome)
 
 usethis::use_data(etape_domaine, overwrite = TRUE)
 
-#### Etape - cycle ####
-
-etape_cycle <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_cycle") %>% 
-  patchr::rename(impexp::access_import("_rename", access_base_path))
-
-usethis::use_data(etape_cycle, overwrite = TRUE)
-
-#### Etape - spécialité ####
-
-etape_specialite_diplome <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_specialite") %>% 
-  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
-  dplyr::anti_join(dplyr::filter(., !is.na(code_specialite_diplome)) %>% 
-                     dplyr::mutate(code_specialite_diplome = NA_character_),
-                   by = c("code_etape", "code_specialite_diplome"))
-
-usethis::use_data(etape_specialite_diplome, overwrite = TRUE)
-
 #### Etape - finalité ####
 
 etape_finalite <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_finalite", skip = 1) %>% 
@@ -290,11 +273,3 @@ etape_sise <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_sise", skip 
   unique()
 
 usethis::use_data(etape_sise, overwrite = TRUE)
-
-#### Cycle ####
-
-cycle <- readxl::read_excel("data-raw/data/Etape.xlsx", "Cycle") %>% 
-  patchr::rename(impexp::access_import("_rename", access_base_path))
-
-usethis::use_data(cycle, overwrite = TRUE)
-

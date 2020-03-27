@@ -12,8 +12,8 @@ acronyme_mention_diplome(code_mention_diplome)
 \value{
 Un vecteur contenant les acronymes de mention de diplôme.
 
-Jeu de données source : \code{apogee::diplome_mention}.\cr
-Il est créé à partir de la table "diplome_mention" de la base Access "Tables_ref.accdb".
+Jeu de données source : \code{apogee::mention_diplome}.\cr
+Il est créé à partir de la table "mention_diplome" de la base Access "Tables_ref.accdb".
 }
 \description{
 Renvoie l'acronyme à partir du code de mention de diplôme.

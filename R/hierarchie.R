@@ -217,26 +217,6 @@ hier_departement_academie <- function(code_departement) {
   return(hier_departement_academie)
 }
 
-#' Renvoie les codes de cycle a partir du code etape
-#'
-#' Renvoie les codes de cycle à partir du code étape.
-#'
-#' @param code_etape Un vecteur de code étape.
-#'
-#' @return Un vecteur de code cycle.
-#'
-#' Jeu de données source : \code{apogee::etape_cycle}.\cr
-#'
-#' @export
-hier_etape_cycle <- function(code_etape) {
-  
-  hier_etape_cycle <- dplyr::tibble(code_etape) %>%
-    dplyr::left_join(apogee::etape_cycle, by = "code_etape") %>%
-    dplyr::pull(code_cycle)
-  
-  return(hier_etape_cycle)
-}
-
 #' Renvoie le secteur (secondaire/tertiaire) a partir du code etape
 #'
 #' Renvoie le secteur (secondaire/tertiaire) à partir du code étape.
@@ -272,7 +252,7 @@ hier_etape_secteur <- function(code_etape) {
 hier_mention_parent <- function(code_mention_diplome, parent_final = FALSE, garder_na = FALSE) {
   
   hier_mention_parent <- dplyr::tibble(code_mention_diplome) %>%
-    dplyr::left_join(apogee::diplome_mention, by = "code_mention_diplome") %>%
+    dplyr::left_join(apogee::mention_diplome, by = "code_mention_diplome") %>%
     dplyr::pull(code_mention_diplome_parent)
   
   if (garder_na == FALSE) {
