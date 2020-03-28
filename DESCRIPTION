@@ -2,7 +2,7 @@ Package: apogee
 Title: Fonctions autour du referentiel Apogee
 Version: 0.1
 Authors@R: person("Observatoire de la Vie Etudiante", "OVE", email = "ove@univ-tlse3.fr", role = c("aut", "cre"))
-Description: Fonctions autour du référentiel Apogee : gestion de la hierarchie, de l'historique et des libelles de l'offre de formation. Les donnees sont generees a partir de la fonction "package_apogee()" du projet apogee.
+Description: Fonctions autour du référentiel Apogee : gestion de la hierarchie, de l'historique et des libelles de l'offre de formation.
 Depends:
     R (>= 3.2.5)
 License: Etalab
