@@ -38,6 +38,9 @@ etape_diplome_type <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_dipl
 etape <- readxl::read_excel("data-raw/data/Etape.xlsx", skip = 1) %>%
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
   patchr::remove_duplicate(annee1_diplome) %>% # utilisé dans la base Access
+  dplyr::semi_join(
+    dplyr::bind_rows(apogee::inscrits, apogee::inscrits_annules, apogee::inscrits_cpge),
+    by = "code_etape") %>% 
   dplyr::rename(lib_etape_apogee = lib_etape) %>%
   dplyr::left_join(impexp::access_import("etape", "data-raw/data/Tables_ref.accdb") %>%
     dplyr::mutate(temoin_access = TRUE),
