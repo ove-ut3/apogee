@@ -20,6 +20,7 @@ Remotes:
     stephLH/scales@ordinal_french
 Suggests: 
     knitr,
-    rmarkdown
+    rmarkdown,
+    testthat (>= 2.1.0)
 VignetteBuilder: knitr
 Roxygen: list(markdown = TRUE)
