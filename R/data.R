@@ -2,6 +2,6 @@
 #'
 "etape"
 
-#' ```{r, echo=FALSE} 
-#' dplyr::glimpse(etape, width = 100) 
+#' ```{r, echo=FALSE}
+#' dplyr::glimpse(etape, width = 100)
 #' ````

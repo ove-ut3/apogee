@@ -1,5 +1,5 @@
 # Données brutes
-rezip <- list.files(pattern = "\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
+rezip <- list.files(pattern = "\\.zip$", recursive = TRUE, full.names = TRUE) %>%
   pbapply::pblapply(apogee::rezip_csv)
 
 source("data-raw/scripts/apogee-data.R", encoding = "UTF-8")

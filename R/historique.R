@@ -14,36 +14,37 @@
 #'
 #' @export
 histo_etape_succ <- function(code_etape, code_elp = NULL, successeur_final = TRUE, garder_na = FALSE) {
-  
   if (is.null(code_elp)) {
     histo_etape_succ <- dplyr::tibble(code_etape) %>%
       dplyr::left_join(dplyr::filter(apogee::etape_histo, is.na(doublon)),
-                       by = "code_etape") %>%
+        by = "code_etape"
+      ) %>%
       dplyr::pull(code_etape_succ)
-    
   } else if (!is.null(code_elp)) {
-    
     if (length(code_etape) != length(code_elp)) {
       stop("Les vecteurs de code_etape et code_elp doivent être de taille identique.", call. = FALSE)
     }
-    
-    histo_etape_succ <- dplyr::tibble(code_etape,
-                                       code_elp) %>%
+
+    histo_etape_succ <- dplyr::tibble(
+      code_etape,
+      code_elp
+    ) %>%
       dplyr::left_join(dplyr::filter(apogee::etape_histo, is.na(doublon_elp)),
-                       by = c("code_etape", "code_elp")) %>%
+        by = c("code_etape", "code_elp")
+      ) %>%
       dplyr::pull(code_etape_succ)
   }
-  
+
   if (garder_na == FALSE) {
     histo_etape_succ <- dplyr::if_else(is.na(histo_etape_succ), code_etape, histo_etape_succ)
   }
-  
+
   if (successeur_final == TRUE) {
     if (any(!is.na(apogee::histo_etape_succ(histo_etape_succ, successeur_final = FALSE, garder_na = TRUE)))) {
       histo_etape_succ <- Recall(histo_etape_succ, successeur_final = successeur_final, garder_na = garder_na)
     }
   }
-  
+
   return(histo_etape_succ)
 }
 
@@ -62,53 +63,51 @@ histo_etape_succ <- function(code_etape, code_elp = NULL, successeur_final = TRU
 #'
 #' @export
 histo_etape_succ_2 <- function(code_etape, successeur_final = TRUE, garder_na = FALSE) {
-  
-  histo_etape_succ_2 <- dplyr::tibble(code_etape) %>% 
-    dplyr::mutate(.id = dplyr::row_number()) %>% 
+  histo_etape_succ_2 <- dplyr::tibble(code_etape) %>%
+    dplyr::mutate(.id = dplyr::row_number()) %>%
     dplyr::left_join(
       dplyr::filter(apogee::etape_histo, is.na(code_elp)),
-      by = "code_etape")
-  
+      by = "code_etape"
+    )
+
   if (garder_na == FALSE) {
-    histo_etape_succ_2 <- histo_etape_succ_2 %>% 
+    histo_etape_succ_2 <- histo_etape_succ_2 %>%
       dplyr::mutate(code_etape_succ = dplyr::if_else(is.na(code_etape_succ), code_etape, code_etape_succ))
   }
-  
+
   if (successeur_final == TRUE) {
-    
-    histo_etape_succ_2 <- histo_etape_succ_2 %>% 
-      dplyr::select(.id, code_etape = code_etape_succ) %>% 
+    histo_etape_succ_2 <- histo_etape_succ_2 %>%
+      dplyr::select(.id, code_etape = code_etape_succ) %>%
       dplyr::left_join(
         dplyr::filter(apogee::etape_histo, is.na(code_elp)),
-        by = "code_etape")
-    
+        by = "code_etape"
+      )
+
     while (any(!is.na(histo_etape_succ_2$code_etape_succ))) {
-      
       if (garder_na == FALSE) {
-        histo_etape_succ_2 <- histo_etape_succ_2 %>% 
+        histo_etape_succ_2 <- histo_etape_succ_2 %>%
           dplyr::mutate(code_etape_succ = dplyr::if_else(is.na(code_etape_succ), code_etape, code_etape_succ))
       }
-      
-      histo_etape_succ_2 <- histo_etape_succ_2 %>% 
-        dplyr::select(.id, code_etape = code_etape_succ) %>% 
+
+      histo_etape_succ_2 <- histo_etape_succ_2 %>%
+        dplyr::select(.id, code_etape = code_etape_succ) %>%
         dplyr::left_join(
           dplyr::filter(apogee::etape_histo, is.na(code_elp)),
-          by = "code_etape")
-
+          by = "code_etape"
+        )
     }
-    
   }
-  
+
   if (garder_na == FALSE) {
-    histo_etape_succ_2 <- histo_etape_succ_2 %>% 
+    histo_etape_succ_2 <- histo_etape_succ_2 %>%
       dplyr::mutate(code_etape_succ = dplyr::if_else(is.na(code_etape_succ), code_etape, code_etape_succ))
   }
-  
-  histo_etape_succ_2 <- histo_etape_succ_2 %>% 
+
+  histo_etape_succ_2 <- histo_etape_succ_2 %>%
     split(x = .$code_etape_succ, f = .$.id)
-  
+
   names(histo_etape_succ_2) <- code_etape
-  
+
   return(histo_etape_succ_2)
 }
 
@@ -128,57 +127,53 @@ histo_etape_succ_2 <- function(code_etape, successeur_final = TRUE, garder_na = 
 #'
 #' @export
 histo_etape_pred <- function(code_etape, annee = NULL, predecesseur_final = FALSE, garder_na = FALSE) {
-  
   etape_histo <- dplyr::select(apogee::etape_histo, code_etape = code_etape_succ, code_etape_pred = code_etape)
-  
+
   if (!is.null(annee)) {
     predecesseur_final <- TRUE
-    
-    etape_histo <- etape_histo %>% 
-      dplyr::semi_join(dplyr::filter(apogee::etape, annee_derniere_etape >= !!annee), 
-                       by = c("code_etape_pred" = "code_etape"))
+
+    etape_histo <- etape_histo %>%
+      dplyr::semi_join(dplyr::filter(apogee::etape, annee_derniere_etape >= !!annee),
+        by = c("code_etape_pred" = "code_etape")
+      )
   }
-  
-  histo_etape_pred <- dplyr::tibble(code_etape) %>% 
-    dplyr::mutate(.id = dplyr::row_number()) %>% 
+
+  histo_etape_pred <- dplyr::tibble(code_etape) %>%
+    dplyr::mutate(.id = dplyr::row_number()) %>%
     dplyr::left_join(etape_histo, by = "code_etape")
-  
+
   if (garder_na == FALSE) {
-    histo_etape_pred <- histo_etape_pred %>% 
+    histo_etape_pred <- histo_etape_pred %>%
       dplyr::mutate(code_etape_pred = dplyr::if_else(is.na(code_etape_pred), code_etape, code_etape_pred))
   }
-  
+
   if (predecesseur_final == TRUE) {
-    
-    histo_etape_pred <- histo_etape_pred %>% 
-      dplyr::select(.id, code_etape = code_etape_pred) %>% 
+    histo_etape_pred <- histo_etape_pred %>%
+      dplyr::select(.id, code_etape = code_etape_pred) %>%
       dplyr::left_join(etape_histo, by = "code_etape")
-    
+
     while (any(!is.na(histo_etape_pred$code_etape_pred))) {
-      
       if (garder_na == FALSE) {
-        histo_etape_pred <- histo_etape_pred %>% 
+        histo_etape_pred <- histo_etape_pred %>%
           dplyr::mutate(code_etape_pred = dplyr::if_else(is.na(code_etape_pred), code_etape, code_etape_pred))
       }
-      
-      histo_etape_pred <- histo_etape_pred %>% 
-        dplyr::select(.id, code_etape = code_etape_pred) %>% 
+
+      histo_etape_pred <- histo_etape_pred %>%
+        dplyr::select(.id, code_etape = code_etape_pred) %>%
         dplyr::left_join(etape_histo, by = "code_etape")
-      
     }
-    
   }
-  
+
   if (garder_na == FALSE) {
-    histo_etape_pred <- histo_etape_pred %>% 
+    histo_etape_pred <- histo_etape_pred %>%
       dplyr::mutate(code_etape_pred = dplyr::if_else(is.na(code_etape_pred), code_etape, code_etape_pred))
   }
-  
-  histo_etape_pred <- histo_etape_pred %>% 
+
+  histo_etape_pred <- histo_etape_pred %>%
     split(x = .$code_etape_pred, f = .$.id)
-  
+
   names(histo_etape_pred) <- code_etape
-  
+
   return(histo_etape_pred)
 }
 
@@ -197,21 +192,20 @@ histo_etape_pred <- function(code_etape, annee = NULL, predecesseur_final = FALS
 #'
 #' @export
 histo_elp_succ <- function(code_elp, successeur_final = TRUE, garder_na = FALSE) {
-  
   histo_elp_succ <- dplyr::tibble(code_elp) %>%
     dplyr::left_join(apogee::elp_histo, by = "code_elp") %>%
     dplyr::pull(code_elp_succ)
-  
+
   if (garder_na == FALSE) {
     histo_elp_succ <- dplyr::if_else(is.na(histo_elp_succ), code_elp, histo_elp_succ)
   }
-  
+
   if (successeur_final == TRUE) {
     if (any(!is.na(apogee::histo_elp_succ(histo_elp_succ, successeur_final = FALSE, garder_na = TRUE)))) {
       histo_elp_succ <- Recall(histo_elp_succ, successeur_final = successeur_final, garder_na = garder_na)
     }
   }
-  
+
   return(histo_elp_succ)
 }
 
@@ -230,21 +224,20 @@ histo_elp_succ <- function(code_elp, successeur_final = TRUE, garder_na = FALSE)
 #'
 #' @export
 histo_mention_diplome_succ <- function(code_mention_diplome, successeur_final = TRUE, garder_na = FALSE) {
-  
   histo_mention_diplome_succ <- dplyr::tibble(code_mention_diplome) %>%
     dplyr::left_join(apogee::mention_diplome_histo, by = "code_mention_diplome") %>%
     dplyr::pull(code_mention_diplome_succ)
-  
+
   if (garder_na == FALSE) {
     histo_mention_diplome_succ <- dplyr::if_else(is.na(histo_mention_diplome_succ), code_mention_diplome, histo_mention_diplome_succ)
   }
-  
+
   if (successeur_final == TRUE) {
     if (any(!is.na(apogee::histo_mention_diplome_succ(histo_mention_diplome_succ, successeur_final = FALSE, garder_na = TRUE)))) {
       histo_mention_diplome_succ <- Recall(histo_mention_diplome_succ, successeur_final = successeur_final, garder_na = garder_na)
     }
   }
-  
+
   return(histo_mention_diplome_succ)
 }
 
@@ -263,20 +256,19 @@ histo_mention_diplome_succ <- function(code_mention_diplome, successeur_final = 
 #'
 #' @export
 histo_composante_succ <- function(code_composante, successeur_final = TRUE, garder_na = FALSE) {
-  
   histo_composante_succ <- dplyr::tibble(code_composante) %>%
     dplyr::left_join(apogee::composante_histo, by = "code_composante") %>%
     dplyr::pull(code_composante_succ)
-  
+
   if (garder_na == FALSE) {
     histo_composante_succ <- dplyr::if_else(is.na(histo_composante_succ), code_composante, histo_composante_succ)
   }
-  
+
   if (successeur_final == TRUE) {
     if (any(!is.na(apogee::histo_composante_succ(histo_composante_succ, successeur_final = FALSE, garder_na = TRUE)))) {
       histo_composante_succ <- Recall(histo_composante_succ, successeur_final = successeur_final, garder_na = garder_na)
     }
   }
-  
+
   return(histo_composante_succ)
 }
