@@ -193,6 +193,16 @@ resultats_diplome <- impexp::csv_import_path("data-raw", pattern = "Resultats_di
   tidyr::unnest_legacy(import) %>%
   doublon_maj_etudiant()
 
+# Ajout diplômés Base Access
+
+ajout_diplomes <- impexp::access_import("diplomes_ajout", "data-raw/data/Tables_ref_individus.accdb") %>%
+  dplyr::select(-commentaire, -date_maj)
+
+resultats_diplome <- resultats_diplome %>%
+  dplyr::anti_join(ajout_diplomes, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>%
+  dplyr::bind_rows(ajout_diplomes) %>%
+  dplyr::arrange(annee, code_etape, code_etudiant, inscription_premiere)
+
 # Suppression diplômés non-existants chez les inscrits
 
 resultats_diplome <- resultats_diplome %>%
@@ -200,51 +210,24 @@ resultats_diplome <- resultats_diplome %>%
     by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")
   )
 
-usethis::use_data(resultats_diplome, overwrite = TRUE)
+# Suppression des étudiants de L1, L2 et M1
 
-#### Diplômés ####
-
-diplomes <- impexp::csv_import_path("data-raw", pattern = "Diplomes\\.csv$", zip = TRUE, skip = 1, encoding = "UTF-8") %>%
-  dplyr::transmute(
-    import = purrr::map(import, patchr::rename, impexp::access_import("_rename", access_base_path)),
-    import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", access_base_path))
-  ) %>%
-  tidyr::unnest_legacy(import) %>%
-  doublon_maj_etudiant()
-
-# Ajout diplômés Base Access
-
-ajout_diplomes <- impexp::access_import("diplomes_ajout", "data-raw/data/Tables_ref_individus.accdb") %>%
-  dplyr::select(-commentaire, -date_maj)
-
-ajout_diplomes %>%
-  dplyr::semi_join(
-    dplyr::filter(diplomes, apogee::hier_resultat_parent(code_resultat) == "ADM"),
-    by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")
-  )
-
-diplomes <- diplomes %>%
-  dplyr::anti_join(ajout_diplomes, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")) %>%
-  dplyr::bind_rows(ajout_diplomes) %>%
-  dplyr::arrange(annee, code_etape, code_etudiant, inscription_premiere)
-
-# Suppression diplômés non-existants chez les inscrits
-
-diplomes <- diplomes %>%
-  dplyr::semi_join(dplyr::select(apogee::inscrits, annee, code_etape, code_etudiant, inscription_premiere),
-    by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")
-  )
+resultats_diplome <- resultats_diplome %>%
+  dplyr::filter(!apogee::hier_etape_type_diplome(code_etape) %in% c("LMD/L1", "LMD/L2", "LMD/M1", "LMD/M1 ENS"))
 
 # Suppression des étudiants de DUT en 1ère année
 
-diplomes <- diplomes %>%
+resultats_diplome <- resultats_diplome %>%
   dplyr::filter(
-    apogee::hier_etape_type_diplome(code_etape) == "DUT",
-    apogee::annee_etape(code_etape) == 1
-  ) %>%
-  dplyr::anti_join(diplomes, ., by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
+    !(apogee::hier_etape_type_diplome(code_etape) == "DUT" & apogee::annee_etape(code_etape) == 1)
+  )
 
-usethis::use_data(diplomes, overwrite = TRUE)
+# Suppression des sessions multiples doublons
+
+resultats_diplome <- resultats_diplome %>%
+  dplyr::filter(!(lib_session %in% c("Session 2", "Session unique") & session == "Session 1"))
+
+usethis::use_data(resultats_diplome, overwrite = TRUE)
 
 #### Individus ####
 
@@ -273,8 +256,11 @@ annee_bac_daeu <- individus %>%
   dplyr::filter(is.na(annee_bac)) %>%
   dplyr::select(code_etudiant) %>%
   dplyr::inner_join(
-    apogee::diplomes %>%
-      dplyr::filter(apogee::hier_etape_type_diplome(code_etape) == "DAEU") %>%
+    apogee::resultats_diplome %>%
+      dplyr::filter(
+        apogee::hier_resultat_parent(code_resultat) == "ADM",
+        apogee::hier_etape_type_diplome(code_etape) == "DAEU"
+      ) %>%
       dplyr::mutate(
         code_bac = "DAEB",
         code_type_etab_bac = "00",

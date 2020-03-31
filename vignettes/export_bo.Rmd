@@ -60,7 +60,6 @@ Sauvegarde dans : `data-raw/data/Toutes annees/`
 
 Requêtes avec spécification d'année :
 
-- Diplomes
 - Inscrits
 - Inscrits_ELP_FSI
 - Inscrits_ELP_hors_FSI
@@ -79,7 +78,6 @@ Pour changer l'année :
 
 ##### Pour les requêtes suivantes (plus légères en nombre d'individus) : 
 
-- Diplomes
 - Inscrits_peda
 - Resultats_diplome
 - Resultats_etape
