@@ -241,7 +241,7 @@ hier_mention_parent <- function(code_mention_diplome, parent_final = FALSE, gard
 #'
 #' Renvoie le type de diplôme parent.
 #'
-#' @param code_mention_diplome Un vecteur de codes de type de diplôme.
+#' @param code_type_diplome Un vecteur de codes de type de diplôme.
 #' @param parent_final \code{TRUE}, renvoit le parent le plus haut dans la hiérarchie; \code{FALSE}, renvoie le premier parent.
 #' @param garder_na \code{TRUE}, les codes sans parent passent à \code{NA}; \code{FALSE}, les codes sans parent sont gardés tels quels.
 #'
@@ -249,21 +249,21 @@ hier_mention_parent <- function(code_mention_diplome, parent_final = FALSE, gard
 #'
 #' @export
 hier_type_diplome_parent <- function(code_type_diplome, parent_final = FALSE, garder_na = FALSE) {
-  hier_type_parent <- dplyr::tibble(code_type_diplome) %>%
+  hier_type_diplome_parent <- dplyr::tibble(code_type_diplome) %>%
     dplyr::left_join(apogee::diplome_type, by = "code_type_diplome") %>%
     dplyr::pull(code_type_diplome_parent)
 
   if (garder_na == FALSE) {
-    hier_type_parent <- dplyr::if_else(is.na(hier_type_parent), code_type_diplome, hier_type_parent)
+    hier_type_diplome_parent <- dplyr::if_else(is.na(hier_type_diplome_parent), code_type_diplome, hier_type_diplome_parent)
   }
 
   if (parent_final == TRUE) {
-    if (any(!is.na(apogee::hier_type_parent(hier_type_parent, parent_final = FALSE, garder_na = TRUE)))) {
-      hier_type_parent <- Recall(hier_type_parent, parent_final = parent_final, garder_na = garder_na)
+    if (any(!is.na(apogee::hier_type_diplome_parent(hier_type_diplome_parent, parent_final = FALSE, garder_na = TRUE)))) {
+      hier_type_diplome_parent <- Recall(hier_type_diplome_parent, parent_final = parent_final, garder_na = garder_na)
     }
   }
 
-  return(hier_type_parent)
+  return(hier_type_diplome_parent)
 }
 
 #' Renvoie le resultat parent
