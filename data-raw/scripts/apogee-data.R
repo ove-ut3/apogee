@@ -101,8 +101,7 @@ inscrits_elp <- impexp::csv_import_path("data-raw", pattern = "Inscrits_ELP.*?\\
     import = lapply(import, patchr::transcode, impexp::access_import("_contents", access_base_path))
   ) %>%
   tidyr::unnest_legacy(import) %>%
-  doublon_maj_etudiant() # %>%
-# dplyr::semi_join(apogee::inscrits, by = c("annee", "code_etape", "code_etudiant", "inscription_premiere"))
+  doublon_maj_etudiant()
 
 usethis::use_data(inscrits_elp, overwrite = TRUE)
 
@@ -285,6 +284,9 @@ annee_bac_etr <- individus %>%
         as.integer(substr(code_etudiant, 2, 3)) > as.integer(substr(annee_diplome_obtenu, 2, 3)),
         stringr::str_detect(code_departement_pays_dernier_diplome, "^[1-9]") | code_departement_pays_dernier_diplome %in% c(NA_character_, "099")
       ) %>%
+      dplyr::group_by(code_etudiant) %>% 
+      dplyr::filter(dplyr::row_number() == 1) %>% 
+      dplyr::ungroup() %>% 
       dplyr::mutate(code_bac = "0031") %>%
       dplyr::select(code_etudiant, annee_bac = annee_diplome_obtenu, code_bac, code_etab_bac = code_etab_diplome_obtenu),
     by = "code_etudiant"
