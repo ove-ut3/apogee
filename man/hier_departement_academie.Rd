@@ -20,5 +20,4 @@ Renvoie les codes académie à partir des codes de département.
 }
 \examples{
 apogee::hier_departement_academie(c("031", "056"))
-
 }

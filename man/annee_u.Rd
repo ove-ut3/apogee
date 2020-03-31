@@ -21,5 +21,4 @@ Transformation de l'année d'inscription en année universitaire.
 
 apogee::annee_u(2016)
 apogee::annee_u(2016, fichier = TRUE)
-
 }

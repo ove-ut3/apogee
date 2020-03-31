@@ -20,5 +20,4 @@ Renvoie le libellé à partir du code académie.
 }
 \examples{
 apogee::lib_academie(c("01", "09"))
-
 }
