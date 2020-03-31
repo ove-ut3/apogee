@@ -27,12 +27,13 @@ etape_diplome_type <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_dipl
   dplyr::group_by(code_etape) %>%
   dplyr::filter(dplyr::row_number() == dplyr::n()) %>%
   dplyr::ungroup() %>%
-  patchr::anti_join_bind(impexp::access_import("etape_diplome_type_ajout", "data-raw/data/Tables_ref.accdb") %>%
-    dplyr::filter(is.na(suppression)) %>%
-    dplyr::select(-date_maj, -suppression), ., by = "code_etape") %>%
-  dplyr::anti_join(impexp::access_import("etape_diplome_type_ajout", "data-raw/data/Tables_ref.accdb") %>%
-    dplyr::filter(!is.na(suppression)),
-  by = c("code_etape", "code_type_diplome")
+  patchr::anti_join_bind(
+    impexp::access_import("etape_diplome_type_ajout", "data-raw/data/Tables_ref.accdb") %>%
+      dplyr::filter(is.na(suppression)) %>%
+      dplyr::select(-date_maj, -suppression), ., by = "code_etape") %>%
+      dplyr::anti_join(impexp::access_import("etape_diplome_type_ajout", "data-raw/data/Tables_ref.accdb") %>%
+      dplyr::filter(!is.na(suppression)),
+    by = c("code_etape", "code_type_diplome")
   )
 
 etape <- readxl::read_excel("data-raw/data/Etape.xlsx", skip = 1) %>%
@@ -40,15 +41,18 @@ etape <- readxl::read_excel("data-raw/data/Etape.xlsx", skip = 1) %>%
   patchr::remove_duplicate(annee1_diplome) %>% # utilisé dans la base Access
   dplyr::semi_join(
     dplyr::bind_rows(apogee::inscrits, apogee::inscrits_annules, apogee::inscrits_cpge),
-    by = "code_etape") %>% 
+    by = "code_etape"
+  ) %>% 
   dplyr::rename(lib_etape_apogee = lib_etape) %>%
-  dplyr::left_join(impexp::access_import("etape", "data-raw/data/Tables_ref.accdb") %>%
-    dplyr::mutate(temoin_access = TRUE),
-  by = "code_etape"
+  dplyr::left_join(
+    impexp::access_import("etape", "data-raw/data/Tables_ref.accdb"),
+    by = "code_etape"
   ) %>%
   dplyr::left_join(etape_diplome_type, by = "code_etape") %>%
-  patchr::recode_formula(impexp::access_import("_recodage", access_base_path) %>%
-    dplyr::filter(source == "data_etape")) %>%
+  patchr::recode_formula(
+    impexp::access_import("_recodage", access_base_path) %>%
+      dplyr::filter(source == "data_etape")
+  ) %>%
   dplyr::mutate(temoin_etape_apogee = dplyr::if_else(lib_etape != lib_etape_apogee, FALSE, TRUE)) %>%
   dplyr::select(-annee_etape_apogee) %>%
   dplyr::left_join(n_inscrits, by = "code_etape") %>%
@@ -96,22 +100,15 @@ etape <- etape %>%
   patchr::recode_formula(impexp::access_import("_recodage", access_base_path) %>%
     dplyr::filter(source == "data_etape"))
 
-if (nrow(patchr::duplicate(etape, code_etape)) >= 1) {
-  stop("Doublons étape", call. = FALSE)
-}
+etape <- etape %>% 
+  dplyr::select(code_etape, lib_etape, acronyme_etape, annee_etape, annee_diplome, code_type_diplome, option, acronyme_option, particularite, acronyme_particularite, ville, cohabilite, annee_premiere_etape, annee_derniere_etape, actif, dplyr::starts_with("lib_etape"), dplyr::starts_with("acronyme_etape"), -lib_etape_court)
 
 usethis::use_data(etape, overwrite = TRUE)
 
-#### Etape - histo ####
+#### Etape - historique ####
 
 etape_histo <- impexp::access_import("etape_histo", "data-raw/data/Tables_ref.accdb") %>%
   dplyr::filter(is.na(suppression_histo))
-
-dplyr::filter(etape_histo, is.na(code_elp)) %>%
-  patchr::duplicate(code_etape, code_etape_succ)
-
-dplyr::filter(etape_histo, !is.na(code_elp)) %>%
-  patchr::duplicate(code_etape, code_elp, code_etape_succ)
 
 # Eclatements
 eclatement <- etape_histo %>%
