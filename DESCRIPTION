@@ -5,7 +5,7 @@ Authors@R: person("Observatoire de la Vie Etudiante", "OVE", email = "ove@univ-t
 Description: Fonctions autour du référentiel Apogee : gestion de la hierarchie, de l'historique et des libelles de l'offre de formation.
 Depends:
     R (>= 3.2.5)
-License: Etalab
+License: MIT
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.0
