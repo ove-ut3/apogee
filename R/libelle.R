@@ -35,7 +35,7 @@ lib_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville", "o
       dplyr::mutate(
         type_diplome = apogee::acronyme_type_diplome(code_type_diplome),
         champ_lib_etape = dplyr::if_else(
-          temoin_etape_apogee == FALSE & !type_diplome %in% c("DAEU", "DE infirmier-e", "Dentaire", "Diplôme d'Etat", "DNO", "HDR", "Médecine", "Pharmacie", "TH FICTIVE", "Vétérinaire"),
+          temoin_etape_apogee == FALSE & !type_diplome %in% c("DAEU", "DE infirmier-e", "Dentaire", "Diplôme d'Etat", "DNO", "HDR", "DE Dentaire", "DE Médecine", "DE Pharmacie", "TH FICTIVE", "DE Vétérinaire"),
           paste(
             stringr::str_replace_na(type_diplome, ""),
             champ_lib_etape
