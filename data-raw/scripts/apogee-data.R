@@ -167,7 +167,7 @@ resultats_etape <- resultats_etape %>%
 suppression_session2 <- apogee::resultats_etape %>%
   dplyr::select(annee, code_etape, code_etudiant, inscription_premiere, lib_session, code_resultat) %>%
   tidyr::spread(lib_session, code_resultat) %>%
-  patchr::normalise_colnames() %>%
+  janitor::clean_names() %>%
   dplyr::filter(apogee::hier_resultat_parent(session_1) == "ADM" & !apogee::hier_resultat_parent(session_2) %in% c(NA_character_, "ADM")) %>%
   dplyr::mutate(lib_session = "Session 2")
 
