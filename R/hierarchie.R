@@ -15,25 +15,6 @@ hier_etape_type_diplome <- function(code_etape) {
   return(hier_etape_type_diplome)
 }
 
-#' Renvoie la filiere a partir du code etape
-#'
-#' @param code_etape Un vecteur de code étape.
-#'
-#' @return Un vecteur contenant les filières.
-#'
-#' @export
-hier_etape_filiere <- function(code_etape) {
-  if (is.null(code_etape)) {
-    return(NA_character_)
-  }
-
-  hier_etape_filiere <- dplyr::tibble(code_etape) %>%
-    dplyr::left_join(apogee::etape, by = "code_etape") %>%
-    dplyr::pull(filiere)
-
-  return(hier_etape_filiere)
-}
-
 #' Renvoie la nature ELP a partir du code
 #'
 #' @param code_elp Un vecteur de code ELP.
