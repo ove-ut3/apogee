@@ -21,8 +21,9 @@ annee_derniere_etape <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge
 
 etape_diplome_type <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_diplome_type", skip = 1) %>%
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
-  patchr::recode_formula(impexp::access_import("_recodage", access_base_path) %>%
-    dplyr::filter(source == "data_diplome")) %>%
+  patchr::recode_formula(
+    impexp::access_import("_recodage", access_base_path) %>%
+      dplyr::filter(source == "data_diplome")) %>%
   dplyr::select(-annee) %>%
   dplyr::group_by(code_etape) %>%
   dplyr::filter(dplyr::row_number() == dplyr::n()) %>%
@@ -101,7 +102,7 @@ etape <- etape %>%
     dplyr::filter(source == "data_etape"))
 
 etape <- etape %>% 
-  dplyr::select(code_etape, lib_etape, acronyme_etape, annee_etape, annee_diplome, code_type_diplome, option, acronyme_option, particularite, acronyme_particularite, ville, cohabilite, annee_premiere_etape, annee_derniere_etape, actif, dplyr::starts_with("lib_etape"), dplyr::starts_with("acronyme_etape"), -lib_etape_court)
+  dplyr::select(code_etape, lib_etape, acronyme_etape, annee_etape, annee_diplome, code_type_diplome, option, acronyme_option, particularite, acronyme_particularite, ville, cohabilite, annee_premiere_etape, annee_derniere_etape, actif, temoin_etape_apogee, dplyr::starts_with("lib_etape"), dplyr::starts_with("acronyme_etape"), -lib_etape_court)
 
 usethis::use_data(etape, overwrite = TRUE)
 
@@ -257,7 +258,7 @@ usethis::use_data(etape_finalite, overwrite = TRUE)
 etape_secteur <- impexp::access_import("etape_secteur", "data-raw/data/Tables_ref.accdb")
 
 etape_secteur_histo <- etape_secteur %>%
-  dplyr::mutate_at("code_etape", apogee::histo_etape_succ_2) %>%
+  dplyr::mutate_at("code_etape", apogee::histo_etape_succ, multiple = TRUE) %>%
   tidyr::unnest_legacy(code_etape) %>%
   unique() %>%
   dplyr::anti_join(etape_secteur, by = "code_etape")
