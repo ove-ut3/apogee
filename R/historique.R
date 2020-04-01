@@ -16,7 +16,7 @@
 #' @export
 histo_etape_succ <- function(code_etape, code_elp = NULL, multiple = FALSE, successeur_final = TRUE, garder_na = FALSE) {
   
-  if (eclatement) {
+  if (multiple) {
     histo_etape_succ <- histo_etape_succ_all(code_etape = code_etape, successeur_final = successeur_final, garder_na = garder_na)
     
   } else {
