@@ -2,12 +2,12 @@ source("data-raw/scripts/utils.R")
 
 #### Inscrits ####
 
-inscrits <- impexp::csv_import_path("data-raw", pattern = "Inscrits\\.csv$", skip = 1, zip = TRUE, encoding = "UTF-8") %>%
-  dplyr::transmute(
-    import = purrr::map(import, patchr::rename, impexp::access_import("_rename", access_base_path)),
-    import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", access_base_path))
-  ) %>%
-  tidyr::unnest_legacy(import) %>%
+inscrits <- list.files("data-raw", pattern = "Inscrits\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
+  paste("unzip -p", .) %>% 
+  purrr::map_df( ~ data.table::fread(cmd = ., skip = 1, encoding = "UTF-8")) %>% 
+  dplyr::as_tibble() %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
   doublon_maj_etudiant() %>%
   patchr::recode_formula(
     impexp::access_import("_recodage", access_base_path) %>%
@@ -83,36 +83,36 @@ usethis::use_data(inscrits, overwrite = TRUE)
 
 #### Inscrits péda ####
 
-inscrits_peda <- impexp::csv_import_path("data-raw", pattern = "Inscrits_peda\\.csv$", skip = 1, zip = TRUE, encoding = "UTF-8") %>%
-  dplyr::transmute(
-    import = purrr::map(import, patchr::rename, impexp::access_import("_rename", access_base_path)),
-    import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", access_base_path))
-  ) %>%
-  tidyr::unnest_legacy(import) %>%
+inscrits_peda <- list.files("data-raw", pattern = "Inscrits_peda\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
+  paste("unzip -p", .) %>% 
+  purrr::map_df( ~ data.table::fread(cmd = ., skip = 1, encoding = "UTF-8")) %>% 
+  dplyr::as_tibble() %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
   doublon_maj_etudiant()
 
 usethis::use_data(inscrits_peda, overwrite = TRUE)
 
 #### Inscrits ELP ####
 
-inscrits_elp <- impexp::csv_import_path("data-raw", pattern = "Inscrits_ELP.*?\\.csv$", zip = TRUE, skip = 1, encoding = "UTF-8") %>%
-  dplyr::transmute(
-    import = lapply(import, patchr::rename, impexp::access_import("_rename", access_base_path)),
-    import = lapply(import, patchr::transcode, impexp::access_import("_contents", access_base_path))
-  ) %>%
-  tidyr::unnest_legacy(import) %>%
+inscrits_elp <- list.files("data-raw", pattern = "Inscrits_ELP.*?\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
+  paste("unzip -p", .) %>% 
+  purrr::map_df( ~ data.table::fread(cmd = ., skip = 1, encoding = "UTF-8")) %>% 
+  dplyr::as_tibble() %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
   doublon_maj_etudiant()
 
 usethis::use_data(inscrits_elp, overwrite = TRUE)
 
 #### Résultats ELP ####
 
-resultats_elp <- impexp::csv_import_path("data-raw", pattern = "^Resultats_ELP.*?\\.csv$", zip = TRUE, skip = 1, encoding = "UTF-8") %>%
-  dplyr::transmute(
-    import = purrr::map(import, patchr::rename, impexp::access_import("_rename", access_base_path)),
-    import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", access_base_path))
-  ) %>%
-  tidyr::unnest_legacy(import) %>%
+resultats_elp <- list.files("data-raw", pattern = "Resultats_ELP.*?\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
+  paste("unzip -p", .) %>% 
+  purrr::map_df( ~ data.table::fread(cmd = ., skip = 1, encoding = "UTF-8")) %>% 
+  dplyr::as_tibble() %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
   doublon_maj_etudiant() %>%
   dplyr::mutate(
     present_examen = dplyr::case_when(
@@ -125,21 +125,21 @@ usethis::use_data(resultats_elp, overwrite = TRUE)
 
 #### Résultats Etape ####
 
-resultats_etape <- impexp::csv_import_path("data-raw", pattern = "Resultats_etape\\.csv$", zip = TRUE, skip = 1, encoding = "UTF-8") %>%
-  dplyr::transmute(
-    import = purrr::map(import, patchr::rename, impexp::access_import("_rename", access_base_path)),
-    import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", access_base_path))
-  ) %>%
-  tidyr::unnest_legacy(import) %>%
+resultats_etape <- list.files("data-raw", pattern = "Resultats_etape\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
+  paste("unzip -p", .) %>% 
+  purrr::map_df( ~ data.table::fread(cmd = ., skip = 1, encoding = "UTF-8")) %>% 
+  dplyr::as_tibble() %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
   doublon_maj_etudiant()
 
 # PACES
-resultats_paces <- impexp::csv_import_path("data-raw", pattern = "Resultats_etape_paces\\.csv$", zip = TRUE, skip = 1, encoding = "UTF-8") %>%
-  dplyr::transmute(
-    import = purrr::map(import, patchr::rename, impexp::access_import("_rename", access_base_path)),
-    import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", access_base_path))
-  ) %>%
-  tidyr::unnest_legacy(import) %>%
+resultats_paces <- list.files("data-raw", pattern = "Resultats_etape_paces\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
+  paste("unzip -p", .) %>% 
+  purrr::map_df( ~ data.table::fread(cmd = ., skip = 1, encoding = "UTF-8")) %>% 
+  dplyr::as_tibble() %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
   doublon_maj_etudiant()
 
 resultats_etape <- resultats_etape %>%
@@ -184,12 +184,12 @@ usethis::use_data(resultats_etape, overwrite = TRUE)
 
 #### Résultats diplôme ####
 
-resultats_diplome <- impexp::csv_import_path("data-raw", pattern = "Resultats_diplome\\.csv$", zip = TRUE, skip = 1, encoding = "UTF-8") %>%
-  dplyr::transmute(
-    import = purrr::map(import, patchr::rename, impexp::access_import("_rename", access_base_path)),
-    import = purrr::map(import, patchr::transcode, impexp::access_import("_contents", access_base_path))
-  ) %>%
-  tidyr::unnest_legacy(import) %>%
+resultats_diplome <- list.files("data-raw", pattern = "Resultats_diplome\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
+  paste("unzip -p", .) %>% 
+  purrr::map_df( ~ data.table::fread(cmd = ., skip = 1, encoding = "UTF-8")) %>% 
+  dplyr::as_tibble() %>% 
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
   doublon_maj_etudiant()
 
 # Ajout diplômés Base Access
@@ -230,8 +230,8 @@ usethis::use_data(resultats_diplome, overwrite = TRUE)
 
 #### Individus ####
 
-individus <- impexp::csv_import_path("data-raw", pattern = "Individus\\.csv", zip = TRUE, skip = 1, encoding = "UTF-8") %>%
-  tidyr::unnest_legacy(import) %>%
+individus <- data.table::fread(cmd = "unzip -p data-raw/data/Toutes_annees/Individus.zip", skip = 1, encoding = "UTF-8") %>%
+  dplyr::as_tibble() %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
   dplyr::mutate_at("date_naissance", patchr::fix_birth_date) %>%
@@ -239,8 +239,7 @@ individus <- impexp::csv_import_path("data-raw", pattern = "Individus\\.csv", zi
     by = "code_etudiant"
   )
 
-individus_bac <- impexp::csv_import_path("data-raw", pattern = "Individus - Bac\\.csv", zip = TRUE, skip = 1, encoding = "UTF-8") %>%
-  tidyr::unnest_legacy(import) %>%
+individus_bac <- data.table::fread(cmd = "unzip -p data-raw/data/Toutes_annees/Individus_bac.zip", skip = 1, encoding = "UTF-8") %>%
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
   dplyr::arrange(code_etudiant, desc(annee_bac), code_mention_bac, code_type_etab_bac) %>%
@@ -260,6 +259,9 @@ annee_bac_daeu <- individus %>%
         apogee::hier_resultat_parent(code_resultat) == "ADM",
         apogee::hier_etape_type_diplome(code_etape) == "DAEU"
       ) %>%
+      dplyr::group_by(code_etudiant) %>% 
+      dplyr::filter(dplyr::row_number() == 1) %>% 
+      dplyr::ungroup() %>% 
       dplyr::mutate(
         code_bac = "DAEB",
         code_type_etab_bac = "00",
@@ -294,15 +296,13 @@ annee_bac_etr <- individus %>%
 
 individus <- patchr::df_update(individus, annee_bac_etr, by = "code_etudiant")
 
-individus_mail_ups <- impexp::csv_import_path("data-raw", pattern = "Individus - Mail UPS\\.csv", zip = TRUE, skip = 1, encoding = "UTF-8") %>%
-  tidyr::unnest_legacy(import) %>%
+individus_mail_ups <- data.table::fread(cmd = "unzip -p data-raw/data/Toutes_annees/Individus_mail_ups.zip", skip = 1, encoding = "UTF-8") %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
   patchr::transcode(impexp::access_import("_contents", access_base_path))
 
 individus <- dplyr::left_join(individus, individus_mail_ups, by = "code_etudiant")
 
-individus_departement_naissance <- impexp::csv_import_path("data-raw", pattern = "Individus_departement_naissance\\.csv", zip = TRUE, skip = 1, encoding = "UTF-8") %>%
-  tidyr::unnest_legacy(import) %>%
+individus_departement_naissance <- data.table::fread(cmd = "unzip -p data-raw/data/Toutes_annees/Individus_departement_naissance.zip", skip = 1, encoding = "UTF-8") %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
   patchr::transcode(impexp::access_import("_contents", access_base_path))
 
@@ -312,14 +312,12 @@ usethis::use_data(individus, overwrite = TRUE)
 
 #### Individus - origine ####
 
-individus_diplome_anterieur <- impexp::csv_import_path("data-raw", pattern = "Individus_diplome_origine\\.csv", zip = TRUE, skip = 1, encoding = "UTF-8") %>%
-  tidyr::unnest_legacy(import) %>%
+individus_diplome_anterieur <- data.table::fread(cmd = "unzip -p data-raw/data/Toutes_annees/Individus_diplome_origine.zip", skip = 1, encoding = "UTF-8") %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
   dplyr::arrange(code_etudiant, annee_diplome_obtenu)
 
-individus_diplome_externe <- impexp::csv_import_path("data-raw", pattern = "Individus_diplome_externe\\.csv", zip = TRUE, skip = 1, encoding = "UTF-8") %>%
-  tidyr::unnest_legacy(import) %>%
+individus_diplome_externe <- data.table::fread(cmd = "unzip -p data-raw/data/Toutes_annees/Individus_diplome_externe.zip", skip = 1, encoding = "UTF-8") %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
   dplyr::mutate(code_type_diplome_externe = stringr::str_pad(code_type_diplome_externe, 3, "left", "0")) %>%
@@ -360,8 +358,8 @@ individus_diplome_origine <- individus_diplome_anterieur %>%
 
 usethis::use_data(individus_diplome_origine, overwrite = TRUE)
 
-individus_situation_annee_precedente <- impexp::csv_import_path("data-raw", pattern = "Individus_situation_annee_prece\\.csv", zip = TRUE, skip = 1, encoding = "UTF-8") %>%
-  tidyr::unnest_legacy(import) %>%
+individus_situation_annee_precedente <- data.table::fread(cmd = "unzip -p data-raw/data/Toutes_annees/Individus_situation_annee_precedente.zip", skip = 1, encoding = "UTF-8") %>% 
+  dplyr::as_tibble() %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
   dplyr::semi_join(
