@@ -17,7 +17,7 @@ Imports:
     stringr,
     tidyr
 Remotes:
-    stephLH/scales@ordinal_french
+    r-lib/scales
 Suggests: 
     knitr,
     rmarkdown,
