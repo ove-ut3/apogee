@@ -190,6 +190,7 @@ resultats_diplome <- list.files("data-raw", pattern = "Resultats_diplome\\.zip$"
   dplyr::as_tibble() %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
+  dplyr::mutate_if(is.character, dplyr::na_if, "") %>% 
   doublon_maj_etudiant()
 
 # Ajout diplômés Base Access
