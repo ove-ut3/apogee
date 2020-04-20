@@ -225,7 +225,7 @@ resultats_diplome <- resultats_diplome %>%
 # Suppression des sessions multiples doublons
 
 resultats_diplome <- resultats_diplome %>%
-  dplyr::filter(!(lib_session %in% c("Session 2", "Session unique") & session == "Session 1"))
+  dplyr::filter(!(lib_session %in% c("Session 2", "Session unique") & session %in% "Session 1"))
 
 usethis::use_data(resultats_diplome, overwrite = TRUE)
 
