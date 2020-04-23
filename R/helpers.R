@@ -56,8 +56,8 @@ etape_premiere_annee <- function(code_etape, historique = FALSE) {
     dplyr::pull(annee_premiere_etape)
 
   if (historique == TRUE) {
-    histo_etape_premiere_annee <- apogee::histo_etape_pred(code_etape) %>%
-      purrr::map(apogee::etape_premiere_annee, historique = FALSE) %>%
+    histo_etape_premiere_annee <- apogee::histo_etape_pred(code_etape, predecesseur_final = TRUE) %>%
+      purrr::map(apogee::etape_premiere_annee) %>%
       purrr::map_int(min)
 
     etape_premiere_annee <- dplyr::if_else(!is.na(histo_etape_premiere_annee), histo_etape_premiere_annee, etape_premiere_annee)
