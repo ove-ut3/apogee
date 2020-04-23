@@ -63,8 +63,6 @@ etape_premiere_annee <- function(code_etape, historique = FALSE) {
     etape_premiere_annee <- dplyr::if_else(!is.na(histo_etape_premiere_annee), histo_etape_premiere_annee, etape_premiere_annee)
   }
 
-  names(etape_premiere_annee) <- code_etape
-
   return(etape_premiere_annee)
 }
 
@@ -181,7 +179,7 @@ formations_liste <- function(annee = NULL, unique = TRUE) {
       dplyr::ungroup() %>%
       dplyr::mutate(
         lib_etape = apogee::lib_etape(code_etape, prefixe = NA_character_, suffixe = NA_character_),
-        acronyme_etape = apogee::acronyme_etape(code_etape),
+        acronyme_etape = apogee::acronyme_etape(code_etape, prefixe = NA_character_, suffixe = NA_character_),
         acronyme_type_diplome = apogee::hier_etape_type_diplome(code_etape) %>%
           apogee::acronyme_type_diplome(),
         acronyme_type_diplome = dplyr::if_else(
@@ -203,7 +201,7 @@ formations_liste <- function(annee = NULL, unique = TRUE) {
     liste_formations <- liste_formations %>%
       dplyr::mutate(
         lib_etape = apogee::lib_etape(code_etape, prefixe = NA_character_, suffixe = NA_character_),
-        acronyme_etape = apogee::acronyme_etape(code_etape),
+        acronyme_etape = apogee::acronyme_etape(code_etape, prefixe = NA_character_, suffixe = NA_character_),
         acronyme_type_diplome = apogee::hier_etape_type_diplome(code_etape) %>%
           apogee::acronyme_type_diplome(),
         acronyme_type_diplome = dplyr::if_else(
@@ -286,9 +284,8 @@ compatibilite_mention_diplome_l <- function(code_mention_diplome_l) {
   compatibilite_mention_diplome_l <- dplyr::tibble(code_mention_diplome_l) %>%
     dplyr::mutate(.id = dplyr::row_number()) %>%
     dplyr::left_join(apogee::mention_diplome_lm, by = "code_mention_diplome_l") %>%
-    split(x = .$code_mention_diplome_m, f = .$.id)
-
-  names(compatibilite_mention_diplome_l) <- code_mention_diplome_l
+    split(x = .$code_mention_diplome_m, f = .$.id) %>% 
+    unname()
 
   return(compatibilite_mention_diplome_l)
 }
@@ -306,9 +303,8 @@ compatibilite_mention_diplome_m <- function(code_mention_diplome_m) {
   compatibilite_mention_diplome_m <- dplyr::tibble(code_mention_diplome_m) %>%
     dplyr::mutate(.id = dplyr::row_number()) %>%
     dplyr::left_join(apogee::mention_diplome_lm, by = "code_mention_diplome_m") %>%
-    split(x = .$code_mention_diplome_l, f = .$.id)
-
-  names(compatibilite_mention_diplome_m) <- code_mention_diplome_m
+    split(x = .$code_mention_diplome_l, f = .$.id) %>% 
+    unname()
 
   return(compatibilite_mention_diplome_m)
 }

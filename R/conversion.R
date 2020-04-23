@@ -14,9 +14,8 @@ conv_etape_sise_diplome <- function(code_etape, annee) {
   conv_etape_sise_diplome <- dplyr::tibble(code_etape, annee) %>%
     dplyr::mutate(.id = dplyr::row_number()) %>%
     dplyr::left_join(apogee::etape_sise, by = c("code_etape", "annee")) %>%
-    split(x = .$code_diplome_sise, f = .$.id)
-
-  names(conv_etape_sise_diplome) <- glue::glue("{code_etape} - {annee}")
+    split(x = .$code_diplome_sise, f = .$.id) %>% 
+    unname()
 
   return(conv_etape_sise_diplome)
 }

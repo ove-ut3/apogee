@@ -107,9 +107,8 @@ hier_etape_mention <- function(code_etape) {
   hier_etape_mention <- dplyr::tibble(code_etape) %>%
     dplyr::mutate(.id = dplyr::row_number()) %>%
     dplyr::left_join(apogee::etape_mention, by = "code_etape") %>%
-    split(x = .$code_mention_diplome, f = .$.id)
-
-  names(hier_etape_mention) <- code_etape
+    split(x = .$code_mention_diplome, f = .$.id) %>% 
+    unname()
 
   return(hier_etape_mention)
 }
@@ -127,9 +126,8 @@ hier_etape_domaine <- function(code_etape) {
   hier_etape_domaine <- dplyr::tibble(code_etape) %>%
     dplyr::mutate(.id = dplyr::row_number()) %>%
     dplyr::left_join(apogee::etape_domaine, by = "code_etape") %>%
-    split(x = .$code_domaine_diplome, f = .$.id)
-
-  names(hier_etape_domaine) <- code_etape
+    split(x = .$code_domaine_diplome, f = .$.id) %>% 
+    unname()
 
   return(hier_etape_domaine)
 }

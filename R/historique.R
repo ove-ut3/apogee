@@ -122,9 +122,8 @@ histo_etape_succ_all <- function(code_etape, successeur_final = TRUE, garder_na 
   }
 
   histo_etape_succ_all <- histo_etape_succ_all %>%
-    split(x = .$code_etape_succ, f = .$.id)
-
-  names(histo_etape_succ_all) <- code_etape
+    split(x = .$code_etape_succ, f = .$.id) %>% 
+    unname()
 
   return(histo_etape_succ_all)
 }
@@ -188,9 +187,8 @@ histo_etape_pred <- function(code_etape, annee = NULL, predecesseur_final = FALS
   }
 
   histo_etape_pred <- histo_etape_pred %>%
-    split(x = .$code_etape_pred, f = .$.id)
-
-  names(histo_etape_pred) <- code_etape
+    split(x = .$code_etape_pred, f = .$.id) %>% 
+    unname()
 
   return(histo_etape_pred)
 }
