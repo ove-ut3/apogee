@@ -2,8 +2,7 @@
 
 n_inscrits <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge) %>%
   dplyr::arrange(annee, code_etape) %>%
-  dplyr::count(code_etape) %>%
-  dplyr::rename(n_inscrits = n)
+  dplyr::count(code_etape, name = "n_inscrits")
 
 annee_premiere_etape <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge) %>%
   dplyr::arrange(annee, code_etape) %>%
@@ -102,7 +101,7 @@ etape <- etape %>%
     dplyr::filter(source == "data_etape"))
 
 etape <- etape %>% 
-  dplyr::select(code_etape, lib_etape, acronyme_etape, annee_etape, annee_diplome, code_type_diplome, option, acronyme_option, particularite, acronyme_particularite, ville, cohabilite, annee_premiere_etape, annee_derniere_etape, actif, temoin_etape_apogee, dplyr::starts_with("lib_etape"), dplyr::starts_with("acronyme_etape"), -lib_etape_court)
+  dplyr::select(code_etape, lib_etape, acronyme_etape, annee_etape, annee_diplome, code_type_diplome, option, acronyme_option, particularite, acronyme_particularite, ville, cohabilite, annee_premiere_etape, annee_derniere_etape, actif, n_inscrits, temoin_etape_apogee, dplyr::starts_with("lib_etape"), dplyr::starts_with("acronyme_etape"), -lib_etape_court)
 
 usethis::use_data(etape, overwrite = TRUE)
 
