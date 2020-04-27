@@ -4,19 +4,12 @@ n_inscrits <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge) %>%
   dplyr::arrange(annee, code_etape) %>%
   dplyr::count(code_etape, name = "n_inscrits")
 
-annee_premiere_etape <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge) %>%
-  dplyr::arrange(annee, code_etape) %>%
-  dplyr::select(code_etape, annee_premiere_etape = annee) %>%
-  dplyr::group_by(code_etape) %>%
-  dplyr::filter(dplyr::row_number() == 1) %>%
-  dplyr::ungroup()
-
-annee_derniere_etape <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge) %>%
-  dplyr::arrange(annee, code_etape) %>%
-  dplyr::select(code_etape, annee_derniere_etape = annee) %>%
-  dplyr::group_by(code_etape) %>%
-  dplyr::filter(dplyr::row_number() == dplyr::n()) %>%
-  dplyr::ungroup()
+annees_activite <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge) %>%
+  dplyr::arrange(code_etape, annee) %>% 
+  dplyr::count(code_etape, annee) %>% 
+  dplyr::select(-n) %>% 
+  tidyr::nest(annees_activite = annee) %>% 
+  dplyr::mutate_at("annees_activite", ~ purrr::map(., 1))
 
 etape_diplome_type <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_diplome_type", skip = 1) %>%
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
@@ -56,11 +49,12 @@ etape <- readxl::read_excel("data-raw/data/Etape.xlsx", skip = 1) %>%
   dplyr::mutate(temoin_etape_apogee = dplyr::if_else(lib_etape != lib_etape_apogee, FALSE, TRUE)) %>%
   dplyr::select(-annee_etape_apogee) %>%
   dplyr::left_join(n_inscrits, by = "code_etape") %>%
-  dplyr::left_join(annee_premiere_etape, by = "code_etape") %>%
-  dplyr::left_join(annee_derniere_etape, by = "code_etape") %>%
+  dplyr::left_join(annees_activite, by = "code_etape") %>%
   dplyr::mutate(
-    annee_derniere_etape = dplyr::if_else(!is.na(actif), apogee::annee_en_cours(), annee_derniere_etape),
-    actif = dplyr::if_else(annee_derniere_etape >= apogee::annee_en_cours(), TRUE, FALSE, FALSE)
+    actif = purrr::map_lgl(
+      annees_activite,
+      ~ apogee::annee_en_cours() %in% .
+    )
   )
 
 etape_ville <- etape %>%
@@ -101,7 +95,7 @@ etape <- etape %>%
     dplyr::filter(source == "data_etape"))
 
 etape <- etape %>% 
-  dplyr::select(code_etape, lib_etape, acronyme_etape, annee_etape, annee_diplome, code_type_diplome, option, acronyme_option, particularite, acronyme_particularite, ville, cohabilite, annee_premiere_etape, annee_derniere_etape, actif, n_inscrits, temoin_etape_apogee, dplyr::starts_with("lib_etape"), dplyr::starts_with("acronyme_etape"), -lib_etape_court)
+  dplyr::select(code_etape, lib_etape, acronyme_etape, annee_etape, annee_diplome, code_type_diplome, option, acronyme_option, particularite, acronyme_particularite, ville, cohabilite, annees_activite, actif, n_inscrits, temoin_etape_apogee, dplyr::starts_with("lib_etape"), dplyr::starts_with("acronyme_etape"), -lib_etape_court)
 
 usethis::use_data(etape, overwrite = TRUE)
 

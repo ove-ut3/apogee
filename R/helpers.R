@@ -38,51 +38,49 @@ annee_diplome <- function(code_etape) {
   return(annee_diplome)
 }
 
-#' Renvoie la premiere annee d'une etape a partir du code etape
+#' Renvoie les annees d'activite d'une formation a partir du code etape
 #'
-#' Renvoie la première annee d'une étape à partir du code étape.
+#' Renvoie les années d'activité d'une formation à partir du code étape.
 #'
 #' @param code_etape Un vecteur de code étape.
 #' @param historique Témoin de prise en compte de l'historique des code_etape.
 #'
-#' @return Un vecteur contenant les années.
+#' @return Une liste contenant les années d'activité.
 #'
 #' Jeu de données source : \code{apogee::etape}.\cr
 #'
 #' @export
-etape_premiere_annee <- function(code_etape, historique = FALSE) {
-  etape_premiere_annee <- dplyr::tibble(code_etape) %>%
-    dplyr::left_join(apogee::etape, by = "code_etape") %>%
-    dplyr::pull(annee_premiere_etape)
+etape_annees_activite <- function(code_etape, historique = FALSE) {
+  
+  etape_annees_activite <- dplyr::tibble(code_etape) %>%
+    dplyr::left_join(apogee::etape, by = "code_etape")
 
-  if (historique == TRUE) {
-    histo_etape_premiere_annee <- apogee::histo_etape_pred(code_etape, predecesseur_final = TRUE) %>%
-      purrr::map(apogee::etape_premiere_annee) %>%
-      purrr::map_int(min)
+  if (historique == FALSE) {
+    
+    etape_annees_activite <- etape_annees_activite$annees_activite
+    
+  } else {
+    
+    histo_annee_premiere_etape <- dplyr::tibble(code_etape) %>% 
+      dplyr::mutate(id = dplyr::row_number())
+    
+    etape_annees_activite <- histo_annee_premiere_etape %>% 
+      dplyr::bind_rows(
+        histo_annee_premiere_etape %>% 
+          dplyr::mutate_at("code_etape", apogee::histo_etape_pred, predecesseur_final = TRUE) %>% 
+          tidyr::unnest(code_etape) 
+      ) %>% 
+      dplyr::left_join(apogee::etape, by = "code_etape") %>% 
+      tidyr::unnest(annees_activite) %>% 
+      dplyr::select(id, annees_activite) %>% 
+      unique() %>% 
+      dplyr::arrange(id, annees_activite) %>% 
+      split(x = .$annees_activite, f = .$id) %>% 
+      unname()
 
-    etape_premiere_annee <- dplyr::if_else(!is.na(histo_etape_premiere_annee), histo_etape_premiere_annee, etape_premiere_annee)
   }
-
-  return(etape_premiere_annee)
-}
-
-#' Renvoie la derniere annee d'une etape a partir du code etape
-#'
-#' Renvoie la dernière annee d'une étape à partir du code étape.
-#'
-#' @param code_etape Un vecteur de code étape.
-#'
-#' @return Un vecteur contenant les années.
-#'
-#' Jeu de données source : \code{apogee::etape}.\cr
-#'
-#' @export
-etape_derniere_annee <- function(code_etape) {
-  etape_derniere_annee <- dplyr::tibble(code_etape) %>%
-    dplyr::left_join(apogee::etape, by = "code_etape") %>%
-    dplyr::pull(annee_derniere_etape)
-
-  return(etape_derniere_annee)
+  
+  return(etape_annees_activite)
 }
 
 #' Transformation de l'annee d'inscription en annee universitaire
@@ -163,7 +161,7 @@ annee_en_cours <- function() {
 formations_historique <- function(annee_debut) {
   formations_historique <- apogee::formations_liste(annee_debut:apogee::annee_en_cours()) %>%
     dplyr::anti_join(apogee::etape_histo, by = c("code_etape" = "code_etape_succ")) %>%
-    dplyr::mutate(annee = purrr::map2(apogee::etape_premiere_annee(code_etape), apogee::etape_derniere_annee(code_etape), ~ .x:.y)) %>%
+    dplyr::mutate(annee = etape_annees_activite(code_etape)) %>%
     dplyr::mutate(id = dplyr::row_number()) %>%
     tidyr::unnest_legacy(annee) %>%
     dplyr::filter(annee >= !!annee_debut) %>%
