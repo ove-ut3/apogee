@@ -72,9 +72,7 @@ etape_annees_activite <- function(code_etape, historique = FALSE) {
       ) %>% 
       dplyr::left_join(apogee::etape, by = "code_etape") %>% 
       tidyr::unnest(annees_activite) %>% 
-      dplyr::select(id, annees_activite) %>% 
-      unique() %>% 
-      dplyr::arrange(id, annees_activite) %>% 
+      dplyr::count(id, annees_activite) %>% 
       split(x = .$annees_activite, f = .$id) %>% 
       unname()
 
