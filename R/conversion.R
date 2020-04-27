@@ -61,11 +61,27 @@ conv_elp_periode <- function(code_elp) {
   return(conv_elp_periode)
 }
 
+#' Renvoie la voie a partir du code étape
 #'
+#' Renvoie la voie a partir du code étape
 #'
+#' @param code_etape Un vecteur de codes étape.
 #'
+#' @return Un vecteur contenant les voies.
 #'
+#' Jeu de données source : \code{parcoursup::groupe_voie}.\cr
 #'
 #' @export
 
+conv_etape_voie <- function(code_etape) {
+  
+  voie_etape <- parcoursup::groupe_voie %>%
+    dplyr::select(voie, code_etape) %>%
+    unique()
+
+  conv_etape_voie <- dplyr::tibble(code_etape) %>%
+    dplyr::left_join(voie_etape, by = "code_etape") %>%
+    dplyr::pull(voie)
+
+  return(conv_etape_voie)
 }
