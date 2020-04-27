@@ -27,10 +27,6 @@ histo_etape_succ <- function(code_etape, code_elp = NULL, multiple = FALSE, succ
         dplyr::pull(code_etape)
     )
     
-    if (length(code_etape_mutliples)) {
-      warning("code etape avec successeurs multiples: ", unique(paste(code_etape_mutliples, collapse = ", ")))
-    }
-    
     if (is.null(code_elp)) {
       histo_etape_succ <- dplyr::tibble(code_etape) %>%
         dplyr::left_join(dplyr::filter(apogee::etape_histo, is.na(doublon)),
