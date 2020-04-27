@@ -11,6 +11,7 @@
 #'
 #' @export
 conv_etape_sise_diplome <- function(code_etape, annee) {
+  
   conv_etape_sise_diplome <- dplyr::tibble(code_etape, annee) %>%
     dplyr::mutate(.id = dplyr::row_number()) %>%
     dplyr::left_join(apogee::etape_sise, by = c("code_etape", "annee")) %>%
@@ -32,6 +33,7 @@ conv_etape_sise_diplome <- function(code_etape, annee) {
 #'
 #' @export
 conv_etape_finalite_diplome <- function(code_etape) {
+  
   conv_etape_finalite_diplome <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape_finalite, by = "code_etape") %>%
     dplyr::pull(code_finalite_diplome)
@@ -51,6 +53,7 @@ conv_etape_finalite_diplome <- function(code_etape) {
 #'
 #' @export
 conv_elp_periode <- function(code_elp) {
+  
   conv_elp_periode <- dplyr::tibble(code_elp) %>%
     dplyr::left_join(apogee::elp, by = "code_elp") %>%
     dplyr::pull(code_periode_elp)
@@ -58,21 +61,11 @@ conv_elp_periode <- function(code_elp) {
   return(conv_elp_periode)
 }
 
-#' Renvoie le type de diplome a partir de l'annee d'etape
 #'
-#' Renvoie le type de diplôme à partir de l'année d'étape.
 #'
-#' @param code_elp Un vecteur d'année d'étape.
 #'
-#' @return Un vecteur contenant les acronymes de type de diplôme.
 #'
-#' Jeu de données source : \code{apogee::diplome_type}.\cr
 #'
 #' @export
-conv_annee_etape_type_diplome <- function(annee_etape) {
-  conv_annee_etape_type_diplome <- dplyr::tibble(annee_etape) %>%
-    dplyr::left_join(apogee::diplome_type, by = "annee_etape") %>%
-    dplyr::pull(acronyme_type_diplome)
 
-  return(conv_annee_etape_type_diplome)
 }
