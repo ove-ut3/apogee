@@ -11,6 +11,7 @@
 #'
 #' @export
 annee_etape <- function(code_etape) {
+  
   annee_etape <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape, by = "code_etape") %>%
     dplyr::pull(annee_etape)
@@ -31,6 +32,7 @@ annee_etape <- function(code_etape) {
 #'
 #' @export
 annee_diplome <- function(code_etape) {
+  
   annee_diplome <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape, by = "code_etape") %>%
     dplyr::pull(annee_diplome)
@@ -96,6 +98,7 @@ etape_annees_activite <- function(code_etape, historique = FALSE) {
 #' apogee::annee_u(2016, fichier = TRUE)
 #' @export
 annee_u <- function(annee, fichier = FALSE) {
+  
   sep <- dplyr::case_when(
     fichier ~ "-",
     !fichier ~ "\U2011"
@@ -118,11 +121,12 @@ annee_u <- function(annee, fichier = FALSE) {
 #'
 #' @export
 temoin_etape_actif <- function(code_etape, annee = NULL, annules = FALSE) {
+  
   temoin_etape_actif <- dplyr::tibble(code_etape) %>%
     dplyr::left_join(apogee::etape, by = "code_etape")
 
   if (!is.null(annee)) {
-    temoin_etape_actif <- dplyr::mutate(temoin_etape_actif, actif = purrr::map2_lgl(annee_premiere_etape, annee_derniere_etape, ~ length(intersect(.x:.y, !!annee)) >= 1))
+    temoin_etape_actif <- dplyr::mutate(temoin_etape_actif, actif = purrr::map_lgl(annees_activite, ~ length(intersect(., !!annee)) >= 1))
   }
 
   if (annules == FALSE) {
@@ -142,8 +146,10 @@ temoin_etape_actif <- function(code_etape, annee = NULL, annules = FALSE) {
 #'
 #' @export
 annee_en_cours <- function() {
+  
   annee_en_cours <- apogee::etape %>%
-    dplyr::pull(annee_derniere_etape) %>%
+    tidyr::unnest(annees_activite) %>% 
+    dplyr::pull(annees_activite) %>%
     max(na.rm = TRUE)
 
   return(annee_en_cours)
@@ -157,6 +163,7 @@ annee_en_cours <- function() {
 #'
 #' @export
 formations_historique <- function(annee_debut) {
+  
   formations_historique <- apogee::formations_liste(annee_debut:apogee::annee_en_cours()) %>%
     dplyr::anti_join(apogee::etape_histo, by = c("code_etape" = "code_etape_succ")) %>%
     dplyr::mutate(annee = etape_annees_activite(code_etape)) %>%
@@ -184,6 +191,7 @@ formations_historique <- function(annee_debut) {
 #'
 #' @export
 compatibilite_mention_diplome_l <- function(code_mention_diplome_l) {
+  
   compatibilite_mention_diplome_l <- dplyr::tibble(code_mention_diplome_l) %>%
     dplyr::mutate(.id = dplyr::row_number()) %>%
     dplyr::left_join(apogee::mention_diplome_lm, by = "code_mention_diplome_l") %>%
@@ -203,6 +211,7 @@ compatibilite_mention_diplome_l <- function(code_mention_diplome_l) {
 #'
 #' @export
 compatibilite_mention_diplome_m <- function(code_mention_diplome_m) {
+  
   compatibilite_mention_diplome_m <- dplyr::tibble(code_mention_diplome_m) %>%
     dplyr::mutate(.id = dplyr::row_number()) %>%
     dplyr::left_join(apogee::mention_diplome_lm, by = "code_mention_diplome_m") %>%
@@ -218,6 +227,7 @@ compatibilite_mention_diplome_m <- function(code_mention_diplome_m) {
 #'
 #' @export
 rezip_csv <- function(fichier_zip) {
+  
   match <- stringr::str_match(fichier_zip, "(.+)(/.+?)$")
   path <- match[, 2]
   file <- match[, 3]
@@ -241,6 +251,7 @@ rezip_csv <- function(fichier_zip) {
 #'
 #' @export
 temoin_mention_actif <- function(code_mention_diplome, annee = NULL) {
+  
   temoin_mention_actif <- dplyr::tibble(code_mention_diplome) %>%
     dplyr::left_join(apogee::mention_diplome, by = "code_mention_diplome")
 

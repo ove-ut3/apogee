@@ -4,8 +4,9 @@ n_inscrits <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge) %>%
   dplyr::arrange(annee, code_etape) %>%
   dplyr::count(code_etape, name = "n_inscrits")
 
-annees_activite <- dplyr::bind_rows(apogee::inscrits, apogee::inscrits_cpge) %>%
-  dplyr::arrange(code_etape, annee) %>% 
+annees_activite <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_diplome_type", skip = 1) %>%
+  patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
+  patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
   dplyr::count(code_etape, annee) %>% 
   dplyr::select(-n) %>% 
   tidyr::nest(annees_activite = annee) %>% 
@@ -51,10 +52,8 @@ etape <- readxl::read_excel("data-raw/data/Etape.xlsx", skip = 1) %>%
   dplyr::left_join(n_inscrits, by = "code_etape") %>%
   dplyr::left_join(annees_activite, by = "code_etape") %>%
   dplyr::mutate(
-    actif = purrr::map_lgl(
-      annees_activite,
-      ~ apogee::annee_en_cours() %in% .
-    )
+    annee_en_cours = apogee::annee_en_cours(),
+    actif = purrr::map2_lgl(annee_en_cours, annees_activite, ~ .x %in% .y)
   )
 
 etape_ville <- etape %>%
@@ -138,9 +137,11 @@ etape_composante <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_compos
     derniere_annee = max(annee)
   ) %>%
   dplyr::ungroup() %>%
-  dplyr::left_join(apogee::etape %>%
-    dplyr::select(code_etape, annee_derniere_etape),
-  by = "code_etape"
+  dplyr::left_join(
+    apogee::etape %>%
+      dplyr::mutate(annee_derniere_etape = purrr::map_int(annees_activite, tail, 1)) %>% 
+      dplyr::select(code_etape, annee_derniere_etape),
+    by = "code_etape"
   ) %>%
   # Ajout de la dernière année d'activité (si actif différent de vide)
   dplyr::mutate_at(c("premiere_annee", "derniere_annee"), as.integer) %>%

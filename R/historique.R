@@ -77,6 +77,7 @@ histo_etape_succ <- function(code_etape, code_elp = NULL, multiple = FALSE, succ
 #' Il est créé à partir d'Apogée et de la table "etape_histo" de la base Access Tables_ref (projet Apogee).
 #' @keywords internal
 histo_etape_succ_all <- function(code_etape, successeur_final = TRUE, garder_na = FALSE) {
+  
   histo_etape_succ_all <- dplyr::tibble(code_etape) %>%
     dplyr::mutate(.id = dplyr::row_number()) %>%
     dplyr::left_join(
@@ -140,15 +141,21 @@ histo_etape_succ_all <- function(code_etape, successeur_final = TRUE, garder_na 
 #'
 #' @export
 histo_etape_pred <- function(code_etape, annee = NULL, predecesseur_final = FALSE, garder_na = FALSE) {
+  
   etape_histo <- dplyr::select(apogee::etape_histo, code_etape = code_etape_succ, code_etape_pred = code_etape)
 
   if (!is.null(annee)) {
+    
     predecesseur_final <- TRUE
 
     etape_histo <- etape_histo %>%
-      dplyr::semi_join(dplyr::filter(apogee::etape, annee_derniere_etape >= !!annee),
+      dplyr::semi_join(
+        apogee::etape %>% 
+          dplyr::mutate(annee_derniere_etape = purrr::map_int(annees_activite, tail, 1)) %>% 
+          dplyr::filter(annee_derniere_etape >= !!annee),
         by = c("code_etape_pred" = "code_etape")
       )
+    
   }
 
   histo_etape_pred <- dplyr::tibble(code_etape) %>%
@@ -156,16 +163,20 @@ histo_etape_pred <- function(code_etape, annee = NULL, predecesseur_final = FALS
     dplyr::left_join(etape_histo, by = "code_etape")
 
   if (garder_na == FALSE) {
+    
     histo_etape_pred <- histo_etape_pred %>%
       dplyr::mutate(code_etape_pred = dplyr::if_else(is.na(code_etape_pred), code_etape, code_etape_pred))
+    
   }
 
   if (predecesseur_final == TRUE) {
+    
     histo_etape_pred <- histo_etape_pred %>%
       dplyr::select(.id, code_etape = code_etape_pred) %>%
       dplyr::left_join(etape_histo, by = "code_etape")
 
     while (any(!is.na(histo_etape_pred$code_etape_pred))) {
+      
       if (garder_na == FALSE) {
         histo_etape_pred <- histo_etape_pred %>%
           dplyr::mutate(code_etape_pred = dplyr::if_else(is.na(code_etape_pred), code_etape, code_etape_pred))
@@ -174,12 +185,16 @@ histo_etape_pred <- function(code_etape, annee = NULL, predecesseur_final = FALS
       histo_etape_pred <- histo_etape_pred %>%
         dplyr::select(.id, code_etape = code_etape_pred) %>%
         dplyr::left_join(etape_histo, by = "code_etape")
+      
     }
+    
   }
 
   if (garder_na == FALSE) {
+    
     histo_etape_pred <- histo_etape_pred %>%
       dplyr::mutate(code_etape_pred = dplyr::if_else(is.na(code_etape_pred), code_etape, code_etape_pred))
+    
   }
 
   histo_etape_pred <- histo_etape_pred %>%
