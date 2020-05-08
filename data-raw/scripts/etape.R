@@ -33,8 +33,8 @@ etape_diplome_type <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_dipl
 etape <- readxl::read_excel("data-raw/data/Etape.xlsx", skip = 1) %>%
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
   tidyr::nest(annee1_diplome = annee1_diplome) %>% 
-  dplyr::mutate_at("annee1_diplome", purrr::map, 1) %>% 
-  dplyr::mutate_at("annee1_diplome", purrr::pluck, 1) %>% 
+  dplyr::mutate_at("annee1_diplome", ~ purrr::map_if(., ~ nrow(.) >= 2, ~ dplyr::tibble())) %>% 
+  tidyr::unnest(annee1_diplome, keep_empty = TRUE) %>% 
   dplyr::semi_join(
     dplyr::bind_rows(apogee::inscrits, apogee::inscrits_annules, apogee::inscrits_cpge),
     by = "code_etape"
@@ -140,7 +140,7 @@ etape_composante <- readxl::read_excel("data-raw/data/Etape.xlsx", "Etape_compos
   ) %>%
   dplyr::ungroup() %>%
   dplyr::left_join(
-    apogee::etape %>%
+    impexp::r_import("data/etape.rda") %>%
       dplyr::mutate(annee_derniere_etape = purrr::map_int(annees_activite, tail, 1)) %>% 
       dplyr::select(code_etape, annee_derniere_etape),
     by = "code_etape"
