@@ -5,6 +5,7 @@ source("data-raw/scripts/utils.R")
 inscrits <- list.files("data-raw", pattern = "Inscrits\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
   paste("unzip -p", .) %>% 
   purrr::map_df( ~ data.table::fread(cmd = ., skip = 1, encoding = "UTF-8")) %>% 
+  dplyr::mutate_if(is.character, dplyr::na_if, "") %>% 
   dplyr::as_tibble() %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>% 
@@ -86,6 +87,7 @@ usethis::use_data(inscrits, overwrite = TRUE)
 inscrits_peda <- list.files("data-raw", pattern = "Inscrits_peda\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
   paste("unzip -p", .) %>% 
   purrr::map_df( ~ data.table::fread(cmd = ., skip = 1, encoding = "UTF-8")) %>% 
+  dplyr::mutate_if(is.character, dplyr::na_if, "") %>% 
   dplyr::as_tibble() %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
@@ -98,6 +100,7 @@ usethis::use_data(inscrits_peda, overwrite = TRUE)
 inscrits_elp <- list.files("data-raw", pattern = "Inscrits_ELP.*?\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
   paste("unzip -p", .) %>% 
   purrr::map_df( ~ data.table::fread(cmd = ., skip = 1, encoding = "UTF-8")) %>% 
+  dplyr::mutate_if(is.character, dplyr::na_if, "") %>% 
   dplyr::as_tibble() %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
@@ -110,6 +113,7 @@ usethis::use_data(inscrits_elp, overwrite = TRUE)
 resultats_elp <- list.files("data-raw", pattern = "Resultats_ELP.*?\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
   paste("unzip -p", .) %>% 
   purrr::map_df( ~ data.table::fread(cmd = ., skip = 1, encoding = "UTF-8")) %>% 
+  dplyr::mutate_if(is.character, dplyr::na_if, "") %>% 
   dplyr::as_tibble() %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
@@ -128,6 +132,7 @@ usethis::use_data(resultats_elp, overwrite = TRUE)
 resultats_etape <- list.files("data-raw", pattern = "Resultats_etape\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
   paste("unzip -p", .) %>% 
   purrr::map_df( ~ data.table::fread(cmd = ., skip = 1, encoding = "UTF-8")) %>% 
+  dplyr::mutate_if(is.character, dplyr::na_if, "") %>% 
   dplyr::as_tibble() %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
@@ -137,6 +142,7 @@ resultats_etape <- list.files("data-raw", pattern = "Resultats_etape\\.zip$", re
 resultats_paces <- list.files("data-raw", pattern = "Resultats_etape_paces\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
   paste("unzip -p", .) %>% 
   purrr::map_df( ~ data.table::fread(cmd = ., skip = 1, encoding = "UTF-8")) %>% 
+  dplyr::mutate_if(is.character, dplyr::na_if, "") %>% 
   dplyr::as_tibble() %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
@@ -187,6 +193,7 @@ usethis::use_data(resultats_etape, overwrite = TRUE)
 resultats_diplome <- list.files("data-raw", pattern = "Resultats_diplome\\.zip$", recursive = TRUE, full.names = TRUE) %>% 
   paste("unzip -p", .) %>% 
   purrr::map_df( ~ data.table::fread(cmd = ., skip = 1, encoding = "UTF-8")) %>% 
+  dplyr::mutate_if(is.character, dplyr::na_if, "") %>% 
   dplyr::as_tibble() %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>% 
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
@@ -232,6 +239,7 @@ usethis::use_data(resultats_diplome, overwrite = TRUE)
 #### Individus ####
 
 individus <- data.table::fread(cmd = "unzip -p data-raw/data/Toutes_annees/Individus.zip", skip = 1, encoding = "UTF-8") %>%
+  dplyr::mutate_if(is.character, dplyr::na_if, "") %>% 
   dplyr::as_tibble() %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
@@ -241,6 +249,7 @@ individus <- data.table::fread(cmd = "unzip -p data-raw/data/Toutes_annees/Indiv
   )
 
 individus_bac <- data.table::fread(cmd = "unzip -p data-raw/data/Toutes_annees/Individus_bac.zip", skip = 1, encoding = "UTF-8") %>%
+  dplyr::mutate_if(is.character, dplyr::na_if, "") %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
   dplyr::arrange(code_etudiant, desc(annee_bac), code_mention_bac, code_type_etab_bac) %>%
@@ -298,12 +307,14 @@ annee_bac_etr <- individus %>%
 individus <- patchr::df_update(individus, annee_bac_etr, by = "code_etudiant")
 
 individus_mail_ups <- data.table::fread(cmd = "unzip -p data-raw/data/Toutes_annees/Individus_mail_ups.zip", skip = 1, encoding = "UTF-8") %>% 
+  dplyr::mutate_if(is.character, dplyr::na_if, "") %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
   patchr::transcode(impexp::access_import("_contents", access_base_path))
 
 individus <- dplyr::left_join(individus, individus_mail_ups, by = "code_etudiant")
 
 individus_departement_naissance <- data.table::fread(cmd = "unzip -p data-raw/data/Toutes_annees/Individus_departement_naissance.zip", skip = 1, encoding = "UTF-8") %>% 
+  dplyr::mutate_if(is.character, dplyr::na_if, "") %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
   patchr::transcode(impexp::access_import("_contents", access_base_path))
 
@@ -314,11 +325,13 @@ usethis::use_data(individus, overwrite = TRUE)
 #### Individus - origine ####
 
 individus_diplome_anterieur <- data.table::fread(cmd = "unzip -p data-raw/data/Toutes_annees/Individus_diplome_origine.zip", skip = 1, encoding = "UTF-8") %>% 
+  dplyr::mutate_if(is.character, dplyr::na_if, "") %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
   dplyr::arrange(code_etudiant, annee_diplome_obtenu)
 
 individus_diplome_externe <- data.table::fread(cmd = "unzip -p data-raw/data/Toutes_annees/Individus_diplome_externe.zip", skip = 1, encoding = "UTF-8") %>% 
+  dplyr::mutate_if(is.character, dplyr::na_if, "") %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
   dplyr::mutate(code_type_diplome_externe = stringr::str_pad(code_type_diplome_externe, 3, "left", "0")) %>%
@@ -360,6 +373,7 @@ individus_diplome_origine <- individus_diplome_anterieur %>%
 usethis::use_data(individus_diplome_origine, overwrite = TRUE)
 
 individus_situation_annee_precedente <- data.table::fread(cmd = "unzip -p data-raw/data/Toutes_annees/Individus_situation_annee_precedente.zip", skip = 1, encoding = "UTF-8") %>% 
+  dplyr::mutate_if(is.character, dplyr::na_if, "") %>% 
   dplyr::as_tibble() %>% 
   patchr::rename(impexp::access_import("_rename", access_base_path)) %>%
   patchr::transcode(impexp::access_import("_contents", access_base_path)) %>%
