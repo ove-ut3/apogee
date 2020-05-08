@@ -168,7 +168,7 @@ formations_historique <- function(annee_debut) {
     dplyr::anti_join(apogee::etape_histo, by = c("code_etape" = "code_etape_succ")) %>%
     dplyr::mutate(annee = etape_annees_activite(code_etape)) %>%
     dplyr::mutate(id = dplyr::row_number()) %>%
-    tidyr::unnest_legacy(annee) %>%
+    tidyr::unnest(annee) %>%
     dplyr::filter(annee >= !!annee_debut) %>%
     dplyr::mutate(lib_etape = apogee::lib_etape(code_etape)) %>%
     dplyr::select(annee, acronyme_type_diplome, id, code_etape, lib_etape) %>%

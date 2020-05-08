@@ -255,7 +255,7 @@ etape_secteur <- impexp::access_import("etape_secteur", "data-raw/data/Tables_re
 
 etape_secteur_histo <- etape_secteur %>%
   dplyr::mutate_at("code_etape", apogee::histo_etape_succ, multiple = TRUE) %>%
-  tidyr::unnest_legacy(code_etape) %>%
+  tidyr::unnest(code_etape) %>%
   unique() %>%
   dplyr::anti_join(etape_secteur, by = "code_etape")
 
