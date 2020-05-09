@@ -17,7 +17,7 @@
 histo_etape_succ <- function(code_etape, code_elp = NULL, multiple = FALSE, successeur_final = TRUE, garder_na = FALSE) {
   
   if (multiple) {
-    histo_etape_succ <- histo_etape_succ_all(code_etape = code_etape, successeur_final = successeur_final, garder_na = garder_na)
+    histo_etape_succ <- histo_etape_succ_all(code_etape = code_etape, code_elp = code_elp, successeur_final = successeur_final, garder_na = garder_na)
     
   } else {
     
@@ -29,8 +29,9 @@ histo_etape_succ <- function(code_etape, code_elp = NULL, multiple = FALSE, succ
     
     if (is.null(code_elp)) {
       histo_etape_succ <- dplyr::tibble(code_etape) %>%
-        dplyr::left_join(dplyr::filter(apogee::etape_histo, is.na(doublon)),
-                         by = "code_etape"
+        dplyr::left_join(
+          dplyr::filter(apogee::etape_histo, is.na(doublon)),
+          by = "code_etape"
         ) %>%
         dplyr::pull(code_etape_succ)
     } else if (!is.null(code_elp)) {
@@ -42,8 +43,9 @@ histo_etape_succ <- function(code_etape, code_elp = NULL, multiple = FALSE, succ
         code_etape,
         code_elp
       ) %>%
-        dplyr::left_join(dplyr::filter(apogee::etape_histo, is.na(doublon_elp)),
-                         by = c("code_etape", "code_elp")
+        dplyr::left_join(
+          dplyr::filter(apogee::etape_histo, is.na(doublon_elp)),
+          by = c("code_etape", "code_elp")
         ) %>%
         dplyr::pull(code_etape_succ)
     }
@@ -68,6 +70,7 @@ histo_etape_succ <- function(code_etape, code_elp = NULL, multiple = FALSE, succ
 #' Renvoie le code étape successeur (avec prise en charge de l'éclatement).
 #'
 #' @param code_etape Un vecteur de code étape.
+#' @param code_elp Un vecteur de code ELP, si c'est un parcours spécifique qui s'est ensuite transformé en étape.
 #' @param successeur_final \code{TRUE}, renvoit le successeur le plus récent dans l'historique; \code{FALSE}, renvoie le premier successeur.
 #' @param garder_na \code{TRUE}, les codes sans successeur passent à \code{NA}; \code{FALSE}, les codes sans successeur sont gardés tels quels.
 #'
@@ -76,14 +79,30 @@ histo_etape_succ <- function(code_etape, code_elp = NULL, multiple = FALSE, succ
 #' Jeu de données source : \code{apogee::etape_histo}.\cr
 #' Il est créé à partir d'Apogée et de la table "etape_histo" de la base Access Tables_ref (projet Apogee).
 #' @keywords internal
-histo_etape_succ_all <- function(code_etape, successeur_final = TRUE, garder_na = FALSE) {
-  
-  histo_etape_succ_all <- dplyr::tibble(code_etape) %>%
-    dplyr::mutate(.id = dplyr::row_number()) %>%
-    dplyr::left_join(
-      dplyr::filter(apogee::etape_histo, is.na(code_elp)),
-      by = "code_etape"
-    )
+histo_etape_succ_all <- function(code_etape, code_elp = NULL, successeur_final = TRUE, garder_na = FALSE) {
+
+  if (is.null(code_elp)) {
+    histo_etape_succ_all <- dplyr::tibble(code_etape) %>%
+      dplyr::mutate(.id = dplyr::row_number()) %>%
+      dplyr::left_join(
+        dplyr::filter(apogee::etape_histo, is.na(doublon)),
+        by = "code_etape"
+      )
+  } else if (!is.null(code_elp)) {
+    if (length(code_etape) != length(code_elp)) {
+      stop("Les vecteurs de code_etape et code_elp doivent être de taille identique.", call. = FALSE)
+    }
+    
+    histo_etape_succ_all <- dplyr::tibble(
+      code_etape,
+      code_elp
+    ) %>%
+      dplyr::mutate(.id = dplyr::row_number()) %>%
+      dplyr::left_join(
+        dplyr::filter(apogee::etape_histo, is.na(doublon_elp)),
+        by = c("code_etape", "code_elp")
+      )
+  }
 
   if (garder_na == FALSE) {
     histo_etape_succ_all <- histo_etape_succ_all %>%

@@ -4,10 +4,17 @@
 \alias{histo_etape_succ_all}
 \title{Renvoie le code etape successeur (avec prise en charge de l'eclatement)}
 \usage{
-histo_etape_succ_all(code_etape, successeur_final = TRUE, garder_na = FALSE)
+histo_etape_succ_all(
+  code_etape,
+  code_elp = NULL,
+  successeur_final = TRUE,
+  garder_na = FALSE
+)
 }
 \arguments{
 \item{code_etape}{Un vecteur de code étape.}
+
+\item{code_elp}{Un vecteur de code ELP, si c'est un parcours spécifique qui s'est ensuite transformé en étape.}
 
 \item{successeur_final}{\code{TRUE}, renvoit le successeur le plus récent dans l'historique; \code{FALSE}, renvoie le premier successeur.}
 
