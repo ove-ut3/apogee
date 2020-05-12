@@ -11,11 +11,11 @@ histo_composante_succ(
 )
 }
 \arguments{
+\item{code_composante}{Un vecteur de code de composante.}
+
 \item{successeur_final}{\code{TRUE}, renvoit le successeur le plus récent dans l'historique; \code{FALSE}, renvoie le premier successeur.}
 
 \item{garder_na}{\code{TRUE}, les codes sans successeur passent à \code{NA}; \code{FALSE}, les codes sans successeur sont gardés tels quels.}
-
-\item{code_etape}{Un vecteur de code de composante.}
 }
 \value{
 Un vecteur de code de composante successeur.

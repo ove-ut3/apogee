@@ -7,7 +7,7 @@
 lib_bourse(code_bourse)
 }
 \arguments{
-\item{code_type_diplome}{Un vecteur de code de bourse.}
+\item{code_bourse}{Un vecteur de code de bourse.}
 }
 \value{
 Un vecteur contenant les libellés de bourse.

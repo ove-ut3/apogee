@@ -7,7 +7,7 @@
 acronyme_mention_diplome(code_mention_diplome)
 }
 \arguments{
-\item{code_etape}{Un vecteur de code de mention de diplôme.}
+\item{code_mention_diplome}{Un vecteur de code de mention de diplôme.}
 }
 \value{
 Un vecteur contenant les acronymes de mention de diplôme.

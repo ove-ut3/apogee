@@ -13,6 +13,7 @@
 #'
 #' @export
 lib_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville", "option", "particularite", "annee")) {
+  
   champ_lib_etape <- purrr::map_lgl(c("ville", "option", "particularite"), ~ . %in% suffixe) %>%
     paste(collapse = " ") %>%
     dplyr::recode(
@@ -27,59 +28,70 @@ lib_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville", "o
     )
 
   lib_etape <- dplyr::tibble(code_etape) %>%
-    dplyr::left_join(apogee::etape, by = "code_etape") %>%
+    dplyr::left_join(
+      apogee::etape, 
+      by = "code_etape"
+    ) %>%
     dplyr::rename(champ_lib_etape = !!champ_lib_etape)
 
   if (prefixe %in% "formation") {
+    
     lib_etape <- lib_etape %>%
       dplyr::mutate(
-        type_diplome = apogee::acronyme_type_diplome(code_type_diplome),
+        type_diplome = apogee::acronyme_type_diplome(.data$code_type_diplome),
         champ_lib_etape = dplyr::if_else(
-          temoin_etape_apogee == FALSE & !type_diplome %in% c("DAEU", "DE infirmier-e", "Dentaire", "Diplôme d'Etat", "DNO", "HDR", "DE Dentaire", "DE Médecine", "DE Pharmacie", "TH FICTIVE", "DE Vétérinaire"),
+          .data$temoin_etape_apogee == FALSE & !.data$type_diplome %in% c("DAEU", "DE infirmier-e", "Dentaire", "Dipl\u00f4me d'Etat", "DNO", "HDR", "DE Dentaire", "DE M\u00e9decine", "DE Pharmacie", "TH FICTIVE", "DE V\u00e9t\u00e9rinaire"),
           paste(
-            stringr::str_replace_na(type_diplome, ""),
-            champ_lib_etape
+            stringr::str_replace_na(.data$type_diplome, ""),
+            .data$champ_lib_etape
           ),
-          champ_lib_etape
+          .data$champ_lib_etape
         )
       )
+    
   } else if (prefixe %in% "diplome") {
+    
     lib_etape <- lib_etape %>%
       dplyr::mutate_at("code_type_diplome", apogee::hier_type_diplome_parent) %>%
       dplyr::mutate(
-        lib_type_diplome = apogee::acronyme_type_diplome(code_type_diplome),
+        lib_type_diplome = apogee::acronyme_type_diplome(.data$code_type_diplome),
         champ_lib_etape = dplyr::if_else(
-          temoin_etape_apogee == FALSE,
+          .data$temoin_etape_apogee == FALSE,
           paste(
-            stringr::str_replace_na(lib_type_diplome, ""),
-            champ_lib_etape
+            stringr::str_replace_na(.data$lib_type_diplome, ""),
+            .data$champ_lib_etape
           ),
-          champ_lib_etape
+          .data$champ_lib_etape
         )
       )
+    
   }
 
   if ("annee" %in% suffixe) {
+    
     lib_etape <- lib_etape %>%
       dplyr::mutate(
         champ_lib_etape = dplyr::if_else(
-          !is.na(annee_diplome),
+          !is.na(.data$annee_diplome),
           paste0(
-            champ_lib_etape,
+            .data$champ_lib_etape,
             " - ",
-            apogee::annee_diplome(code_etape) %>%
-              scales::ordinal(rules = scales::ordinal_french(gender = "feminin")), " année"
+            apogee::annee_diplome(.data$code_etape) %>%
+              scales::ordinal(rules = scales::ordinal_french(gender = "feminin")), " ann\u00e9e"
           ),
-          champ_lib_etape
+          .data$champ_lib_etape
         )
       )
+    
   }
 
   lib_etape <- lib_etape %>%
-    dplyr::pull(champ_lib_etape)
+    dplyr::pull(.data$champ_lib_etape)
 
   if (class(lib_etape) == "logical") {
+    
     lib_etape <- as.character(lib_etape)
+    
   }
 
   return(lib_etape)
@@ -100,6 +112,7 @@ lib_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville", "o
 #'
 #' @export
 acronyme_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville", "option", "particularite", "annee")) {
+  
   champ_acronyme_etape <- purrr::map_lgl(c("ville", "option", "particularite"), ~ . %in% suffixe) %>%
     paste(collapse = " ") %>%
     dplyr::recode(
@@ -114,77 +127,67 @@ acronyme_etape <- function(code_etape, prefixe = "formation", suffixe = c("ville
     )
 
   acronyme_etape <- dplyr::tibble(code_etape) %>%
-    dplyr::left_join(apogee::etape, by = "code_etape") %>%
+    dplyr::left_join(
+      apogee::etape, 
+      by = "code_etape"
+    ) %>%
     dplyr::rename(champ_acronyme_etape = !!champ_acronyme_etape)
 
   if (prefixe %in% "formation") {
+    
     acronyme_etape <- acronyme_etape %>%
       dplyr::mutate(
-        type_diplome = apogee::acronyme_type_diplome(code_type_diplome),
+        type_diplome = apogee::acronyme_type_diplome(.data$code_type_diplome),
         champ_acronyme_etape = dplyr::if_else(
-          temoin_etape_apogee == FALSE & !type_diplome %in% c("DAEU", "DE infirmier-e", "Dentaire", "Diplôme d'Etat", "DNO", "HDR", "Médecine", "Pharmacie", "TH FICTIVE", "Vétérinaire"),
+          .data$temoin_etape_apogee == FALSE & !.data$type_diplome %in% c("DAEU", "DE infirmier-e", "Dentaire", "Dipl\u00f4me d'Etat", "DNO", "HDR", "M\u00e9decine", "Pharmacie", "TH FICTIVE", "V\u00e9t\u00e9rinaire"),
           paste(
-            stringr::str_replace_na(type_diplome, ""),
-            champ_acronyme_etape
+            stringr::str_replace_na(.data$type_diplome, ""),
+            .data$champ_acronyme_etape
           ),
-          champ_acronyme_etape
+          .data$champ_acronyme_etape
         )
       )
+    
   } else if (prefixe %in% "diplome") {
+    
     acronyme_etape <- acronyme_etape %>%
       dplyr::mutate_at("code_type_diplome", apogee::hier_type_diplome_parent) %>%
       dplyr::mutate(
-        lib_type_diplome = apogee::acronyme_type_diplome(code_type_diplome),
+        lib_type_diplome = apogee::acronyme_type_diplome(.data$code_type_diplome),
         champ_acronyme_etape = dplyr::if_else(
-          temoin_etape_apogee == FALSE,
+          .data$temoin_etape_apogee == FALSE,
           paste(
-            stringr::str_replace_na(lib_type_diplome, ""),
-            champ_acronyme_etape
+            stringr::str_replace_na(.data$lib_type_diplome, ""),
+            .data$champ_acronyme_etape
           ),
-          champ_acronyme_etape
+          .data$champ_acronyme_etape
         )
       )
+    
   }
 
   if ("annee" %in% suffixe) {
+    
     acronyme_etape <- acronyme_etape %>%
       dplyr::mutate(
         champ_acronyme_etape = dplyr::if_else(
-          !is.na(annee_diplome),
+          !is.na(.data$annee_diplome),
           paste0(
-            champ_acronyme_etape,
+            .data$champ_acronyme_etape,
             " - ",
-            apogee::annee_diplome(code_etape) %>%
-              scales::ordinal(rules = scales::ordinal_french(gender = "feminin")), " année"
+            apogee::annee_diplome(.data$code_etape) %>%
+              scales::ordinal(rules = scales::ordinal_french(gender = "feminin")), " ann\u00e9e"
           ),
-          champ_acronyme_etape
+          .data$champ_acronyme_etape
         )
       )
+    
   }
 
   acronyme_etape <- acronyme_etape %>%
-    dplyr::pull(champ_acronyme_etape)
+    dplyr::pull(.data$champ_acronyme_etape)
 
   return(acronyme_etape)
-}
-
-#' Renvoie le libelle a partir du code cursus d'une etape
-#'
-#' Renvoie le libellé à partir du code cursus d'une étape.
-#'
-#' @param code_cursus_etape Un vecteur de code cursus d'une étape.
-#'
-#' @return Un vecteur contenant les libellé de cursus.
-#'
-#' Jeu de données source : \code{apogee::cursus_etape}.\cr
-#'
-#' @export
-lib_cursus_etape <- function(code_cursus_etape) {
-  lib_cursus_etape <- dplyr::tibble(code_cursus_etape) %>%
-    dplyr::left_join(apogee::etape_cursus, by = "code_cursus_etape") %>%
-    dplyr::pull(lib_cursus_etape)
-
-  return(lib_cursus_etape)
 }
 
 #' Renvoie le libelle a partir du code composante
@@ -200,9 +203,13 @@ lib_cursus_etape <- function(code_cursus_etape) {
 #'
 #' @export
 lib_composante <- function(code_composante) {
+  
   lib_composante <- dplyr::tibble(code_composante) %>%
-    dplyr::left_join(apogee::composante, by = "code_composante") %>%
-    dplyr::pull(lib_composante)
+    dplyr::left_join(
+      apogee::composante, 
+      by = "code_composante"
+    ) %>%
+    dplyr::pull(.data$lib_composante)
 
   return(lib_composante)
 }
@@ -220,9 +227,13 @@ lib_composante <- function(code_composante) {
 #'
 #' @export
 lib_regime_inscription <- function(code_regime_inscription) {
+  
   lib_regime_inscription <- dplyr::tibble(code_regime_inscription) %>%
-    dplyr::left_join(apogee::regime_inscription, by = "code_regime_inscription") %>%
-    dplyr::pull(lib_regime_inscription)
+    dplyr::left_join(
+      apogee::regime_inscription, 
+      by = "code_regime_inscription"
+    ) %>%
+    dplyr::pull(.data$lib_regime_inscription)
 
   return(lib_regime_inscription)
 }
@@ -240,10 +251,14 @@ lib_regime_inscription <- function(code_regime_inscription) {
 #'
 #' @export
 lib_type_diplome <- function(code_type_diplome) {
+  
   lib_type_diplome <- dplyr::tibble(code_type_diplome) %>%
-    dplyr::left_join(apogee::diplome_type, by = "code_type_diplome") %>%
-    dplyr::mutate(lib_type_diplome = dplyr::if_else(is.na(lib_type_diplome), code_type_diplome, lib_type_diplome)) %>%
-    dplyr::pull(lib_type_diplome)
+    dplyr::left_join(
+      apogee::diplome_type, 
+      by = "code_type_diplome"
+    ) %>%
+    dplyr::mutate(lib_type_diplome = dplyr::if_else(is.na(.data$lib_type_diplome), .data$code_type_diplome, .data$lib_type_diplome)) %>%
+    dplyr::pull(.data$lib_type_diplome)
 
   return(lib_type_diplome)
 }
@@ -252,7 +267,7 @@ lib_type_diplome <- function(code_type_diplome) {
 #'
 #' Renvoie le libellé à partir du code de finalité de diplôme.
 #'
-#' @param code_type_diplome Un vecteur de code de finalité de diplôme.
+#' @param code_finalite_diplome Un vecteur de code de finalité de diplôme.
 #'
 #' @return Un vecteur contenant les libellés de type diplôme.
 #'
@@ -260,9 +275,13 @@ lib_type_diplome <- function(code_type_diplome) {
 #'
 #' @export
 lib_finalite_diplome <- function(code_finalite_diplome) {
+  
   lib_finalite_diplome <- dplyr::tibble(code_finalite_diplome) %>%
-    dplyr::left_join(apogee::finalite_diplome, by = "code_finalite_diplome") %>%
-    dplyr::pull(lib_finalite_diplome)
+    dplyr::left_join(
+      apogee::finalite_diplome, 
+      by = "code_finalite_diplome"
+    ) %>%
+    dplyr::pull(.data$lib_finalite_diplome)
 
   return(lib_finalite_diplome)
 }
@@ -271,7 +290,7 @@ lib_finalite_diplome <- function(code_finalite_diplome) {
 #'
 #' Renvoie le libellé à partir du code bourse.
 #'
-#' @param code_type_diplome Un vecteur de code de bourse.
+#' @param code_bourse Un vecteur de code de bourse.
 #'
 #' @return Un vecteur contenant les libellés de bourse.
 #'
@@ -279,9 +298,13 @@ lib_finalite_diplome <- function(code_finalite_diplome) {
 #'
 #' @export
 lib_bourse <- function(code_bourse) {
+  
   lib_bourse <- dplyr::tibble(code_bourse) %>%
-    dplyr::left_join(apogee::bourse, by = "code_bourse") %>%
-    dplyr::pull(lib_bourse)
+    dplyr::left_join(
+      apogee::bourse, 
+      by = "code_bourse"
+    ) %>%
+    dplyr::pull(.data$lib_bourse)
 
   return(lib_bourse)
 }
@@ -299,9 +322,13 @@ lib_bourse <- function(code_bourse) {
 #'
 #' @export
 acronyme_type_diplome <- function(code_type_diplome) {
+  
   acronyme_type_diplome <- dplyr::tibble(code_type_diplome) %>%
-    dplyr::left_join(apogee::diplome_type, by = "code_type_diplome") %>%
-    dplyr::pull(acronyme_type_diplome)
+    dplyr::left_join(
+      apogee::diplome_type, 
+      by = "code_type_diplome"
+    ) %>%
+    dplyr::pull(.data$acronyme_type_diplome)
 
   return(acronyme_type_diplome)
 }
@@ -318,9 +345,13 @@ acronyme_type_diplome <- function(code_type_diplome) {
 #'
 #' @export
 lib_type_etab <- function(code_type_etab) {
+  
   lib_type_etab <- dplyr::tibble(code_type_etab) %>%
-    dplyr::left_join(apogee::etablissement_type, by = "code_type_etab") %>%
-    dplyr::pull(lib_type_etab)
+    dplyr::left_join(
+      apogee::etablissement_type, 
+      by = "code_type_etab"
+    ) %>%
+    dplyr::pull(.data$lib_type_etab)
 
   return(lib_type_etab)
 }
@@ -337,9 +368,13 @@ lib_type_etab <- function(code_type_etab) {
 #'
 #' @export
 lib_elp <- function(code_elp) {
+  
   lib_elp <- dplyr::tibble(code_elp) %>%
-    dplyr::left_join(apogee::elp, by = "code_elp") %>%
-    dplyr::pull(lib_elp)
+    dplyr::left_join(
+      apogee::elp, 
+      by = "code_elp"
+    ) %>%
+    dplyr::pull(.data$lib_elp)
 
   return(lib_elp)
 }
@@ -356,9 +391,13 @@ lib_elp <- function(code_elp) {
 #'
 #' @export
 lib_nature_elp <- function(code_nature_elp) {
+  
   lib_nature_elp <- dplyr::tibble(code_nature_elp) %>%
-    dplyr::left_join(apogee::elp_nature, by = "code_nature_elp") %>%
-    dplyr::pull(lib_nature_elp)
+    dplyr::left_join(
+      apogee::elp_nature, 
+      by = "code_nature_elp"
+    ) %>%
+    dplyr::pull(.data$lib_nature_elp)
 
   return(lib_nature_elp)
 }
@@ -376,9 +415,13 @@ lib_nature_elp <- function(code_nature_elp) {
 #'
 #' @export
 lib_bac <- function(code_bac) {
+  
   lib_bac <- dplyr::tibble(code_bac) %>%
-    dplyr::left_join(apogee::bac, by = "code_bac") %>%
-    dplyr::pull(lib_bac)
+    dplyr::left_join(
+      apogee::bac, 
+      by = "code_bac"
+    ) %>%
+    dplyr::pull(.data$lib_bac)
 
   return(lib_bac)
 }
@@ -396,9 +439,13 @@ lib_bac <- function(code_bac) {
 #'
 #' @export
 acronyme_bac <- function(code_bac) {
+  
   acronyme_bac <- dplyr::tibble(code_bac) %>%
-    dplyr::left_join(apogee::bac, by = "code_bac") %>%
-    dplyr::pull(acronyme_bac)
+    dplyr::left_join(
+      apogee::bac, 
+      by = "code_bac"
+    ) %>%
+    dplyr::pull(.data$acronyme_bac)
 
   return(acronyme_bac)
 }
@@ -407,7 +454,7 @@ acronyme_bac <- function(code_bac) {
 #'
 #' Renvoie le libellé à partir du code de mention au Bac.
 #'
-#' @param code_pcs Un vecteur de code de mention au Bac.
+#' @param code_mention_bac Un vecteur de code de mention au Bac.
 #'
 #' @return Un vecteur contenant les libellés de mention au Bac.
 #'
@@ -416,9 +463,13 @@ acronyme_bac <- function(code_bac) {
 #'
 #' @export
 lib_mention_bac <- function(code_mention_bac) {
+  
   lib_mention_bac <- dplyr::tibble(code_mention_bac) %>%
-    dplyr::left_join(apogee::bac_mention, by = "code_mention_bac") %>%
-    dplyr::pull(lib_mention_bac)
+    dplyr::left_join(
+      apogee::bac_mention, 
+      by = "code_mention_bac"
+    ) %>%
+    dplyr::pull(.data$lib_mention_bac)
 
   return(lib_mention_bac)
 }
@@ -436,9 +487,13 @@ lib_mention_bac <- function(code_mention_bac) {
 #'
 #' @export
 lib_pcs <- function(code_pcs) {
+  
   lib_pcs <- dplyr::tibble(code_pcs) %>%
-    dplyr::left_join(apogee::pcs, by = "code_pcs") %>%
-    dplyr::pull(lib_pcs)
+    dplyr::left_join(
+      apogee::pcs, 
+      by = "code_pcs"
+    ) %>%
+    dplyr::pull(.data$lib_pcs)
 
   return(lib_pcs)
 }
@@ -456,9 +511,13 @@ lib_pcs <- function(code_pcs) {
 #'
 #' @export
 lib_sexe <- function(code_sexe) {
+  
   lib_sexe <- dplyr::tibble(code_sexe) %>%
-    dplyr::left_join(apogee::sexe, by = "code_sexe") %>%
-    dplyr::pull(lib_sexe)
+    dplyr::left_join(
+      apogee::sexe, 
+      by = "code_sexe"
+    ) %>%
+    dplyr::pull(.data$lib_sexe)
 
   return(lib_sexe)
 }
@@ -475,9 +534,13 @@ lib_sexe <- function(code_sexe) {
 #'
 #' @export
 lib_situation_sociale <- function(code_situation_sociale) {
+  
   lib_situation_sociale <- dplyr::tibble(code_situation_sociale) %>%
-    dplyr::left_join(apogee::situation_sociale, by = "code_situation_sociale") %>%
-    dplyr::pull(lib_situation_sociale)
+    dplyr::left_join(
+      apogee::situation_sociale, 
+      by = "code_situation_sociale"
+    ) %>%
+    dplyr::pull(.data$lib_situation_sociale)
 
   return(lib_situation_sociale)
 }
@@ -486,7 +549,7 @@ lib_situation_sociale <- function(code_situation_sociale) {
 #'
 #' Renvoie le libellé à partir du code statut étudiant.
 #'
-#' @param code_situation_sociale Un vecteur de code statut étudiant.
+#' @param code_statut_etudiant Un vecteur de code statut étudiant.
 #'
 #' @return Un vecteur contenant les libellés de statut étudiant.
 #'
@@ -494,9 +557,13 @@ lib_situation_sociale <- function(code_situation_sociale) {
 #'
 #' @export
 lib_statut_etudiant <- function(code_statut_etudiant) {
+  
   lib_statut_etudiant <- dplyr::tibble(code_statut_etudiant) %>%
-    dplyr::left_join(apogee::statut_etudiant, by = "code_statut_etudiant") %>%
-    dplyr::pull(lib_statut_etudiant)
+    dplyr::left_join(
+      apogee::statut_etudiant, 
+      by = "code_statut_etudiant"
+    ) %>%
+    dplyr::pull(.data$lib_statut_etudiant)
 
   return(lib_statut_etudiant)
 }
@@ -513,9 +580,13 @@ lib_statut_etudiant <- function(code_statut_etudiant) {
 #'
 #' @export
 lib_mention_diplome <- function(code_mention_diplome) {
+  
   lib_mention_diplome <- dplyr::tibble(code_mention_diplome) %>%
-    dplyr::left_join(apogee::mention_diplome, by = "code_mention_diplome") %>%
-    dplyr::pull(lib_mention_diplome)
+    dplyr::left_join(
+      apogee::mention_diplome, 
+      by = "code_mention_diplome"
+    ) %>%
+    dplyr::pull(.data$lib_mention_diplome)
 
   return(lib_mention_diplome)
 }
@@ -532,9 +603,13 @@ lib_mention_diplome <- function(code_mention_diplome) {
 #'
 #' @export
 lib_domaine_diplome <- function(code_domaine_diplome) {
+  
   lib_domaine_diplome <- dplyr::tibble(code_domaine_diplome) %>%
-    dplyr::left_join(apogee::domaine_diplome, by = "code_domaine_diplome") %>%
-    dplyr::pull(lib_domaine_diplome)
+    dplyr::left_join(
+      apogee::domaine_diplome, 
+      by = "code_domaine_diplome"
+    ) %>%
+    dplyr::pull(.data$lib_domaine_diplome)
 
   return(lib_domaine_diplome)
 }
@@ -551,9 +626,13 @@ lib_domaine_diplome <- function(code_domaine_diplome) {
 #'
 #' @export
 lib_diplome <- function(code_diplome) {
+  
   lib_diplome <- dplyr::tibble(code_diplome) %>%
-    dplyr::left_join(apogee::diplome, by = "code_diplome") %>%
-    dplyr::pull(lib_diplome)
+    dplyr::left_join(
+      apogee::diplome, 
+      by = "code_diplome"
+    ) %>%
+    dplyr::pull(.data$lib_diplome)
 
   return(lib_diplome)
 }
@@ -570,9 +649,13 @@ lib_diplome <- function(code_diplome) {
 #'
 #' @export
 lib_resultat <- function(code_resultat) {
+  
   lib_resultat <- dplyr::tibble(code_resultat) %>%
-    dplyr::left_join(apogee::resultat, by = "code_resultat") %>%
-    dplyr::pull(lib_resultat)
+    dplyr::left_join(
+      apogee::resultat, 
+      by = "code_resultat"
+    ) %>%
+    dplyr::pull(.data$lib_resultat)
 
   return(lib_resultat)
 }
@@ -589,9 +672,13 @@ lib_resultat <- function(code_resultat) {
 #'
 #' @export
 lib_periode_elp <- function(code_periode_elp) {
+  
   lib_periode_elp <- dplyr::tibble(code_periode_elp) %>%
-    dplyr::left_join(apogee::elp_periode, by = "code_periode_elp") %>%
-    dplyr::pull(lib_periode_elp)
+    dplyr::left_join(
+      apogee::elp_periode, 
+      by = "code_periode_elp"
+    ) %>%
+    dplyr::pull(.data$lib_periode_elp)
 
   return(lib_periode_elp)
 }
@@ -608,9 +695,13 @@ lib_periode_elp <- function(code_periode_elp) {
 #'
 #' @export
 lib_type_diplome_origine <- function(code_type_diplome_origine) {
+  
   lib_type_diplome_origine <- dplyr::tibble(code_type_diplome_origine) %>%
-    dplyr::left_join(apogee::diplome_origine_type, by = "code_type_diplome_origine") %>%
-    dplyr::pull(lib_type_diplome_origine)
+    dplyr::left_join(
+      apogee::diplome_origine_type, 
+      by = "code_type_diplome_origine"
+    ) %>%
+    dplyr::pull(.data$lib_type_diplome_origine)
 
   return(lib_type_diplome_origine)
 }
@@ -630,9 +721,13 @@ lib_type_diplome_origine <- function(code_type_diplome_origine) {
 #' apogee::lib_academie(c("01", "09"))
 #' @export
 lib_academie <- function(code_academie) {
+  
   lib_academie <- dplyr::tibble(code_academie) %>%
-    dplyr::left_join(apogee::academie, by = "code_academie") %>%
-    dplyr::pull(lib_academie)
+    dplyr::left_join(
+      apogee::academie, 
+      by = "code_academie"
+    ) %>%
+    dplyr::pull(.data$lib_academie)
 
   return(lib_academie)
 }
@@ -641,7 +736,7 @@ lib_academie <- function(code_academie) {
 #'
 #' Renvoie l'acronyme à partir du code de domaine de diplôme.
 #'
-#' @param code_bac Un vecteur de code de domaine de diplôme.
+#' @param code_domaine_diplome Un vecteur de code de domaine de diplôme.
 #'
 #' @return Un vecteur contenant les acronymes de domaine de diplôme.
 #'
@@ -650,9 +745,13 @@ lib_academie <- function(code_academie) {
 #'
 #' @export
 acronyme_domaine_diplome <- function(code_domaine_diplome) {
+  
   acronyme_domaine_diplome <- dplyr::tibble(code_domaine_diplome) %>%
-    dplyr::left_join(apogee::domaine_diplome, by = "code_domaine_diplome") %>%
-    dplyr::pull(acronyme_domaine_diplome)
+    dplyr::left_join(
+      apogee::domaine_diplome, 
+      by = "code_domaine_diplome"
+    ) %>%
+    dplyr::pull(.data$acronyme_domaine_diplome)
 
   return(acronyme_domaine_diplome)
 }
@@ -661,7 +760,7 @@ acronyme_domaine_diplome <- function(code_domaine_diplome) {
 #'
 #' Renvoie l'acronyme à partir du code de mention de diplôme.
 #'
-#' @param code_etape Un vecteur de code de mention de diplôme.
+#' @param code_mention_diplome Un vecteur de code de mention de diplôme.
 #'
 #' @return Un vecteur contenant les acronymes de mention de diplôme.
 #'
@@ -670,9 +769,13 @@ acronyme_domaine_diplome <- function(code_domaine_diplome) {
 #'
 #' @export
 acronyme_mention_diplome <- function(code_mention_diplome) {
+  
   acronyme_mention_diplome <- dplyr::tibble(code_mention_diplome) %>%
-    dplyr::left_join(apogee::mention_diplome, by = "code_mention_diplome") %>%
-    dplyr::pull(acronyme_mention_diplome)
+    dplyr::left_join(
+      apogee::mention_diplome, 
+      by = "code_mention_diplome"
+    ) %>%
+    dplyr::pull(.data$acronyme_mention_diplome)
 
   return(acronyme_mention_diplome)
 }
@@ -689,9 +792,13 @@ acronyme_mention_diplome <- function(code_mention_diplome) {
 #'
 #' @export
 lib_situation_annee_precedente <- function(code_situation_annee_precedente) {
+  
   lib_situation_annee_precedente <- dplyr::tibble(code_situation_annee_precedente) %>%
-    dplyr::left_join(apogee::situation_annee_precedente, by = "code_situation_annee_precedente") %>%
-    dplyr::pull(lib_situation_annee_precedente)
+    dplyr::left_join(
+      apogee::situation_annee_precedente, 
+      by = "code_situation_annee_precedente"
+    ) %>%
+    dplyr::pull(.data$lib_situation_annee_precedente)
 
   return(lib_situation_annee_precedente)
 }

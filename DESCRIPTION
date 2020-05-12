@@ -2,10 +2,11 @@ Package: apogee
 Title: Fonctions autour du referentiel Apogee
 Version: 0.1
 Authors@R: person("Observatoire de la Vie Etudiante", "OVE", email = "ove@univ-tlse3.fr", role = c("aut", "cre"))
-Description: Fonctions autour du référentiel Apogee : gestion de la hierarchie, de l'historique et des libelles de l'offre de formation.
+Description: Fonctions autour du référentiel Apogee.
+    Gestion de la hierarchie, de l'historique et des libelles de l'offre de formation.
 Depends:
     R (>= 3.2.5)
-License: MIT
+License: MIT + file LICENSE
 Encoding: UTF-8
 LazyData: true
 RoxygenNote: 7.1.0
@@ -13,11 +14,10 @@ Imports:
     dplyr,
     glue,
     purrr,
+    rlang,
     scales,
     stringr,
     tidyr
-Remotes:
-    r-lib/scales
 Suggests: 
     knitr,
     rmarkdown,

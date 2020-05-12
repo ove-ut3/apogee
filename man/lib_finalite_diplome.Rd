@@ -7,7 +7,7 @@
 lib_finalite_diplome(code_finalite_diplome)
 }
 \arguments{
-\item{code_type_diplome}{Un vecteur de code de finalité de diplôme.}
+\item{code_finalite_diplome}{Un vecteur de code de finalité de diplôme.}
 }
 \value{
 Un vecteur contenant les libellés de type diplôme.

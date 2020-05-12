@@ -7,7 +7,7 @@
 acronyme_domaine_diplome(code_domaine_diplome)
 }
 \arguments{
-\item{code_bac}{Un vecteur de code de domaine de diplôme.}
+\item{code_domaine_diplome}{Un vecteur de code de domaine de diplôme.}
 }
 \value{
 Un vecteur contenant les acronymes de domaine de diplôme.

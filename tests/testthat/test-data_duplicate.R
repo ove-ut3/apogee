@@ -11,6 +11,17 @@ test_that("Pas de doublons dans les tables de données", {
   expect_equal(nrow(patchr::duplicate(resultats_diplome, annee, code_etape, code_etudiant, inscription_premiere, lib_session)), 0)
 })
 
-# test_that("Pas de doublons dans les tables de métadonnées", {
-#   expect_equal(nrow(patchr::duplicate(inscrits, annee, code_etape, code_etudiant, inscription_premiere)), 0)
-# })
+test_that("Pas de doublons dans les tables de métadonnées", {
+  
+  etape_mention <- apogee::etape_mention %>% 
+    dplyr::mutate(lib_mention = apogee::lib_mention_diplome(code_mention_diplome)) %>% 
+    patchr::duplicate(code_etape, lib_mention)
+  
+  expect_true(nrow(etape_mention) == 0)
+  
+  # Tester si les tables access ne sont pas redondantes avec des mises à jours qui ont été faites sur apogée depuis
+  
+  # tester si de nouvelles formations sont apparues depuis la denière update
+  
+  # apogee::histo_etape_succ("EDCHM1", code_elp = "EDCHC03P;EDCHC04P", multiple = TRUE) == "EDCHAE"
+})

@@ -7,7 +7,7 @@
 lib_statut_etudiant(code_statut_etudiant)
 }
 \arguments{
-\item{code_situation_sociale}{Un vecteur de code statut étudiant.}
+\item{code_statut_etudiant}{Un vecteur de code statut étudiant.}
 }
 \value{
 Un vecteur contenant les libellés de statut étudiant.

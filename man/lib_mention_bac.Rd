@@ -7,7 +7,7 @@
 lib_mention_bac(code_mention_bac)
 }
 \arguments{
-\item{code_pcs}{Un vecteur de code de mention au Bac.}
+\item{code_mention_bac}{Un vecteur de code de mention au Bac.}
 }
 \value{
 Un vecteur contenant les libellés de mention au Bac.

@@ -13,8 +13,11 @@
 annee_etape <- function(code_etape) {
   
   annee_etape <- dplyr::tibble(code_etape) %>%
-    dplyr::left_join(apogee::etape, by = "code_etape") %>%
-    dplyr::pull(annee_etape)
+    dplyr::left_join(
+      apogee::etape, 
+      by = "code_etape"
+    ) %>%
+    dplyr::pull(.data$annee_etape)
 
   return(annee_etape)
 }
@@ -34,8 +37,11 @@ annee_etape <- function(code_etape) {
 annee_diplome <- function(code_etape) {
   
   annee_diplome <- dplyr::tibble(code_etape) %>%
-    dplyr::left_join(apogee::etape, by = "code_etape") %>%
-    dplyr::pull(annee_diplome)
+    dplyr::left_join(
+      apogee::etape, 
+      by = "code_etape"
+    ) %>%
+    dplyr::pull(.data$annee_diplome)
 
   return(annee_diplome)
 }
@@ -55,7 +61,10 @@ annee_diplome <- function(code_etape) {
 etape_annees_activite <- function(code_etape, historique = FALSE) {
   
   etape_annees_activite <- dplyr::tibble(code_etape) %>%
-    dplyr::left_join(apogee::etape, by = "code_etape")
+    dplyr::left_join(
+      apogee::etape, 
+      by = "code_etape"
+    )
 
   if (historique == FALSE) {
     
@@ -64,18 +73,21 @@ etape_annees_activite <- function(code_etape, historique = FALSE) {
   } else {
     
     histo_annee_premiere_etape <- dplyr::tibble(code_etape) %>% 
-      dplyr::mutate(id = dplyr::row_number())
+      dplyr::mutate(.id = dplyr::row_number())
     
     etape_annees_activite <- histo_annee_premiere_etape %>% 
       dplyr::bind_rows(
         histo_annee_premiere_etape %>% 
           dplyr::mutate_at("code_etape", apogee::histo_etape_pred, predecesseur_final = TRUE) %>% 
-          tidyr::unnest(code_etape) 
+          tidyr::unnest(.data$code_etape) 
       ) %>% 
-      dplyr::left_join(apogee::etape, by = "code_etape") %>% 
-      tidyr::unnest(annees_activite) %>% 
-      dplyr::count(id, annees_activite) %>% 
-      split(x = .$annees_activite, f = .$id) %>% 
+      dplyr::left_join(
+        apogee::etape, 
+        by = "code_etape"
+      ) %>% 
+      tidyr::unnest(.data$annees_activite) %>% 
+      dplyr::count(.data$.id, .data$annees_activite) %>% 
+      split(x = .$annees_activite, f = .$.id) %>% 
       unname()
 
   }
@@ -123,17 +135,20 @@ annee_u <- function(annee, fichier = FALSE) {
 temoin_etape_actif <- function(code_etape, annee = NULL, annules = FALSE) {
   
   temoin_etape_actif <- dplyr::tibble(code_etape) %>%
-    dplyr::left_join(apogee::etape, by = "code_etape")
+    dplyr::left_join(
+      apogee::etape, 
+      by = "code_etape"
+    )
 
   if (!is.null(annee)) {
-    temoin_etape_actif <- dplyr::mutate(temoin_etape_actif, actif = purrr::map_lgl(annees_activite, ~ length(intersect(., !!annee)) >= 1))
+    temoin_etape_actif <- dplyr::mutate(temoin_etape_actif, actif = purrr::map_lgl(.data$annees_activite, ~ length(intersect(., !!annee)) >= 1))
   }
 
   if (annules == FALSE) {
-    temoin_etape_actif <- dplyr::mutate(temoin_etape_actif, actif = dplyr::if_else(is.na(n_inscrits), FALSE, actif))
+    temoin_etape_actif <- dplyr::mutate(temoin_etape_actif, actif = dplyr::if_else(is.na(.data$n_inscrits), FALSE, .data$actif))
   }
 
-  temoin_etape_actif <- dplyr::pull(temoin_etape_actif, actif)
+  temoin_etape_actif <- dplyr::pull(temoin_etape_actif, .data$actif)
 
   return(temoin_etape_actif)
 }
@@ -148,8 +163,8 @@ temoin_etape_actif <- function(code_etape, annee = NULL, annules = FALSE) {
 annee_en_cours <- function() {
   
   annee_en_cours <- apogee::etape %>%
-    tidyr::unnest(annees_activite) %>% 
-    dplyr::pull(annees_activite) %>%
+    tidyr::unnest(.data$annees_activite) %>% 
+    dplyr::pull(.data$annees_activite) %>%
     max(na.rm = TRUE)
 
   return(annee_en_cours)
@@ -164,19 +179,26 @@ annee_en_cours <- function() {
 #' @export
 formations_historique <- function(annee_debut) {
   
-  formations_historique <- apogee::formations_liste(annee_debut:apogee::annee_en_cours()) %>%
-    dplyr::anti_join(apogee::etape_histo, by = c("code_etape" = "code_etape_succ")) %>%
-    dplyr::mutate(annee = etape_annees_activite(code_etape)) %>%
-    dplyr::mutate(id = dplyr::row_number()) %>%
-    tidyr::unnest(annee) %>%
-    dplyr::filter(annee >= !!annee_debut) %>%
-    dplyr::mutate(lib_etape = apogee::lib_etape(code_etape)) %>%
-    dplyr::select(annee, acronyme_type_diplome, id, code_etape, lib_etape) %>%
-    tidyr::gather("champ", "valeur", code_etape, lib_etape) %>%
-    tidyr::unite(champ, annee, champ, sep = "##") %>%
-    tidyr::spread(champ, valeur) %>%
-    dplyr::select(-id) %>%
-    split(f = dplyr::pull(., acronyme_type_diplome))
+  formations_historique <- apogee::etape %>% 
+    dplyr::filter(.data$actif) %>% 
+    dplyr::anti_join(
+      apogee::etape_histo, 
+      by = c("code_etape" = "code_etape_succ")
+    ) %>%
+    dplyr::mutate(annee = etape_annees_activite(.data$code_etape)) %>%
+    dplyr::mutate(.id = dplyr::row_number()) %>%
+    tidyr::unnest(.data$annee) %>%
+    dplyr::filter(.data$annee >= !!annee_debut) %>%
+    dplyr::mutate(
+      lib_etape = apogee::lib_etape(.data$code_etape),
+      acronyme_type_diplome = apogee::acronyme_type_diplome(.data$code_type_diplome)
+    ) %>%
+    dplyr::select(.data$annee, .data$acronyme_type_diplome, .data$.id, .data$code_etape, .data$lib_etape) %>%
+    tidyr::gather("champ", "valeur", .data$code_etape, .data$lib_etape) %>%
+    tidyr::unite("champ", .data$annee, .data$champ, sep = "##") %>%
+    tidyr::spread(.data$champ, .data$valeur) %>%
+    dplyr::select(-.data$.id) %>%
+    split(f = dplyr::pull(., .data$acronyme_type_diplome))
 
   return(formations_historique)
 }
@@ -194,7 +216,10 @@ compatibilite_mention_diplome_l <- function(code_mention_diplome_l) {
   
   compatibilite_mention_diplome_l <- dplyr::tibble(code_mention_diplome_l) %>%
     dplyr::mutate(.id = dplyr::row_number()) %>%
-    dplyr::left_join(apogee::mention_diplome_lm, by = "code_mention_diplome_l") %>%
+    dplyr::left_join(
+      apogee::mention_diplome_lm, 
+      by = "code_mention_diplome_l"
+    ) %>%
     split(x = .$code_mention_diplome_m, f = .$.id) %>% 
     unname()
 
@@ -214,7 +239,10 @@ compatibilite_mention_diplome_m <- function(code_mention_diplome_m) {
   
   compatibilite_mention_diplome_m <- dplyr::tibble(code_mention_diplome_m) %>%
     dplyr::mutate(.id = dplyr::row_number()) %>%
-    dplyr::left_join(apogee::mention_diplome_lm, by = "code_mention_diplome_m") %>%
+    dplyr::left_join(
+      apogee::mention_diplome_lm, 
+      by = "code_mention_diplome_m"
+    ) %>%
     split(x = .$code_mention_diplome_l, f = .$.id) %>% 
     unname()
 
@@ -231,11 +259,11 @@ rezip_csv <- function(fichier_zip) {
   match <- stringr::str_match(fichier_zip, "(.+)(/.+?)$")
   path <- match[, 2]
   file <- match[, 3]
-  unzip(zipfile = glue::glue("{path}{file}"), exdir = path)
+  utils::unzip(zipfile = glue::glue("{path}{file}"), exdir = path)
 
   csv_file <- list.files(path, pattern = "csv$", full.names = TRUE)
 
-  zip(glue::glue("{path}{file}"), csv_file, flags = "-jqr")
+  utils::zip(glue::glue("{path}{file}"), csv_file, flags = "-jqr")
 
   suppression <- file.remove(csv_file)
 }
@@ -253,13 +281,16 @@ rezip_csv <- function(fichier_zip) {
 temoin_mention_actif <- function(code_mention_diplome, annee = NULL) {
   
   temoin_mention_actif <- dplyr::tibble(code_mention_diplome) %>%
-    dplyr::left_join(apogee::mention_diplome, by = "code_mention_diplome")
+    dplyr::left_join(
+      apogee::mention_diplome, 
+      by = "code_mention_diplome"
+    )
 
   if (!is.null(annee)) {
-    temoin_mention_actif <- dplyr::mutate(temoin_mention_actif, actif = purrr::map2_lgl(mention_premiere_annee, mention_derniere_annee, ~ length(intersect(.x:.y, !!annee)) >= 1))
+    temoin_mention_actif <- dplyr::mutate(temoin_mention_actif, actif = purrr::map2_lgl(.data$mention_premiere_annee, .data$mention_derniere_annee, ~ length(intersect(.x:.y, !!annee)) >= 1))
   }
 
-  temoin_mention_actif <- dplyr::pull(temoin_mention_actif, actif)
+  temoin_mention_actif <- dplyr::pull(temoin_mention_actif, .data$actif)
 
   return(temoin_mention_actif)
 }

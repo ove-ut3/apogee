@@ -213,7 +213,9 @@ resultats_diplome <- resultats_diplome %>%
 # Suppression diplômés non-existants chez les inscrits
 
 resultats_diplome <- resultats_diplome %>%
-  dplyr::semi_join(dplyr::select(apogee::inscrits, annee, code_etape, code_etudiant, inscription_premiere),
+  dplyr::semi_join(
+    apogee::inscrits %>% 
+      dplyr::select(annee, code_etape, code_etudiant, inscription_premiere),
     by = c("annee", "code_etape", "code_etudiant", "inscription_premiere")
   )
 
@@ -232,7 +234,11 @@ resultats_diplome <- resultats_diplome %>%
 # Suppression des sessions multiples doublons
 
 resultats_diplome <- resultats_diplome %>%
-  dplyr::filter(!(lib_session %in% c("Session 2", "Session unique") & session %in% "Session 1"))
+  dplyr::filter(!(lib_session %in% c("Session 2", "Session unique") & session %in% "Session 1")) %>% 
+  dplyr::arrange(annee, code_etape, code_etudiant, inscription_premiere, lib_session, session) %>% 
+  dplyr::group_by(annee, code_etape, code_etudiant, inscription_premiere, lib_session) %>% 
+  dplyr::filter(dplyr::row_number() == 1) %>% 
+  dplyr::ungroup()
 
 usethis::use_data(resultats_diplome, overwrite = TRUE)
 

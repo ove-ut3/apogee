@@ -8,6 +8,8 @@ conv_etape_sise_diplome(code_etape, annee)
 }
 \arguments{
 \item{code_etape}{Un vecteur de code étape.}
+
+\item{annee}{L'année d'activité de l'étape.}
 }
 \value{
 Un vecteur contenant les codes de diplôme SISE.
