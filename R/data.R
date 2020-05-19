@@ -39,7 +39,9 @@
 "bourse"
 
 #' Table composante
-#'
+#' 
+#' Libellé, type, localisation
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(composante, width = 100)
 #' ````
@@ -47,7 +49,9 @@
 "composante"
 
 #' Table composante_histo
-#'
+#' 
+#' Lien de succession entre composantes
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(composante_histo, width = 100)
 #' ````
@@ -55,7 +59,9 @@
 "composante_histo"
 
 #' Table composante_type
-#'
+#' 
+#' Libellé de type
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(composante_type, width = 100)
 #' ````
@@ -71,7 +77,9 @@
 "departement_academie"
 
 #' Table diplome
-#'
+#' 
+#' libellé, type, cycle
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(diplome, width = 100)
 #' ````
@@ -87,7 +95,9 @@
 "diplome_origine_type"
 
 #' Table diplome_type
-#'
+#' 
+#' libellé de type
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(diplome_type, width = 100)
 #' ````
@@ -95,7 +105,9 @@
 "diplome_type"
 
 #' Table domaine_diplome
-#'
+#' 
+#' libellé de domaine de diplôme
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(domaine_diplome, width = 100)
 #' ````
@@ -143,7 +155,9 @@
 "etablissement_type"
 
 #' Table etape
-#'
+#' 
+#' libellés, type_diplome, années d'activité
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(etape, width = 100)
 #' ````
@@ -151,7 +165,9 @@
 "etape"
 
 #' Table etape_composante
-#'
+#' 
+#' rattachement dans le temps des formations aux composantes
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(etape_composante, width = 100)
 #' ````
@@ -159,7 +175,9 @@
 "etape_composante"
 
 #' Table etape_domaine
-#'
+#' 
+#' rattachement des formations aux domaines de diplôme
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(etape_domaine, width = 100)
 #' ````
@@ -167,7 +185,9 @@
 "etape_domaine"
 
 #' Table etape_finalite
-#'
+#' 
+#' correspondance des formation avec la finalité du diplôme (master 2 et diplômes de santé)
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(etape_finalite, width = 100)
 #' ````
@@ -175,7 +195,9 @@
 "etape_finalite"
 
 #' Table etape_histo
-#'
+#' 
+#' lien de succession entre formations
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(etape_histo, width = 100)
 #' ````
@@ -183,7 +205,9 @@
 "etape_histo"
 
 #' Table etape_mention
-#'
+#' 
+#' rattachement des formations aux mentions de diplôme
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(etape_mention, width = 100)
 #' ````
@@ -191,7 +215,9 @@
 "etape_mention"
 
 #' Table etape_secteur
-#'
+#' 
+#' rattachement des formations aux secteurs définis par le SCUIO-IP
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(etape_secteur, width = 100)
 #' ````
@@ -199,7 +225,9 @@
 "etape_secteur"
 
 #' Table etape_sise
-#'
+#' 
+#' correspondance entre les formations les code diplôme SISE
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(etape_sise, width = 100)
 #' ````
@@ -207,7 +235,9 @@
 "etape_sise"
 
 #' Table finalite_diplome
-#'
+#' 
+#' libellé de finalité de diplôme
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(finalite_diplome, width = 100)
 #' ````
@@ -279,7 +309,9 @@
 "inscrits_peda"
 
 #' Table mention_diplome
-#'
+#' 
+#' libellé, année d'activité
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(mention_diplome, width = 100)
 #' ````
@@ -287,7 +319,9 @@
 "mention_diplome"
 
 #' Table mention_diplome_histo
-#'
+#' 
+#' lien de succession entre mentions
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(mention_diplome_histo, width = 100)
 #' ````
@@ -295,7 +329,9 @@
 "mention_diplome_histo"
 
 #' Table mention_diplome_lm
-#'
+#' 
+#' compatibilité entre mentions de Licence et Master
+#' 
 #' ```{r, echo=FALSE}
 #' dplyr::glimpse(mention_diplome_lm, width = 100)
 #' ````

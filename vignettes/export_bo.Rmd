@@ -24,7 +24,7 @@ Rythme d'actualisation tous les mois
 - login intranet : gxs6479a
 - mot de passe : 
 
-Chemin versles requêtes :
+Chemin vers les requêtes :
 
 - Onglet "Documents"
 - Sous-menu en bas à gauche: "Dossiers"
@@ -54,7 +54,7 @@ Requêtes sans spécification d'année :
 - Individus_mail_ups
 - Individus_situation_annee_precedente
 
-Sauvegarde dans : `data-raw/data/Toutes annees/`
+Sauvegarde dans : `data-raw/data/Toutes_annees/`
 
 #### Requêtes inscrits, résultats et diplômés
 
@@ -76,6 +76,8 @@ Pour changer l'année :
 - Menu "Modifier le fournisseur de données"
 - Changement d'année dans le volet "Filtres de la requête"
 
+Sauvegarder dans le dossier annuel correspondant à l'année spécifiée, par exemple `data-raw/data/2019-20`.
+
 ##### Pour les requêtes suivantes (plus légères en nombre d'individus) : 
 
 - Inscrits_peda
@@ -83,7 +85,7 @@ Pour changer l'année :
 - Resultats_etape
 - Resultats_etape_paces
 
-Sauvegarde par tranche de 5 ans dans le dossier d'accréditation en cours, par exemple `data-raw/data/2016-17 - 2021-22`
+Sauvegarde par tranche de 5 ans dans le dossier d'accréditation en cours, par exemple `data-raw/data/2016-17 - 2021-22`.
 
 ##### Pour les requêtes suivantes (plus lourdes en nombre d'individus) : 
 
@@ -132,5 +134,4 @@ Requête BO correspondant à l'offre de formation uniquement :
 - Exécution des scripts des méta-données
 - Penser à builder apogée une seconde fois
 
-Les données du package `apogee.stats` peuvent alors être mises à jour également (voir vignette dans package `apogee.stats`).
-
+Les données du package `scolarite` peuvent alors être mises à jour également (voir vignette dans package `scolarite`).

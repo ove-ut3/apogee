@@ -1,0 +1,309 @@
+---
+title: "Manipulations des métadonnées dans Apogée"
+author: "Observatoire de la vie étudiante"
+date: "`r format(Sys.Date(), '%d %B %Y')`"
+output: 
+  rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Manipulations des métadonnées dans Apogée}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+library(dplyr)
+```
+
+## Introduction
+
+La package `apogee` a pour finalité de stocker deux types d'informations à partir du système d'information Apogée :
+
+- D'un côté, l'offre de formation de l'établissement en modélisant les libellés, liens d'historique et de hiérarchie entre les niveaux des formations ainsi que des éléments pédagogiques
+- De l'autre, les données de scolarité attachées aux étudiants : inscriptions, résultats aux examens, informations individuelles
+
+Cette vignette a pour but de présenter les données et fonctions stockées dans ce package.
+
+## Source
+
+La procédure d'extraction des données source est réalisée depuis Business Objects (BO) et est décrite dans la vignette [Extraction BO](export_bo.html).
+
+## Offre de formation
+
+L'offre de formation est structurée autour des termes suivants.
+
+### Etape
+
+L'ensemble des formations de l'Etablissement est référencée par ce qu'on appelle un *code étape*.
+
+Il s'agit d'une codification locale qui correspond à une année d'étude.
+Par exemple, une année de Licence 2 aura un code étape différent d'une année de Licence 3.
+
+Ces formations sont stockées dans la table `apogee::etape` qui décrit notamment les libellés ainsi que d'autre informations.
+
+### Eléments pédagogiques
+
+Chaque formation ou étape de l'établissement est décrit par une maquette regroupant des *éléments pédagogiques* ou matières.
+
+L'ensemble des élément pédagogiques sont stockés dans la table `apogee::elp`.
+
+### Composante
+
+Chaque formation est rattachée à une structure administrative au sein de l'Etablissement que l'on appelle la *composante* ou faculté (`apogee::composante`).
+
+Celle-ci correspond à un découpage disciplinaire au sein de l'établissement.
+Par exemple, la composante `F2SMH` ou "Faculté des sciences du sport et du mouvement humain" correspond à STAPS.
+
+### Diplôme 
+
+L'Etablissement délivre des *diplômes* qui sont référencés à la fois avec un code local (voir table `apogee::diplome`) et national (voir `sise::diplome`).
+
+Une table de correspondance existe (`apogee::etape_sise`) mais au niveau plus fin de l'étape en local.
+
+Le code diplôme se réfère à l'ensemble des années nécessaires à son obtention.
+Pour un diplôme de Licence, il comprend donc les années de Licence 1, Licence 2 et Licence 3.
+
+### Domaine de diplôme
+
+Chaque diplôme est rangé dans une hiérachie disciplinaire que l'on appelle le *domaine* (`apogee::domaine_diplome`).
+
+Une table nationale existe également : `sise::diplome_discipline`.
+
+### Mention de diplôme
+
+Chaque diplôme est également rattaché à une *mention de diplôme*.
+Il s'agit également d'un découpage national qui permet de classer les diplômes selon une nomenclature (`apogee::mention_diplome`).
+
+### L'inscription administrative et l'inscription pédagogique
+
+L'inscription dans une formation se divise en deux temps.
+
+En premier lieu, l'inscription administrative renseigne les informations individuelles de l'étudiants, le paiement des droits d'inscription, etc...
+
+Dans un second temps, l'étudiant doit saisir son inscription pédagogique par le choix des éléments pédagogiques suivis pendant l'année.
+
+### Inscription première et inscription seconde
+
+Pendant une même année, un même étudiant peut être inscrit dans plusieurs formations.
+
+Ce cas se produit par exemple lors d'un *enjambement* : l'étudiant n'a pas validé la totalité de ses éléments pédagogiques en Licence 2, mais est autorisé l'année suivante à s'inscrire en Licence 3.
+
+Pendant cette seconde année, il sera donc inscrit à la fois en *inscription première* en Licence 2 et en *inscription seconde* en Licence 3.
+
+## Les données individuelles et de scolarité
+
+Chaque étudiant doit fournir un certain nombre d'informations administratives au moment de son inscription.
+
+### Données individuelles
+
+Certaines d'entre elles sont attachées exclusivement à l'individu et sont stockées dans la table dédiée `apogee::individus` (état civil, etc...).
+
+La table `individus_diplome_origine` précise le dernier diplôme obtenu avant l'entrée dans l'établissement.
+
+La table `individus_situation_annee_precedente` précise enfin la situation de l'étudiant juste avant d'intégrer une formation de l'établissement.
+
+### Données d'inscription
+
+Des données sont également relatives à l'inscription des étudiants qui est susceptible de varier chaque année.
+
+Les inscriptions administratives aux étapes (ou formations) sont sauvegardées dans la table `apogee::inscrits`, l'inscription pédagogique dans la table `apogee::inscrits_peda`, et l'inscription aux élément pédagogiques dans la table `apogee::inscrits_elp`.
+
+### Résultats aux examens
+
+Enfin, les résultats aux examens sont  respectivement stockés dans les tables `apogee::resultats_elp`, `apogee::resultats_etape` et `apogee::resultats_diplome` pour les éléments pédagogiques, les étapes, et les diplômes.
+
+Cest données sont également variables selon l'année universitaire observée.
+
+## La base Access `data-raw/data/Tables_ref.accdb`
+
+Une base Access existe pour pallier certains manques des extractions initiales sur l'offre de formation (depuis Apogée avec BO) présentée ci-dessus.
+Il s'agit des fichiers excel du dossier `data-raw/data`.
+
+*Note: Une bonne partie d'entre elles doivent pouvoir être prises en charge nativement par l'outil SGCE pour lequel l'OVE a eu un accès récent.*
+
+Sont listées les tables de la base Access à consulter prioritairement :
+
+### Table `etape`
+
+Les libellés de formation remontés par défaut depuis BO ne sont pas bien formés : majuscules, accents manquants, etc...
+Cette table écrase les valeurs initiales et ajoute également les champs de description suivants :
+
+- `acronyme etape` : acronyme de la formation
+- `annee_etape` : année de formation (`2` pour la Licence 2, `4` pour un Master 1, etc...)
+- `annee_diplome` : année dans le diplôme (`2` pour la Licence 2, `1` pour un Master 1, etc...)
+- `option` et `particularite` : précisions sur la formation
+- `ville` : campus sur lequel la formation est proposée
+- `cohabilite` : Acronyme d'établissement avec lequel la formation est co-habilitée.
+
+### Table `etape_histo`
+
+Dans apogée, le lien d'historique entre formations n'est pas saisi. La table `etape_histo` a été saisie manuellement pour les reconstituer.
+
+Le champ `code_elp` correspond à un ou plusieurs code de parcours qui permet de lever l'ambiguité pour un lien d'historique. 
+
+Par exemple, la L2 Chimie de 2011 à 2015 (code `EDCHM1`) se divise en 2 à partir de 2016-17 (codes `EDCHAE` et `EDCHSE`).
+Le code de parcours (élément pédagogique de nature parcours) de 2011 à 2015 permet d'effectuer un passage, un à un, entre ancien et nouveau code étape.
+
+### Table `diplome_type`
+
+Les types de diplôme saisi dans apogée mélangent plusieurs niveaux de formation évoqués plus haut.
+
+On trouve par exemple les valeurs `LMD/L1`, `LMD/L2` et `LMD/L3` qui ne correspondent pas à un diplôme mais à une année à l'intérieur du diplôme.
+Ces valeurs apparaissent à côté des types de diplôme `DUT` et `Licence pr` qui corespondent eux bien à des diplômes.
+
+La table `diplome_type` ajoute, d'une part des libellés et acronymes retravaillés et, d'autre un lien de hiérarchie avec le champ `code_type_diplome_parent` qui permet de corriger le problème du mélange de niveau de diplôme.
+
+### Table `mention_diplome_lm`
+
+Le suivi de cohortes sur lequel est amené à travailler l'OVE implique de pouvoir dire si un étudiant passant d'une mention de Licence vers une mention de Master, est considéré :
+
+- soit dans une prolongation naturelle de son cursus
+- soit en réorientation (flux latéral)
+
+La table `mention_diplome_lm` référence la compatibilité entre mentions de Licence et Master pour pouvoir répondre à cette question.
+
+Source : https://www.data.gouv.fr/fr/datasets/liste-des-compatibilites-des-mentions-du-diplome-national-de-licence-avec-les-mentions-du-diplome-national-de-master/
+
+## Les fonctions
+
+Pour manipuler ces données, un ensemble de fonctions ont été codées autour de trois principales fonctionnalités :
+
+- Convertir un code vers son libellé (préfixe `lib_`)
+- Passer dans une hiérarchie d'un niveau de granularité précis vers un niveau plus agrégé (préfixe `hier_`)
+- Pouvoir reconstituer un historique malgré des changement de codification (préfixe `histo_`)
+
+Toutes les fonctions sont décrites dans les aides associées.
+Ci-dessous sont proposées une série d'exemples permettant d'appréhender les possibilités an matière de manipulation de données grace au package.
+
+## Des exemples d'utilisation
+
+### Nombre d'inscriptions administratives premières par formation en année 2015-16
+
+```{r}
+inscrits <- apogee::inscrits %>% 
+  dplyr::filter(
+    annee == 2015,
+    inscription_premiere
+  ) %>% 
+  dplyr::mutate(lib_etape = apogee::lib_etape(code_etape)) %>% 
+  dplyr::count(code_etape, lib_etape, name = "inscrits")
+
+dplyr::glimpse(inscrits, width = 100)
+```
+
+### Ajout d'un filtre sur les formation de Licence 2
+
+```{r}
+inscrits_l2 <- apogee::inscrits %>% 
+  dplyr::filter(
+    annee == 2015,
+    inscription_premiere,
+    apogee::hier_etape_type_diplome(code_etape) == "LMD/L2"
+  ) %>% 
+  dplyr::mutate(lib_etape = apogee::lib_etape(code_etape)) %>% 
+  dplyr::count(code_etape, lib_etape, name = "inscrits")
+
+dplyr::glimpse(inscrits_l2, width = 100)
+```
+
+### Passage aux formations de l'offre actuelle (accéditation 2016-17)
+
+```{r}
+inscrits_l2_histo <- apogee::inscrits %>% 
+  dplyr::filter(
+    annee == 2015,
+    inscription_premiere,
+    apogee::hier_etape_type_diplome(code_etape) == "LMD/L2"
+  ) %>% 
+  dplyr::mutate(code_etape = apogee::histo_etape_succ(code_etape, code_elp = elp_parcours)) %>% 
+  dplyr::mutate(lib_etape = apogee::lib_etape(code_etape)) %>% 
+  dplyr::count(code_etape, lib_etape, name = "inscrits")
+
+dplyr::glimpse(inscrits_l2_histo, width = 100)
+```
+
+Certaines formations n'ont pas pu être converties vers l'offre de formation actuelle.
+
+C'est la cas par exemple de certains individus de la formation `L2 Chimie` (code `EDCHM1`) en 2015-16 qui n'ont pas de sous-code parcours permettant d'établir le lien d'historique. 
+
+### Offre de formation actuelle
+
+```{r}
+offre_formation <- apogee::etape %>% 
+  dplyr::filter(actif) %>% 
+  dplyr::select(
+    code_type_diplome, code_etape, lib_etape, acronyme_etape,
+    annee_etape, option, particularite, campus = ville
+  ) %>% 
+  # Libellé de type de diplôme
+  dplyr::mutate_at("code_type_diplome", apogee::hier_type_diplome_parent) %>% 
+  dplyr::mutate(lib_type_diplome = apogee::acronyme_type_diplome(code_type_diplome)) %>% 
+  # Ajout de la composante
+  dplyr::left_join(
+    apogee::etape_composante %>% 
+      dplyr::filter(derniere_annee == apogee::annee_en_cours()) %>% 
+      dplyr::mutate_at("code_composante", apogee::histo_composante_succ) %>% 
+      dplyr::mutate_at("code_composante", apogee::hier_composante_parent) %>% 
+      # Doublons existants (par exemple code_etape `CO0031`)
+      dplyr::select(code_etape, code_composante) %>% 
+      unique() %>% 
+      dplyr::mutate(lib_composante = apogee::lib_composante(code_composante)) %>% 
+      tidyr::drop_na(lib_composante) %>% 
+      # Concaténation en cas de rattachement multi-composantes
+      dplyr::group_by(code_etape) %>% 
+      dplyr::summarise_at("lib_composante", paste, collapse = " ; ") %>% 
+      dplyr::ungroup(),
+    by = "code_etape"
+  ) %>% 
+  # Ajout de la mention de diplôme
+  dplyr::left_join(
+    apogee::etape_mention %>% 
+      dplyr::mutate(lib_mention_diplome = apogee::lib_mention_diplome(code_mention_diplome)) %>% 
+      tidyr::drop_na(lib_mention_diplome) %>% 
+      # Concaténation en cas de rattachement multi-mentions
+      dplyr::group_by(code_etape) %>% 
+      dplyr::summarise_at("lib_mention_diplome", paste, collapse = " ; ") %>% 
+      dplyr::ungroup(),
+    by = "code_etape"
+  ) %>% 
+  # Ajout du domaine de diplôme
+  dplyr::left_join(
+    apogee::etape_domaine %>% 
+      dplyr::mutate(lib_domaine_diplome = apogee::lib_domaine_diplome(code_domaine_diplome)) %>% 
+      tidyr::drop_na(lib_domaine_diplome) %>% 
+      # Concaténation en cas de rattachement multi-domaines
+      dplyr::group_by(code_etape) %>% 
+      dplyr::summarise_at("lib_domaine_diplome", paste, collapse = " ; ") %>% 
+      dplyr::ungroup(),
+    by = "code_etape"
+  ) %>% 
+  dplyr::select(
+    lib_type_diplome, lib_composante, lib_domaine_diplome, lib_mention_diplome,
+    code_etape, lib_etape, acronyme_etape, annee_etape, option, particularite, campus
+  )
+
+dplyr::glimpse(offre_formation, width = 100)
+```
+
+### Diplômés de DUT, LP et Master en vue des enquêtes d'insertion professionnelle (année 2016-17)
+
+```{r}
+insertion_pro <- apogee::resultats_diplome %>%
+  dplyr::filter(
+    annee == 2016,
+    apogee::hier_resultat_parent(code_resultat) == "ADM"
+  ) %>%
+  dplyr::select(annee, code_etape, code_etudiant, inscription_premiere) %>%
+  unique() %>% # Suppression des doublons : sessions, etc...
+  dplyr::mutate(
+    type_diplome = apogee::hier_etape_type_diplome(code_etape) %>% 
+      apogee::hier_type_diplome_parent() %>% 
+      apogee::acronyme_type_diplome()
+  ) %>% 
+  dplyr::filter(type_diplome %in% c("DUT", "LP", "Master"))
+
+dplyr::glimpse(insertion_pro, width = 100)
+```
