@@ -111,6 +111,15 @@ Des données sont également relatives à l'inscription des étudiants qui est s
 
 Les inscriptions administratives aux étapes (ou formations) sont sauvegardées dans la table `apogee::inscrits`, l'inscription pédagogique dans la table `apogee::inscrits_peda`, et l'inscription aux élément pédagogiques dans la table `apogee::inscrits_elp`.
 
+L'identifiant unique est l'inscription d'un étudiant (champ `code_etudiant`) à une formation (champ `code_etape`) pendant une année universitaire (champ `annee`) en inscription première ou non (champ `inscription_premiere`).
+
+```{r}
+# Recherche de doublons selon les 4 champs
+apogee::inscrits %>% 
+  dplyr::select(annee, code_etape, code_etudiant, inscription_premiere) %>% 
+  patchr::duplicate(annee, code_etape, code_etudiant, inscription_premiere)
+```
+
 ### Résultats aux examens
 
 Enfin, les résultats aux examens sont  respectivement stockés dans les tables `apogee::resultats_elp`, `apogee::resultats_etape` et `apogee::resultats_diplome` pour les éléments pédagogiques, les étapes, et les diplômes.
